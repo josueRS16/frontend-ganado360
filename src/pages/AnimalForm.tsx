@@ -88,199 +88,274 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
 
   return (
     <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="modal-dialog modal-xl">
-        <div className="modal-content border-success shadow-lg">
-          <div className="modal-header bg-success text-white">
-            <h5 className="modal-title fw-bold">
-              <span className="me-2">🐄</span>
+      <div className="modal-dialog modal-lg">
+        <div className="modal-content border-0 shadow-lg">
+          <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
+            <h5 className="modal-title fw-semibold d-flex align-items-center">
+              <i className={`bi ${animal ? 'bi-pencil-square' : 'bi-plus-circle'} me-2`}></i>
               {animal ? 'Editar Animal' : 'Nuevo Animal'}
             </h5>
-            <button type="button" className="btn-close btn-close-white" onClick={handleClose}></button>
+            <button 
+              type="button" 
+              className="btn-close btn-close-white" 
+              onClick={handleClose}
+              aria-label="Cerrar modal"
+            ></button>
           </div>
           <form onSubmit={handleSubmit}>
-            <div className="modal-body">
-              <div className="row g-3">
-                <div className="col-md-6">
-                  <label htmlFor="nombre" className="form-label">Nombre</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="nombre"
-                    value={formData.Nombre}
-                    onChange={(e) => setFormData({ ...formData, Nombre: e.target.value })}
-                    required
-                  />
+            <div className="modal-body p-4">
+              {/* Información Básica */}
+              <div className="card border-0 shadow-sm mb-4">
+                <div className="card-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
+                  <h6 className="card-title mb-0 d-flex align-items-center">
+                    <i className="bi bi-info-circle-fill me-2"></i>
+                    Información Básica
+                  </h6>
                 </div>
-                <div className="col-md-6">
-                  <label htmlFor="sexo" className="form-label">Sexo</label>
-                  <select
-                    className="form-select"
-                    id="sexo"
-                    value={formData.Sexo}
-                    onChange={(e) => {
-                      const newSex = e.target.value as "M" | "F";
-                      // Reset pregnancy-related fields when switching to male
-                      if (newSex === "M") {
-                        setFormData({ 
-                          ...formData, 
-                          Sexo: newSex,
-                          Esta_Preniada: false,
-                          Fecha_Monta: null,
-                          Fecha_Estimada_Parto: null
-                        });
-                      } else {
-                        setFormData({ ...formData, Sexo: newSex });
-                      }
-                    }}
-                    required
-                  >
-                    <option value="">Seleccionar sexo</option>
-                    <option value="M">Macho</option>
-                    <option value="F">Hembra</option>
-                  </select>
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="categoria" className="form-label">Categoría</label>
-                  <select
-                    className="form-select"
-                    id="categoria"
-                    value={formData.ID_Categoria}
-                    onChange={(e) => setFormData({ ...formData, ID_Categoria: Number(e.target.value) })}
-                    required
-                  >
-                    {categorias.map(categoria => (
-                      <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
-                        {categoria.Tipo}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="raza" className="form-label">Raza</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="raza"
-                    value={formData.Raza}
-                    onChange={(e) => setFormData({ ...formData, Raza: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="color" className="form-label">Color</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="color"
-                    value={formData.Color}
-                    onChange={(e) => setFormData({ ...formData, Color: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="peso" className="form-label">Peso</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="peso"
-                    value={formData.Peso}
-                    onChange={(e) => setFormData({ ...formData, Peso: Number(e.target.value) })}
-                    placeholder="Ej: 450"
-                    required
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="fechaNacimiento" className="form-label">Fecha de Nacimiento</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    id="fechaNacimiento"
-                    value={formData.Fecha_Nacimiento}
-                    onChange={(e) => setFormData({ ...formData, Fecha_Nacimiento: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="fechaIngreso" className="form-label">Fecha de Ingreso</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    id="fechaIngreso"
-                    value={formData.Fecha_Ingreso}
-                    onChange={(e) => setFormData({ ...formData, Fecha_Ingreso: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="estaPreniada" className="form-label">Estado Reproductivo</label>
-                  <select
-                    className="form-select"
-                    id="estaPreniada"
-                    value={formData.Esta_Preniada ? "true" : "false"}
-                    onChange={(e) => setFormData({ ...formData, Esta_Preniada: e.target.value === "true" })}
-                    disabled={formData.Sexo === "M"}
-                  >
-                    <option value="false">
-                      {formData.Sexo === "M" ? "No aplica (Macho)" : "No preñada"}
-                    </option>
-                    <option value="true" disabled={formData.Sexo === "M"}>
-                      {formData.Sexo === "M" ? "No aplica (Macho)" : "Preñada"}
-                    </option>
-                  </select>
-                  {formData.Sexo === "M" && (
-                    <div className="form-text text-muted">
-                      <small>Los machos no pueden estar preñados</small>
-                    </div>
-                  )}
-                </div>
-                {formData.Esta_Preniada && formData.Sexo === "F" && (
-                  <>
+                <div className="card-body">
+                  <div className="row g-3">
                     <div className="col-md-6">
-                      <label htmlFor="fechaMonta" className="form-label">Fecha de Monta</label>
-                      <input
-                        type="date"
-                        className="form-control"
-                        id="fechaMonta"
-                        value={formData.Fecha_Monta || ''}
-                        onChange={(e) => setFormData({ ...formData, Fecha_Monta: e.target.value || null })}
-                      />
+                      <div className="form-floating">
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="nombre"
+                          placeholder="Nombre del animal"
+                          value={formData.Nombre}
+                          onChange={(e) => setFormData({ ...formData, Nombre: e.target.value })}
+                          required
+                        />
+                        <label htmlFor="nombre">Nombre del Animal</label>
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-floating">
+                        <select
+                          className="form-select"
+                          id="sexo"
+                          value={formData.Sexo}
+                          onChange={(e) => {
+                            const newSex = e.target.value as "M" | "F";
+                            // Reset pregnancy-related fields when switching to male
+                            if (newSex === "M") {
+                              setFormData({ 
+                                ...formData, 
+                                Sexo: newSex,
+                                Esta_Preniada: false,
+                                Fecha_Monta: null,
+                                Fecha_Estimada_Parto: null
+                              });
+                            } else {
+                              setFormData({ ...formData, Sexo: newSex });
+                            }
+                          }}
+                          required
+                        >
+                          <option value="">Seleccionar</option>
+                          <option value="M">Macho</option>
+                          <option value="F">Hembra</option>
+                        </select>
+                        <label htmlFor="sexo">Sexo</label>
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="form-floating">
+                        <select
+                          className="form-select"
+                          id="categoria"
+                          value={formData.ID_Categoria}
+                          onChange={(e) => setFormData({ ...formData, ID_Categoria: Number(e.target.value) })}
+                          required
+                        >
+                          {categorias.map(categoria => (
+                            <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
+                              {categoria.Tipo}
+                            </option>
+                          ))}
+                        </select>
+                        <label htmlFor="categoria">Categoría</label>
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-floating">
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="raza"
+                          placeholder="Raza del animal"
+                          value={formData.Raza}
+                          onChange={(e) => setFormData({ ...formData, Raza: e.target.value })}
+                          required
+                        />
+                        <label htmlFor="raza">Raza</label>
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-floating">
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="color"
+                          placeholder="Color del animal"
+                          value={formData.Color}
+                          onChange={(e) => setFormData({ ...formData, Color: e.target.value })}
+                          required
+                        />
+                        <label htmlFor="color">Color</label>
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="form-floating">
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="peso"
+                          placeholder="Peso en kg"
+                          value={formData.Peso || ''}
+                          onChange={(e) => setFormData({ ...formData, Peso: Number(e.target.value) })}
+                          required
+                        />
+                        <label htmlFor="peso">Peso (kg)</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Fechas Importantes */}
+              <div className="card border-0 shadow-sm mb-4">
+                <div className="card-header" style={{ background: 'var(--color-tint1)', color: 'white' }}>
+                  <h6 className="card-title mb-0 d-flex align-items-center">
+                    <i className="bi bi-calendar-event me-2"></i>
+                    Fechas Importantes
+                  </h6>
+                </div>
+                <div className="card-body">
+                  <div className="row g-3">
+                    <div className="col-md-6">
+                      <div className="form-floating">
+                        <input
+                          type="date"
+                          className="form-control"
+                          id="fechaNacimiento"
+                          value={formData.Fecha_Nacimiento}
+                          onChange={(e) => setFormData({ ...formData, Fecha_Nacimiento: e.target.value })}
+                          required
+                        />
+                        <label htmlFor="fechaNacimiento">Fecha de Nacimiento</label>
+                      </div>
                     </div>
                     <div className="col-md-6">
-                      <label htmlFor="fechaEstimadaParto" className="form-label">Fecha Estimada de Parto</label>
-                      <input
-                        type="date"
-                        className="form-control"
-                        id="fechaEstimadaParto"
-                        value={formData.Fecha_Estimada_Parto || ''}
-                        onChange={(e) => setFormData({ ...formData, Fecha_Estimada_Parto: e.target.value || null })}
-                      />
+                      <div className="form-floating">
+                        <input
+                          type="date"
+                          className="form-control"
+                          id="fechaIngreso"
+                          value={formData.Fecha_Ingreso}
+                          onChange={(e) => setFormData({ ...formData, Fecha_Ingreso: e.target.value })}
+                          required
+                        />
+                        <label htmlFor="fechaIngreso">Fecha de Ingreso</label>
+                      </div>
                     </div>
-                  </>
-                )}
+                    <div className="col-md-6">
+                          <div className="form-floating">
+                            <input
+                              type="date"
+                              className="form-control"
+                              id="fechaMonta"
+                              value={formData.Fecha_Monta || ''}
+                              onChange={(e) => setFormData({ ...formData, Fecha_Monta: e.target.value || null })}
+                            />
+                            <label htmlFor="fechaMonta">Fecha de Monta</label>
+                          </div>
+                        </div>
+                  </div>
+                </div>
+              </div>
+              {/* Estado Reproductivo */}
+              <div className="card border-0 shadow-sm">
+                <div className="card-header" style={{ background: 'var(--color-slate)', color: 'white' }}>
+                  <h6 className="card-title mb-0 d-flex align-items-center">
+                    <i className="bi bi-heart-pulse me-2"></i>
+                    Estado Reproductivo
+                  </h6>
+                </div>
+                <div className="card-body">
+                  <div className="row g-3">
+                    <div className="col-md-6">
+                      <div className="form-floating">
+                        <select
+                          className="form-select"
+                          id="estaPreniada"
+                          value={formData.Esta_Preniada ? "true" : "false"}
+                          onChange={(e) => setFormData({ ...formData, Esta_Preniada: e.target.value === "true" })}
+                          disabled={formData.Sexo === "M"}
+                        >
+                          <option value="false">
+                            {formData.Sexo === "M" ? "No aplica (Macho)" : "No preñada"}
+                          </option>
+                          <option value="true" disabled={formData.Sexo === "M"}>
+                            {formData.Sexo === "M" ? "No aplica (Macho)" : "Preñada"}
+                          </option>
+                        </select>
+                        <label htmlFor="estaPreniada">Estado Reproductivo</label>
+                      </div>
+                      {formData.Sexo === "M" && (
+                        <div className="form-text text-muted">
+                          <i className="bi bi-info-circle me-1"></i>
+                          Los machos no pueden estar preñados
+                        </div>
+                      )}
+                    </div>
+                    {formData.Esta_Preniada && formData.Sexo === "F" && (
+                      <>
+                        <div className="col-md-6">
+                          <div className="form-floating">
+                            <input
+                              type="date"
+                              className="form-control"
+                              id="fechaEstimadaParto"
+                              value={formData.Fecha_Estimada_Parto || ''}
+                              onChange={(e) => setFormData({ ...formData, Fecha_Estimada_Parto: e.target.value || null })}
+                            />
+                            <label htmlFor="fechaEstimadaParto">Fecha Estimada de Parto</label>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="modal-footer bg-light">
-            <button 
-                type="submit" 
-                className="btn btn-success"
-                disabled={createMutation.isPending || updateMutation.isPending}
-              >
-                {createMutation.isPending || updateMutation.isPending ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    Guardando...
-                  </>
-                ) : (
-                  <>
-                    <span className="me-1">💾</span>
-                    {animal ? 'Actualizar' : 'Crear'}
-                  </>
-                )}
-              </button>
-              <button type="button" className="btn btn-outline-secondary" onClick={handleClose}>
-                <span className="me-1">❌</span>
-                Cancelar
-              </button>
+            <div className="modal-footer bg-light border-0 p-3">
+              <div className="d-flex justify-content-end gap-2 w-100">
+              <button 
+                  type="submit" 
+                  className="btn btn-apply"
+                  disabled={createMutation.isPending || updateMutation.isPending}
+                >
+                  {createMutation.isPending || updateMutation.isPending ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Guardando...
+                    </>
+                  ) : (
+                    <>
+                      <i className={`bi ${animal ? 'bi-check-circle' : 'bi-plus-circle'} me-2`}></i>
+                      {animal ? 'Actualizar' : 'Crear'}
+                    </>
+                  )}
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-outline-secondary" 
+                  onClick={handleClose}
+                >
+                  <i className="bi bi-x-circle me-2"></i>
+                  Cancelar
+                </button>
+              </div>
             </div>
           </form>
         </div>

@@ -582,10 +582,10 @@ export function Animales() {
       {/* Modal de Detalles del Animal */}
       {detallesModalState.isOpen && detallesModalState.animal && (
         <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-lg modal-dialog-centered">
+          <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div className="modal-content border-0 shadow-lg">
               <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
-                <h5 className="modal-title d-flex align-items-center">
+                <h5 className="modal-title fw-semibold d-flex align-items-center">
                   <i className="bi bi-diagram-3-fill me-2"></i>
                   Detalles del Animal
                 </h5>
@@ -680,12 +680,12 @@ export function Animales() {
                             <p className="fw-medium">
                               {detallesModalState.animal.Esta_Preniada === 1 ? (
                                 <span className="badge bg-warning text-black">
-                                  <span className="me-1">🤱</span>
+                                  <i className="bi bi-heart-pulse me-1"></i>
                                   Preñada
                                 </span>
                               ) : (
                                 <span className="badge bg-light text-dark">
-                                  <span className="me-1">✅</span>
+                                  <i className="bi bi-check-circle me-1"></i>
                                   Activo
                                 </span>
                               )}
@@ -733,35 +733,38 @@ export function Animales() {
                 {/* Información Adicional */}
                 <div className="row mt-3">
                   <div className="col-12">
-                    <div className="card border-0 bg-light">
-                      <div className="card-header bg-info text-white">
-                        <h6 className="card-title mb-0">
-                          <span className="me-2">📊</span>
+                    <div className="card border-0 shadow-sm">
+                      <div className="card-header" style={{ background: 'var(--color-slate)', color: 'white' }}>
+                        <h6 className="card-title mb-0 d-flex align-items-center">
+                          <i className="bi bi-graph-up me-2"></i>
                           Información Adicional
                         </h6>
                       </div>
                       <div className="card-body">
                         <div className="row g-3">
                           <div className="col-md-4">
-                            <div className="text-center">
-                              <h6 className="text-muted">Edad</h6>
-                              <p className="fw-bold text-primary fs-5">
+                            <div className="text-center p-3 border rounded">
+                              <i className="bi bi-calendar3 text-primary fs-4 mb-2"></i>
+                              <h6 className="text-muted mb-1">Edad</h6>
+                              <p className="fw-bold text-primary fs-5 mb-0">
                                 {Math.floor((new Date().getTime() - new Date(detallesModalState.animal.Fecha_Nacimiento).getTime()) / (1000 * 60 * 60 * 24 * 365))} años
                               </p>
                             </div>
                           </div>
                           <div className="col-md-4">
-                            <div className="text-center">
-                              <h6 className="text-muted">Días en el Sistema</h6>
-                              <p className="fw-bold text-success fs-5">
+                            <div className="text-center p-3 border rounded">
+                              <i className="bi bi-clock-history text-success fs-4 mb-2"></i>
+                              <h6 className="text-muted mb-1">Días en el Sistema</h6>
+                              <p className="fw-bold text-success fs-5 mb-0">
                                 {Math.floor((new Date().getTime() - new Date(detallesModalState.animal.Fecha_Ingreso).getTime()) / (1000 * 60 * 60 * 24))} días
                               </p>
                             </div>
                           </div>
                           <div className="col-md-4">
-                            <div className="text-center">
-                              <h6 className="text-muted">Estado de Salud</h6>
-                              <p className="fw-bold text-success fs-5">
+                            <div className="text-center p-3 border rounded">
+                              <i className="bi bi-heart-pulse text-success fs-4 mb-2"></i>
+                              <h6 className="text-muted mb-1">Estado de Salud</h6>
+                              <p className="fw-bold text-success fs-5 mb-0">
                                 <span className="badge bg-success">Saludable</span>
                               </p>
                             </div>
@@ -772,26 +775,28 @@ export function Animales() {
                   </div>
                 </div>
               </div>
-              <div className="modal-footer bg-light border-0">
+              <div className="modal-footer bg-light border-0 p-3">
+                <div className="d-flex justify-content-end gap-2 w-100">
                 <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  onClick={closeDetallesModal}
-                >
-                  <i className="bi bi-x-circle me-2"></i>
-                  Cerrar
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-apply"
-                  onClick={() => {
-                    closeDetallesModal();
-                    openModal(detallesModalState.animal);
-                  }}
-                >
-                  <i className="bi bi-pencil me-2"></i>
-                  Editar
-                </button>
+                    type="button"
+                    className="btn btn-apply"
+                    onClick={() => {
+                      closeDetallesModal();
+                      openModal(detallesModalState.animal);
+                    }}
+                  >
+                    <i className="bi bi-pencil me-2"></i>
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={closeDetallesModal}
+                  >
+                    <i className="bi bi-x-circle me-2"></i>
+                    Cerrar
+                  </button>
+                </div>
               </div>
             </div>
           </div>
