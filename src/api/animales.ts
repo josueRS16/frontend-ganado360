@@ -45,7 +45,7 @@ export const animalesApi = {
 
   // GET /animales-con-detalle
   getAllWithDetail: async (): Promise<ApiResponse<Animal[]>> => {
-    const response = await http.get('/animales-con-detalle');
+    const response = await http.get('/animales/con-detalle');
     return response.data;
   },
 

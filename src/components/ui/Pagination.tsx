@@ -61,11 +61,11 @@ export function Pagination({
   // This allows users to change items per page
 
   return (
-    <div className="d-flex justify-content-between align-items-center mt-4">
+    <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
       {/* Items per page selector */}
       {showItemsPerPage && onItemsPerPageChange && (
         <div className="d-flex align-items-center">
-          <label htmlFor="itemsPerPage" className="form-label me-2 mb-0">
+          <label htmlFor="itemsPerPage" className="form-label me-2 mb-0 small">
             Mostrar:
           </label>
           <select
@@ -74,6 +74,7 @@ export function Pagination({
             style={{ width: 'auto' }}
             value={itemsPerPage}
             onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
+            aria-label="Elementos por página"
           >
             {itemsPerPageOptions.map(option => (
               <option key={option} value={option}>
@@ -81,12 +82,12 @@ export function Pagination({
               </option>
             ))}
           </select>
-          <span className="ms-2 text-muted">por página</span>
+          <span className="ms-2 text-muted small">por página</span>
         </div>
       )}
 
       {/* Pagination info */}
-      <div className="text-muted">
+      <div className="text-muted small" aria-live="polite">
         Mostrando {startItem} a {endItem} de {totalItems} resultados
       </div>
 
@@ -102,7 +103,7 @@ export function Pagination({
                 disabled={hasPrevPage !== undefined ? !hasPrevPage : currentPage === 1}
                 aria-label="Página anterior"
               >
-                <span aria-hidden="true">&laquo;</span>
+                <i className="bi bi-chevron-left" aria-hidden="true"></i>
               </button>
             </li>
 
@@ -132,7 +133,7 @@ export function Pagination({
                 disabled={hasNextPage !== undefined ? !hasNextPage : currentPage === totalPages}
                 aria-label="Página siguiente"
               >
-                <span aria-hidden="true">&raquo;</span>
+                <i className="bi bi-chevron-right" aria-hidden="true"></i>
               </button>
             </li>
           </ul>

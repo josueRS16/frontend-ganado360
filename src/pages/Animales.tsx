@@ -119,29 +119,31 @@ export function Animales() {
       {/* Header */}
       <div className="row mb-4">
         <div className="col-12">
-          <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-3">
             <div>
-              <h1 className="h2 mb-1 text-success">
-{/*                 <span className="me-2">🐄</span>
- */}                Gestión de Animales
+              <h1 className="h2 mb-2 d-flex align-items-center page-title-dark" style={{ color: 'var(--color-base-green)' }}>
+                <i className="bi bi-diagram-3-fill me-3"></i>
+                Gestión de Ganado
               </h1>
-              <p className="text-muted mb-0">
-                {isLoading ? 'Cargando...' : pagination ? `${pagination.totalCount} animales registrados` : `${animales.length} animales registrados`}
+              <p className=" mb-0 fs-6">
+                {isLoading ? 'Cargando inventario...' : pagination ? `${pagination.totalCount} animales registrados` : `${animales.length} animales registrados`}
               </p>
             </div>
-            <div className="d-flex gap-2">
-             {/*  <button
-                className="btn btn-outline-success"
-                onClick={() => setShowFilters(!showFilters)}
+            <div className="d-flex flex-column flex-sm-row gap-2">
+              <button 
+                className="btn btn-outline-secondary d-lg-none" 
+                data-bs-toggle="offcanvas" 
+                data-bs-target="#filtersOffcanvas"
+                aria-label="Abrir filtros"
               >
-                <span className="me-1">🔍</span>
-                Filtros {hasActiveFilters && <span className="badge bg-success ms-1">{Object.keys(params).length}</span>}
-              </button> */}
-              <div className="bg-success p-2 rounded">
-              <span className="fw-bold text-white">🔍 Filtros Aplicados: </span> <span className="fw-bold text-white">{Object.keys(params).length}</span>
-              </div>
-              <button className="btn btn-success" onClick={() => openModal()}>
-               {/*  <span className="me-1 text-white">➕</span> */}
+                <i className="bi bi-funnel me-2"></i>
+                Filtros
+                {hasActiveFilters && (
+                  <span className="badge bg-primary ms-2">{Object.keys(params).length}</span>
+                )}
+              </button>
+              <button className="btn btn-apply" onClick={() => openModal()}>
+                <i className="bi bi-plus-circle-fill me-2"></i>
                 <span className="fw-bold">Añadir</span>
               </button>
             </div>
@@ -149,205 +151,297 @@ export function Animales() {
         </div>
       </div>
 
-      {/* Filters Panel */}
-      {/* {showFilters && ( */}
-        <div className="row mb-4">
-          <div className="col-12">
-            <div className="card border-success shadow-sm">
-              <div className="card-header bg-success text-white">
-                <div className="d-flex justify-content-between align-items-center">
-                  <h6 className="card-title mb-0">
-                    <span className="me-2">🔍</span>
-                    Filtros de Búsqueda
-                  </h6>
-                  {hasActiveFilters && (
-                    <button className="btn btn-sm btn-light" onClick={clearAllFilters}>
-                      <span className="me-1">🗑️</span>
-                      Limpiar Filtros
-                    </button>
-                  )}
-                </div>
+      {/* Desktop Filters Panel */}
+      <div className="row mb-4">
+        <div className="col-12">
+          <div className="filters-panel d-none d-lg-block">
+            <div className="d-flex justify-content-between align-items-center">
+              <h6 className="mb-0 fw-semibold d-flex align-items-center section-title-dark" style={{ color: 'var(--color-base-green)' }}>
+                <i className="bi bi-funnel-fill me-2"></i>
+                Filtros de Búsqueda
+              </h6>
+              {hasActiveFilters && (
+                <button className="btn btn-outline-secondary btn-sm" onClick={clearAllFilters}>
+                  <i className="bi bi-x-circle me-1"></i>
+                  Limpiar Filtros
+                </button>
+              )}
+            </div>
+            <div className="row">
+              <div className="col-md-3">
+                <label className="form-label">Categoría</label>
+                <select
+                  className="form-select"
+                  value={params.ID_Categoria || ''}
+                  onChange={(e) => handleFilterChange('ID_Categoria', e.target.value ? Number(e.target.value) : undefined)}
+                  aria-label="Filtrar por categoría"
+                >
+                  <option value="">Todas las categorías</option>
+                  {categorias.map((categoria) => (
+                    <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
+                      {categoria.Tipo}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <div className="card-body">
-                <div className="row g-3">
-                  <div className="col-md-3">
-                    <label className="form-label fw-semibold">Categoría</label>
-                    <select
-                      className="form-select"
-                      value={params.ID_Categoria || ''}
-                      onChange={(e) => handleFilterChange('ID_Categoria', e.target.value ? Number(e.target.value) : undefined)}
-                    >
-                      <option value="">Todas las categorías</option>
-                      {categorias.map((categoria) => (
-                        <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
-                          {categoria.Tipo}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="col-md-3">
-                    <label className="form-label fw-semibold">Sexo</label>
-                    <select
-                      className="form-select"
-                      value={params.Sexo || ''}
-                      onChange={(e) => handleFilterChange('Sexo', e.target.value as "M" | "F" || undefined)}
-                    >
-                      <option value="">Todos</option>
-                      <option value="M">Macho</option>
-                      <option value="F">Hembra</option>
-                    </select>
-                  </div>
-                  <div className="col-md-3">
-                    <label className="form-label fw-semibold">Fecha Ingreso Desde</label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      value={params.fechaIngresoDesde || ''}
-                      onChange={(e) => handleFilterChange('fechaIngresoDesde', e.target.value || undefined)}
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <label className="form-label fw-semibold">Fecha Ingreso Hasta</label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      value={params.fechaIngresoHasta || ''}
-                      onChange={(e) => handleFilterChange('fechaIngresoHasta', e.target.value || undefined)}
-                    />
-                  </div>
-                </div>
+              <div className="col-md-2">
+                <label className="form-label">Sexo</label>
+                <select
+                  className="form-select"
+                  value={params.Sexo || ''}
+                  onChange={(e) => handleFilterChange('Sexo', e.target.value as "M" | "F" || undefined)}
+                  aria-label="Filtrar por sexo"
+                >
+                  <option value="">Todos</option>
+                  <option value="M">Macho</option>
+                  <option value="F">Hembra</option>
+                </select>
               </div>
+              <div className="col-md-3">
+                <label className="form-label">Ingreso desde</label>
+                <input
+                  type="date"
+                  className="form-control"
+                  value={params.fechaIngresoDesde || ''}
+                  onChange={(e) => handleFilterChange('fechaIngresoDesde', e.target.value || undefined)}
+                  aria-label="Fecha de ingreso desde"
+                />
+              </div>
+              <div className="col-md-3">
+                <label className="form-label">Ingreso hasta</label>
+                <input
+                  type="date"
+                  className="form-control"
+                  value={params.fechaIngresoHasta || ''}
+                  onChange={(e) => handleFilterChange('fechaIngresoHasta', e.target.value || undefined)}
+                  aria-label="Fecha de ingreso hasta"
+                />
+              </div>
+             {/*  <div className="col-md-1 d-grid">
+                <button className="btn btn-apply" type="button">
+                  <i className="bi bi-search"></i>
+                </button>
+              </div> */}
             </div>
           </div>
         </div>
-      {/* )} */}
+      </div>
+
+      {/* Mobile Filters Offcanvas */}
+      <div className="offcanvas offcanvas-start filters-offcanvas" tabIndex={-1} id="filtersOffcanvas">
+        <div className="offcanvas-header">
+          <h5 className="offcanvas-title d-flex align-items-center">
+            <i className="bi bi-funnel-fill me-2"></i>
+            Filtros de Búsqueda
+          </h5>
+          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar filtros"></button>
+        </div>
+        <div className="offcanvas-body">
+          <div className="row g-3">
+            <div className="col-12">
+              <label className="form-label">Categoría</label>
+              <select
+                className="form-select"
+                value={params.ID_Categoria || ''}
+                onChange={(e) => handleFilterChange('ID_Categoria', e.target.value ? Number(e.target.value) : undefined)}
+                aria-label="Filtrar por categoría"
+              >
+                <option value="">Todas las categorías</option>
+                {categorias.map((categoria) => (
+                  <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
+                    {categoria.Tipo}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="col-12">
+              <label className="form-label">Sexo</label>
+              <select
+                className="form-select"
+                value={params.Sexo || ''}
+                onChange={(e) => handleFilterChange('Sexo', e.target.value as "M" | "F" || undefined)}
+                aria-label="Filtrar por sexo"
+              >
+                <option value="">Todos</option>
+                <option value="M">Macho</option>
+                <option value="F">Hembra</option>
+              </select>
+            </div>
+            <div className="col-12">
+              <label className="form-label">Ingreso desde</label>
+              <input
+                type="date"
+                className="form-control"
+                value={params.fechaIngresoDesde || ''}
+                onChange={(e) => handleFilterChange('fechaIngresoDesde', e.target.value || undefined)}
+                aria-label="Fecha de ingreso desde"
+              />
+            </div>
+            <div className="col-12">
+              <label className="form-label">Ingreso hasta</label>
+              <input
+                type="date"
+                className="form-control"
+                value={params.fechaIngresoHasta || ''}
+                onChange={(e) => handleFilterChange('fechaIngresoHasta', e.target.value || undefined)}
+                aria-label="Fecha de ingreso hasta"
+              />
+            </div>
+          </div>
+          <div className="d-grid gap-2 mt-4">
+            <button className="btn btn-apply" data-bs-dismiss="offcanvas">
+              <i className="bi bi-search me-2"></i>
+              Aplicar Filtros
+            </button>
+            <button className="btn btn-outline-secondary" onClick={clearAllFilters}>
+              <i className="bi bi-x-circle me-2"></i>
+              Limpiar Filtros
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Results */}
       {isLoading ? (
-        <div className="d-flex justify-content-center py-5">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Cargando animales...</span>
+        <div className="card">
+          <div className="card-body table-state-loading">
+            <div className="d-flex flex-column align-items-center">
+              <div className="spinner-border mb-3" style={{ color: 'var(--color-base-green)' }} role="status">
+                <span className="visually-hidden">Cargando inventario de animales...</span>
+              </div>
+              <h6 className="text-muted mb-0">Cargando inventario de animales...</h6>
+            </div>
           </div>
         </div>
       ) : animales.length === 0 ? (
         <div className="card">
-          <div className="card-body text-center py-5">
-            <h5 className="text-muted">No se encontraron animales</h5>
-            <p className="text-muted">
-              {hasActiveFilters 
-                ? 'No hay animales que coincidan con los filtros aplicados.'
-                : 'Aún no tienes animales registrados en el sistema.'
-              }
-            </p>
-            {hasActiveFilters ? (
-              <button className="btn btn-outline-primary" onClick={clearAllFilters}>
-                Limpiar Filtros
-              </button>
-            ) : (
-              <button className="btn btn-primary" onClick={() => openModal()}>
-                Registrar Primer Animal
-              </button>
-            )}
+          <div className="card-body table-state-empty">
+            <div className="d-flex flex-column align-items-center">
+              <i className="bi bi-diagram-3 display-1 text-muted mb-3"></i>
+              <h5 className="text-muted mb-2">No se encontraron animales</h5>
+              <p className="text-muted text-center mb-4">
+                {hasActiveFilters 
+                  ? 'No hay animales que coincidan con los filtros aplicados.'
+                  : 'Aún no tienes animales registrados en el sistema.'
+                }
+              </p>
+              {hasActiveFilters ? (
+                <button className="btn btn-outline-secondary" onClick={clearAllFilters}>
+                  <i className="bi bi-x-circle me-2"></i>
+                  Limpiar Filtros
+                </button>
+              ) : (
+                <button className="btn btn-apply" onClick={() => openModal()}>
+                  <i className="bi bi-plus-circle me-2"></i>
+                  Registrar Primer Animal
+                </button>
+              )}
+            </div>
           </div>
         </div>
       ) : (
         <div className="row">
           <div className="col-12">
-            <div className="card border-success shadow-sm">
-              <div className="card-header bg-light border-bottom">
+            <div className="card border-0 shadow-sm">
+              <div className="card-header bg-transparent border-0 pb-0">
                 <div className="d-flex justify-content-between align-items-center">
-                  <h6 className="card-title mb-0 text-success">
-                    <span className="me-2">📋</span>
-                    Lista de Animales
+                  <h6 className="card-title mb-0 fw-semibold d-flex align-items-center section-title-dark" style={{ color: 'var(--color-base-green)' }}>
+                    <i className="bi bi-list-ul me-2"></i>
+                    Inventario de Animales
                   </h6>
-                  <span className="badge bg-success fs-6">
+                  <span className="badge rounded-pill px-3 py-2" style={{ 
+                    backgroundColor: 'var(--color-sage-gray)', 
+                    color: 'var(--color-charcoal)' 
+                  }}>
                     {animales.length} {animales.length === 1 ? 'animal' : 'animales'}
                   </span>
                 </div>
               </div>
               <div className="table-responsive">
-                <table className="table table-hover mb-0">
-                  <thead className="table-success">
+                <table className="table table-ganado table-hover align-middle mb-0">
+                  <thead>
                     <tr>
-                      <th className="fw-semibold text-center">Nombre</th>
-                      <th className="fw-semibold text-center">Categoría</th>
-                      <th className="fw-semibold text-center">Sexo</th>
-                      <th className="fw-semibold text-center">Raza</th>
-                      <th className="fw-semibold text-center">Peso</th>
-                      <th className="fw-semibold text-center">F. Nac.</th>
-                      <th className="fw-semibold text-center">F. Ingreso</th>
-                      <th className="fw-semibold text-center">Estado</th>
-                      <th className="fw-semibold text-center">Acciones</th>
+                      <th scope="col" className="cell-tight text-center">Nombre</th>
+                      <th scope="col" className="cell-tight text-center">Categoría</th>
+                      <th scope="col" className="cell-tight text-center">Sexo</th>
+                      <th scope="col" className="cell-tight text-center">Raza</th>
+                      <th scope="col" className="cell-tight text-center">Peso</th>
+                      <th scope="col" className="cell-tight text-center">F. Nac.</th>
+                      <th scope="col" className="cell-tight text-center">F. Ingreso</th>
+                      <th scope="col" className="cell-tight text-center">Estado</th>
+                      <th scope="col" className="cell-tight text-center">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
                     {animales.map((animal) => (
                       <tr key={animal.ID_Animal} className="align-middle">
-                        <td className="fw-medium text-center">
-                            {/* <Link 
-                            to={`/animales/${animal.ID_Animal}`}
-                            className="text-decoration-none fw-semibold fw-medium"
-                          > */}
-                            {animal.Nombre}
-                         {/*  </Link> */}
+                        <td className="cell-tight text-center">
+                          <div className="fw-semibold">{animal.Nombre}</div>
                         </td>
-                        <td className="text-center">
-                          <span className="badge bg-secondary fs-6">{animal.CategoriaTipo}</span>
+                        <td className="cell-tight text-center">
+                          <span className="badge bg-secondary">{animal.CategoriaTipo}</span>
                         </td>
-                        <td className="text-center">
-                          <span className={`badge fs-6 ${animal.Sexo === 'F' ? 'bg-success' : 'bg-info'}`}>
+                        <td className="cell-tight text-center">
+                          <span className={`badge ${animal.Sexo === 'F' ? 'bg-warning text-dark' : 'bg-secondary text-white'}`}>
                             {animal.Sexo === 'F' ? 'Hembra' : 'Macho'}
                           </span>
                         </td>
-                        <td className="fw-medium text-center">{animal.Raza}</td>
-                        <td className="fw-medium">{animal.Peso} kg</td>
-                        <td className="text-center">{new Date(animal.Fecha_Nacimiento).toLocaleDateString()}</td>
-                        <td className="text-center">{new Date(animal.Fecha_Ingreso).toLocaleDateString()}</td>
-                        <td className="text-center">
-                          <div className="">
-                            {animal.Esta_Preniada === 1 && (
-                              <button 
-                                className="btn btn-link p-0 text-decoration-none"
-                                onClick={() => openPartoModal(animal)}
-                                style={{ border: 'none', background: 'none' }}
-                              >
-                                <span className="badge bg-warning fs-6 text-black">
-                                  <span className="me-1">🤱</span>
-                                  Preñada
-                                </span>
-                              </button>
-                            )}
-                            {animal.Esta_Preniada === 0 && (
-                              <span className="badge bg-light text-dark fs-6">
-                                <span className="me-1">✅</span>
-                                Activo
-                              </span>
-                            )}
-                          </div>
+                        <td className="cell-tight text-center fw-semibold" title={animal.Raza}>{animal.Raza}</td>
+                        <td className="cell-tight text-center">
+                          <span className="fw-medium">{animal.Peso} kg</span>
                         </td>
-                        <td>
-                          <div className="btn-group" role="group">
+                        <td className="cell-tight text-center">
+                          <span className="small fw-semibold">{new Date(animal.Fecha_Nacimiento).toLocaleDateString()}</span>
+                        </td>
+                        <td className="cell-tight text-center">
+                          <span className="small fw-semibold">{new Date(animal.Fecha_Ingreso).toLocaleDateString()}</span>
+                        </td>
+                        <td className="cell-tight text-center">
+                          {animal.Esta_Preniada === 1 ? (
+                            <button 
+                              className="btn btn-link p-0 text-decoration-none"
+                              onClick={() => openPartoModal(animal)}
+                              style={{ border: 'none', background: 'none' }}
+                              aria-label="Ver fecha estimada de parto"
+                            >
+                              <span className="badge bg-warning text-dark">
+                                {/* <i className="bi bi-heart-fill me-1"></i> */}
+                                Preñada
+                              </span>
+                            </button>
+                          ) : (
+                            <span className="badge bg-light text-dark">
+                              <i className="bi bi-check-circle me-1"></i>
+                              Activo
+                            </span>
+                          )}
+                        </td>
+                        <td className="cell-tight text-center">
+                          <div className="btn-group" role="group" aria-label="Acciones del animal">
                             <button
-                              className="btn btn-sm btn-outline-success"
+                              className="btn btn-sm btn-outline-primary"
                               onClick={() => openDetallesModal(animal)}
                               title="Ver detalles"
+                              aria-label="Ver detalles del animal"
                             >
-                              <span className="me-1">👁️</span>
+                              <i className="bi bi-eye"></i>
                             </button>
                             <button
                               className="btn btn-sm btn-outline-warning"
                               onClick={() => openModal(animal)}
                               title="Editar"
+                              aria-label="Editar animal"
                             >
-                              <span className="me-1">✏️</span>
+                              <i className="bi bi-pencil"></i>
                             </button>
                             <button
                               className="btn btn-sm btn-outline-danger"
                               onClick={() => handleDelete(animal)}
                               disabled={deleteMutation.isPending}
                               title="Eliminar"
+                              aria-label="Eliminar animal"
                             >
-                              <span className="me-1">🗑️</span>
+                              <i className="bi bi-trash"></i>
                             </button>
                           </div>
                         </td>
@@ -362,54 +456,57 @@ export function Animales() {
       )}
 
       {/* Pagination */}
-      <div className="row">
-        <div className="col-12">
-          {/* <div className="card border-success shadow-sm">
-            <div className="card-body"> */}
-              {pagination ? (
-                <Pagination
-                  currentPage={pagination.currentPage}
-                  totalPages={pagination.totalPages}
-                  totalItems={pagination.totalCount}
-                  itemsPerPage={pagination.limit}
-                  onPageChange={handlePageChange}
-                  onItemsPerPageChange={handleItemsPerPageChange}
-                  showItemsPerPage={true}
-                  itemsPerPageOptions={[5, 10, 20, 50]}
-                  hasNextPage={pagination.hasNextPage}
-                  hasPrevPage={pagination.hasPrevPage}
-                  nextPage={pagination.nextPage}
-                  prevPage={pagination.prevPage}
-                />
-              ) : (
-                <div className="d-flex justify-content-between align-items-center">
-                  <div className="d-flex align-items-center">
-                    <label htmlFor="itemsPerPage" className="form-label me-2 mb-0">
-                      Mostrar:
-                    </label>
-                    <select
-                      id="itemsPerPage"
-                      className="form-select form-select-sm"
-                      style={{ width: 'auto' }}
-                      value={currentParams.limit || 10}
-                      onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-                    >
-                      <option value={5}>5</option>
-                      <option value={10}>10</option>
-                      <option value={20}>20</option>
-                      <option value={50}>50</option>
-                    </select>
-                    <span className="ms-2 text-muted">por página</span>
+      {animales.length > 0 && (
+        <div className="row">
+          <div className="col-12">
+            <div className="card border-0 shadow-sm">
+              <div className="pagination-ganado">
+                {pagination ? (
+                  <Pagination
+                    currentPage={pagination.currentPage}
+                    totalPages={pagination.totalPages}
+                    totalItems={pagination.totalCount}
+                    itemsPerPage={pagination.limit}
+                    onPageChange={handlePageChange}
+                    onItemsPerPageChange={handleItemsPerPageChange}
+                    showItemsPerPage={true}
+                    itemsPerPageOptions={[5, 10, 20, 50]}
+                    hasNextPage={pagination.hasNextPage}
+                    hasPrevPage={pagination.hasPrevPage}
+                    nextPage={pagination.nextPage}
+                    prevPage={pagination.prevPage}
+                  />
+                ) : (
+                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                    <div className="d-flex align-items-center">
+                      <label htmlFor="itemsPerPage" className="form-label me-2 mb-0 small">
+                        Mostrar:
+                      </label>
+                      <select
+                        id="itemsPerPage"
+                        className="form-select form-select-sm"
+                        style={{ width: 'auto' }}
+                        value={currentParams.limit || 10}
+                        onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+                        aria-label="Elementos por página"
+                      >
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                        <option value={50}>50</option>
+                      </select>
+                      <span className="ms-2 text-muted small">por página</span>
+                    </div>
+                    <div className="text-muted small" aria-live="polite">
+                      {isLoading ? 'Cargando...' : `${animales.length} resultados`}
+                    </div>
                   </div>
-                  <div className="text-muted">
-                    {isLoading ? 'Cargando...' : `${animales.length} resultados`}
-                  </div>
-                </div>
-              )}
-            {/* </div>
-          </div> */}
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
 
       <AnimalForm
         animal={modalState.animal}
@@ -421,28 +518,28 @@ export function Animales() {
       {partoModalState.isOpen && partoModalState.animal && (
         <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content border-success shadow-lg">
-              <div className="modal-header bg-success text-white">
-                <h5 className="modal-title">
-                  <span className="me-2">🤱</span>
+            <div className="modal-content border-0 shadow-lg">
+              <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
+                <h5 className="modal-title d-flex align-items-center">
+                  <i className="bi bi-heart-fill me-2"></i>
                   Fecha Estimada de Parto
                 </h5>
                 <button
                   type="button"
                   className="btn-close btn-close-white"
                   onClick={closePartoModal}
-                  aria-label="Cerrar"
+                  aria-label="Cerrar modal"
                 ></button>
               </div>
-              <div className="modal-body">
+              <div className="modal-body p-4">
                 <div className="text-center">
-                  <div className="mb-3">
-                    <h6 className="text-muted">Animal:</h6>
-                    <h5 className="text-success fw-bold">{partoModalState.animal.Nombre}</h5>
+                  <div className="mb-4">
+                    <h6 className="text-muted mb-2">Animal:</h6>
+                    <h5 className="fw-bold" style={{ color: 'var(--color-base-green)' }}>{partoModalState.animal.Nombre}</h5>
                   </div>
-                  <div className="mb-3">
-                    <h6 className="text-muted">Fecha Estimada de Parto:</h6>
-                    <h4 className="text-primary fw-bold">
+                  <div className="mb-4">
+                    <h6 className="text-muted mb-2">Fecha Estimada de Parto:</h6>
+                    <h4 className="fw-bold" style={{ color: 'var(--color-tint1)' }}>
                       {partoModalState.animal.Fecha_Estimada_Parto 
                         ? new Date(partoModalState.animal.Fecha_Estimada_Parto).toLocaleDateString('es-ES', {
                             year: 'numeric',
@@ -454,23 +551,26 @@ export function Animales() {
                     </h4>
                   </div>
                   {partoModalState.animal.Fecha_Estimada_Parto && (
-                    <div className="alert alert-info">
-                      <small>
-                        <strong>Días restantes:</strong> {
-                          Math.ceil((new Date(partoModalState.animal.Fecha_Estimada_Parto!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
-                        } días
-                      </small>
+                    <div className="alert alert-info border-0" style={{ background: 'rgba(18, 107, 50, 0.1)' }}>
+                      <div className="d-flex align-items-center justify-content-center">
+                        <i className="bi bi-calendar-check me-2" style={{ color: 'var(--color-tint1)' }}></i>
+                        <small className="fw-semibold">
+                          <strong>Días restantes:</strong> {
+                            Math.ceil((new Date(partoModalState.animal.Fecha_Estimada_Parto!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+                          } días
+                        </small>
+                      </div>
                     </div>
                   )}
                 </div>
               </div>
-              <div className="modal-footer bg-light">
+              <div className="modal-footer bg-light border-0">
                 <button
                   type="button"
-                  className="btn btn-success"
+                  className="btn btn-apply"
                   onClick={closePartoModal}
                 >
-                  <span className="me-1">✅</span>
+                  <i className="bi bi-check-circle me-2"></i>
                   Cerrar
                 </button>
               </div>
@@ -483,27 +583,27 @@ export function Animales() {
       {detallesModalState.isOpen && detallesModalState.animal && (
         <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="modal-dialog modal-lg modal-dialog-centered">
-            <div className="modal-content border-success shadow-lg">
-              <div className="modal-header bg-success text-white">
-                <h5 className="modal-title">
-                  <span className="me-2">🐄</span>
+            <div className="modal-content border-0 shadow-lg">
+              <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
+                <h5 className="modal-title d-flex align-items-center">
+                  <i className="bi bi-diagram-3-fill me-2"></i>
                   Detalles del Animal
                 </h5>
                 <button
                   type="button"
                   className="btn-close btn-close-white"
                   onClick={closeDetallesModal}
-                  aria-label="Cerrar"
+                  aria-label="Cerrar modal"
                 ></button>
               </div>
-              <div className="modal-body">
-                <div className="row">
+              <div className="modal-body p-4">
+                <div className="row g-4">
                   {/* Información Básica */}
                   <div className="col-md-6">
-                    <div className="card h-100 border-0 bg-light">
-                      <div className="card-header bg-success text-white">
-                        <h6 className="card-title mb-0">
-                          <span className="me-2">📋</span>
+                    <div className="card h-100 border-0 shadow-sm">
+                      <div className="card-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
+                        <h6 className="card-title mb-0 d-flex align-items-center">
+                          <i className="bi bi-info-circle-fill me-2"></i>
                           Información Básica
                         </h6>
                       </div>
@@ -511,7 +611,7 @@ export function Animales() {
                         <div className="row g-3">
                           <div className="col-12">
                             <label className="form-label fw-semibold text-muted">Nombre:</label>
-                            <p className="fw-bold text-success fs-5">{detallesModalState.animal.Nombre}</p>
+                            <p className="fw-bold fs-5" style={{ color: 'var(--color-base-green)' }}>{detallesModalState.animal.Nombre}</p>
                           </div>
                           <div className="col-6">
                             <label className="form-label fw-semibold text-muted">ID:</label>
@@ -550,10 +650,10 @@ export function Animales() {
 
                   {/* Fechas y Estado */}
                   <div className="col-md-6">
-                    <div className="card h-100 border-0 bg-light">
-                      <div className="card-header bg-primary text-white">
-                        <h6 className="card-title mb-0">
-                          <span className="me-2">📅</span>
+                    <div className="card h-100 border-0 shadow-sm">
+                      <div className="card-header" style={{ background: 'var(--color-tint1)', color: 'white' }}>
+                        <h6 className="card-title mb-0 d-flex align-items-center">
+                          <i className="bi bi-calendar-event me-2"></i>
                           Fechas y Estado
                         </h6>
                       </div>
@@ -672,24 +772,24 @@ export function Animales() {
                   </div>
                 </div>
               </div>
-              <div className="modal-footer bg-light">
+              <div className="modal-footer bg-light border-0">
                 <button
                   type="button"
                   className="btn btn-outline-secondary"
                   onClick={closeDetallesModal}
                 >
-                  <span className="me-1">❌</span>
+                  <i className="bi bi-x-circle me-2"></i>
                   Cerrar
                 </button>
                 <button
                   type="button"
-                  className="btn btn-warning"
+                  className="btn btn-apply"
                   onClick={() => {
                     closeDetallesModal();
                     openModal(detallesModalState.animal);
                   }}
                 >
-                  <span className="me-1">✏️</span>
+                  <i className="bi bi-pencil me-2"></i>
                   Editar
                 </button>
               </div>

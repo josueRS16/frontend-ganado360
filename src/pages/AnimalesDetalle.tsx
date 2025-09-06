@@ -169,11 +169,11 @@ export function AnimalesDetalle() {
                   <th>Raza</th>
                   <th>Color</th>
                   <th>Peso</th>
-                  <th>Fecha Nacimiento</th>
-                  <th>Fecha Ingreso</th>
-                  <th>Estado Reproductivo</th>
-                  <th>Fecha Monta</th>
-                  <th>Fecha Estimada Parto</th>
+                  <th>F. Nac</th>
+                  <th>F. Ingreso</th>
+                  <th>Estado Reprod.</th>
+                  <th>F. Monta</th>
+                  <th>F. Estim. Parto</th>
                 </tr>
               </thead>
               <tbody>

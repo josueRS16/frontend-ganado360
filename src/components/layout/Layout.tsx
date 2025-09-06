@@ -58,17 +58,38 @@ export function Layout() {
 
       <ToastContainer />
 
-      <div className="border-top p-3 text-center bg-light">
-          <div className="d-flex align-items-center justify-content-center mb-2">
-            <span className="text-success me-2">🐄</span>
-            <strong className="text-success">Ganado360</strong>
+      <footer className="footer-ganado mt-auto">
+        <div className="container-fluid px-4 py-4">
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <div className="d-flex align-items-center">
+              <i className="bi bi-clipboard-data-fill me-2 fs-5"></i>
+              <div>
+                <strong className="fw-bold">Ganado360</strong>
+                <div className="small opacity-75">Sistema de Gestión Ganadera</div>
+              </div>
+            </div>
+            
+            <div className="d-flex flex-column flex-sm-row align-items-center gap-3 small">
+              <div className="d-flex align-items-center gap-2">
+                <span className="badge" style={{ background: 'var(--color-tint1)' }}>v1.0.0</span>
+                <span className="opacity-75">•</span>
+                <span className="opacity-75">© 2024</span>
+              </div>
+              
+              <div className="d-flex gap-3">
+                <a href="#" className="text-decoration-none">
+                  <i className="bi bi-question-circle me-1"></i>
+                  Soporte
+                </a>
+                <a href="#" className="text-decoration-none">
+                  <i className="bi bi-book me-1"></i>
+                  Documentación
+                </a>
+              </div>
+            </div>
           </div>
-          <small className="text-muted">
-            Sistema de Gestión de Ganado
-            <br />
-            <span className="badge bg-success text-white">v1.0.0</span>
-          </small>
         </div>
+      </footer>
     </div>
 
     
