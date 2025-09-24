@@ -67,6 +67,8 @@ export type UpdateCategoriaRequest = CategoriaRequest;
 export interface Animal {
   ID_Animal: number;
   Nombre: string;
+  EstadoNombre: string;
+  ID_Estado_Animal?: number; // Para dar de baja
   Sexo: string;
   Color: string;
   Peso: string;
@@ -78,6 +80,7 @@ export interface Animal {
   Fecha_Ingreso: string;
   ID_Categoria: number;
   CategoriaTipo: string;
+  Imagen_URL?: string | null;
 }
 
 export interface CreateAnimalRequest {
@@ -92,6 +95,7 @@ export interface CreateAnimalRequest {
   Fecha_Estimada_Parto: string | null;
   Fecha_Ingreso: string;
   ID_Categoria: number;
+  Imagen_URL?: string | null; // URL opcional (máx. 500) o null para eliminar
 }
 
 export type UpdateAnimalRequest = CreateAnimalRequest;
@@ -187,7 +191,7 @@ export interface EstadoAnimal {
 export interface EstadoAnimalRequest {
   ID_Animal: number;
   ID_Estado: number;
-  Fecha_Fallecimiento: string;
+  Fecha_Fallecimiento?: string | null;
 }
 
 export interface EstadoAnimalFilters {

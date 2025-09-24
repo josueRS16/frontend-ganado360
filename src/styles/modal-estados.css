@@ -1,0 +1,133 @@
+/* Estilos para el modal de asignar estados */
+
+.hover-bg-light {
+  transition: background-color 0.2s ease;
+}
+
+.hover-bg-light:hover {
+  background-color: var(--bs-light) !important;
+}
+
+/* Mejorar la apariencia de los radio buttons */
+.form-check-input:checked {
+  background-color: var(--color-base-green);
+  border-color: var(--color-base-green);
+}
+
+.form-check-input:focus {
+  border-color: var(--color-base-green);
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+/* Estados para los labels */
+.form-check-label {
+  transition: all 0.2s ease;
+}
+
+.form-check-input:checked + .form-check-label {
+  color: var(--color-base-green);
+  font-weight: 600;
+}
+
+/* Responsive design para el modal */
+@media (max-width: 576px) {
+  .modal-dialog {
+    margin: 0.5rem;
+  }
+  
+  .modal-body {
+    padding: 1rem !important;
+  }
+  
+  .alert {
+    padding: 0.75rem !important;
+  }
+  
+  .btn-group {
+    flex-direction: column;
+  }
+  
+  .btn-group .btn {
+    border-radius: 0.375rem !important;
+    margin-bottom: 0.25rem;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .hover-bg-light:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .form-check-input {
+    background-color: transparent;
+    border-color: var(--bs-border-color);
+  }
+  
+  .form-check-input:checked {
+    background-color: var(--color-base-green);
+    border-color: var(--color-base-green);
+  }
+  
+  .border {
+    border-color: var(--bs-border-color) !important;
+  }
+}
+
+/* Animaciones suaves */
+.modal.show .modal-dialog {
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Mejorar la visualización de badges */
+.badge {
+  font-size: 0.875em;
+  padding: 0.5em 0.75em;
+}
+
+/* Estilos para los elementos de estado */
+.estado-item {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.estado-item:hover {
+  background-color: var(--color-sage-gray);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.estado-item.selected {
+  background-color: var(--color-base-green);
+  color: white;
+  border-color: var(--color-base-green);
+}
+
+/* Spinner personalizado */
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.125em;
+}
+
+/* Alertas personalizadas */
+.alert-light {
+  border: 1px solid var(--color-sage-gray);
+}
+
+/* Botones */
+.btn-apply:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

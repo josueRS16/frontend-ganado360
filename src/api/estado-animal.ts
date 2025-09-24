@@ -37,4 +37,11 @@ export const estadoAnimalApi = {
   delete: async (id: number): Promise<void> => {
     await http.delete(`/estado-animal/${id}`);
   },
+
+  // PUT /estado-animal/:id (cambiar estado a "Baja" con fecha de fallecimiento)
+  darDeBaja: async (params: { idEstadoAnimal: number; fechaFallecimiento: string }): Promise<void> => {
+    await http.put(`/estado-animal/${params.idEstadoAnimal}`, {
+      Fecha_Fallecimiento: params.fechaFallecimiento
+    });
+  },
 };

@@ -3,6 +3,11 @@ import { useCreateAnimal, useUpdateAnimal } from '../hooks/useAnimales';
 import { useCategorias } from '../hooks/useCategorias';
 import { useToast } from '../context/ToastContext';
 import type { Animal, CreateAnimalRequest } from '../types/api';
+import { cacheAnimalImage } from '../utils/imageCache';
+import { ImageSelector } from '../components/ui/ImageSelector';
+import { getRazasPorCategoria } from '../utils/razasBovinas';
+import { uploadApi } from '../api/upload';
+import '../styles/razas-select.css';
 
 interface AnimalFormProps {
   animal?: Animal;
@@ -29,6 +34,7 @@ const createInitialFormData = (animal?: Animal): CreateAnimalRequest => {
     Fecha_Estimada_Parto: isMale ? null : (animal?.Fecha_Estimada_Parto ? animal.Fecha_Estimada_Parto.split('T')[0] : null),
     Fecha_Ingreso: animal?.Fecha_Ingreso ? animal.Fecha_Ingreso.split('T')[0] : '',
     ID_Categoria: animal?.ID_Categoria || 1,
+    Imagen_URL: animal?.Imagen_URL || null,
   };
 };
 
@@ -38,6 +44,9 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
   const createMutation = useCreateAnimal();
   const updateMutation = useUpdateAnimal();
   const { showToast } = useToast();
+
+  // Obtener razas agrupadas por categoría
+  const razasPorCategoria = getRazasPorCategoria();
 
   const [formData, setFormData] = useState<CreateAnimalRequest>(createInitialFormData(animal));
 
@@ -53,18 +62,43 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
   };
 
   const handleCreateAnimal = async () => {
-    await createMutation.mutateAsync(formData);
+    const payload: CreateAnimalRequest = {
+      ...formData,
+      Imagen_URL: formData.Imagen_URL && formData.Imagen_URL.trim().length > 0 ? formData.Imagen_URL.trim().slice(0, 500) : null,
+    };
+    const resp = await createMutation.mutateAsync(payload);
     showToast('Animal creado exitosamente', 'success');
+    const createdId = resp.data.ID_Animal;
+    if (payload.Imagen_URL) {
+      cacheAnimalImage(createdId, payload.Imagen_URL);
+    }
   };
 
   const handleUpdateAnimal = async () => {
     if (!animal) throw new Error('No se puede actualizar: animal no especificado');
     
+    const newImageUrl = formData.Imagen_URL && formData.Imagen_URL.trim().length > 0 ? formData.Imagen_URL.trim().slice(0, 500) : null;
+
+    // NOTA: La eliminación de archivos se maneja desde el botón "eliminar imagen" 
+    // que envía DELETE request al backend. Aquí solo actualizamos la información.
+    console.log(`[AnimalForm] Updating animal with image URL: ${newImageUrl}`);
+
+    const payload: CreateAnimalRequest = {
+      ...formData,
+      Imagen_URL: newImageUrl,
+    };
+
     await updateMutation.mutateAsync({
       id: animal.ID_Animal,
-      data: formData
+      data: payload
     });
+    
     showToast('Animal actualizado exitosamente', 'success');
+
+    // Cachear nueva imagen si es externa
+    if (payload.Imagen_URL && !uploadApi.isLocalUploadedImage(payload.Imagen_URL)) {
+      cacheAnimalImage(animal.ID_Animal, payload.Imagen_URL);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -178,16 +212,29 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                     </div>
                     <div className="col-md-4">
                       <div className="form-floating">
-                        <input
-                          type="text"
-                          className="form-control"
+                        <select
+                          className="form-select raza-select"
                           id="raza"
-                          placeholder="Raza del animal"
                           value={formData.Raza}
                           onChange={(e) => setFormData({ ...formData, Raza: e.target.value })}
                           required
-                        />
+                        >
+                          <option value="">Seleccionar raza</option>
+                          {Object.entries(razasPorCategoria).map(([categoria, razas]) => (
+                            <optgroup key={categoria} label={categoria}>
+                              {razas.map((raza) => (
+                                <option key={raza} value={raza}>
+                                  {raza}
+                                </option>
+                              ))}
+                            </optgroup>
+                          ))}
+                        </select>
                         <label htmlFor="raza">Raza</label>
+                      </div>
+                      <div className="form-text">
+                        <i className="bi bi-info-circle me-1"></i>
+                        Selecciona la raza bovina más apropiada
                       </div>
                     </div>
                     <div className="col-md-4">
@@ -217,6 +264,18 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                         />
                         <label htmlFor="peso">Peso (kg)</label>
                       </div>
+                    </div>
+                    <div className="col-md-12">
+                      <label className="form-label fw-semibold">Imagen del Animal</label>
+                      <ImageSelector
+                        value={formData.Imagen_URL ?? null}
+                        onChange={(imageUrl) => setFormData({ ...formData, Imagen_URL: imageUrl })}
+                        onClear={() => setFormData({ ...formData, Imagen_URL: null })}
+                        placeholder="https://ejemplo.com/imagen.jpg"
+                        maxFileSize={5}
+                        animalId={animal?.ID_Animal}
+                        acceptedTypes={['image/jpeg', 'image/png', 'image/gif', 'image/webp']}
+                      />
                     </div>
                   </div>
                 </div>

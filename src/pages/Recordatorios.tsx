@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRecordatorios, useCreateRecordatorio, useUpdateRecordatorio, useDeleteRecordatorio } from '../hooks/useRecordatorios';
 import { useAnimales } from '../hooks/useAnimales';
 import { useQueryParams } from '../hooks/useQueryParams';
@@ -14,18 +14,28 @@ interface RecordatorioModalProps {
 
 function RecordatorioModal({ recordatorio, isOpen, onClose, onSave }: RecordatorioModalProps) {
   const { data: animalesData } = useAnimales();
-  const animales = animalesData?.data || [];
+  const animales = useMemo(() => animalesData?.data || [], [animalesData?.data]);
 
   const [formData, setFormData] = useState<RecordatorioRequest>({
-    ID_Animal: recordatorio?.ID_Animal || 1,
+    ID_Animal: recordatorio?.ID_Animal || 0,
     Titulo: recordatorio?.Titulo || '',
     Descripcion: recordatorio?.Descripcion || '',
     Fecha_Recordatorio: recordatorio?.Fecha_Recordatorio || '',
   });
 
+  // Update ID_Animal when animals are loaded and no recordatorio is being edited
+  useEffect(() => {
+    if (!recordatorio && animales.length > 0 && formData.ID_Animal === 0) {
+      setFormData(prev => ({
+        ...prev,
+        ID_Animal: animales[0].ID_Animal
+      }));
+    }
+  }, [animales, recordatorio, formData.ID_Animal]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.Titulo.trim() && formData.Descripcion.trim()) {
+    if (formData.Titulo.trim() && formData.Descripcion.trim() && formData.ID_Animal > 0) {
       onSave(formData);
     }
   };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useHistorial, useCreateHistorial, useUpdateHistorial, useDeleteHistorial } from '../hooks/useHistorial';
 import { useAnimales } from '../hooks/useAnimales';
 import { useUsuarios } from '../hooks/useUsuarios';
@@ -15,11 +15,11 @@ interface HistorialModalProps {
 function HistorialModal({ historial, isOpen, onClose, onSave }: HistorialModalProps) {
   const { data: animalesData } = useAnimales();
   const { data: usuariosData } = useUsuarios();
-  const animales = animalesData?.data || [];
+  const animales = useMemo(() => animalesData?.data || [], [animalesData?.data]);
   const usuarios = usuariosData?.data || [];
 
   const [formData, setFormData] = useState<HistorialVeterinarioRequest>({
-    ID_Animal: historial?.ID_Animal || 1,
+    ID_Animal: historial?.ID_Animal || 0,
     Tipo_Evento: historial?.Tipo_Evento || '',
     Descripcion: historial?.Descripcion || '',
     Fecha_Aplicacion: historial?.Fecha_Aplicacion || '',
@@ -27,9 +27,19 @@ function HistorialModal({ historial, isOpen, onClose, onSave }: HistorialModalPr
     Hecho_Por: historial?.Hecho_Por || 1,
   });
 
+  // Update ID_Animal when animals are loaded and no historial is being edited
+  useEffect(() => {
+    if (!historial && animales.length > 0 && formData.ID_Animal === 0) {
+      setFormData(prev => ({
+        ...prev,
+        ID_Animal: animales[0].ID_Animal
+      }));
+    }
+  }, [animales, historial, formData.ID_Animal]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.Tipo_Evento.trim() && formData.Descripcion.trim()) {
+    if (formData.Tipo_Evento.trim() && formData.Descripcion.trim() && formData.ID_Animal > 0) {
       onSave(formData);
     }
   };

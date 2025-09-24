@@ -1,11 +1,15 @@
 import { useState } from 'react';
-import { useAnimales, useDeleteAnimal } from '../hooks/useAnimales';
+import { useAnimales } from '../hooks/useAnimales';
 import { useCategorias } from '../hooks/useCategorias';
 import { useQueryParams } from '../hooks/useQueryParams';
 import { useToast } from '../context/ToastContext';
+import { useDarDeBajaAnimal } from '../hooks/useEstadoAnimal';
 import { AnimalForm } from './AnimalForm';
 import { Pagination } from '../components/ui/Pagination';
+import { DarDeBajaModal } from '../components/modals/DarDeBajaModal';
 import type { AnimalesFilters, Animal } from '../types/api';
+import { getCachedAnimalImage } from '../utils/imageCache';
+import { getImageDisplayUrl } from '../utils/imageUtils';
 
 export function Animales() {
   const { params, updateParams, clearParams } = useQueryParams<AnimalesFilters>();
@@ -18,7 +22,7 @@ export function Animales() {
   };
   const { data: animalesData, isLoading, error } = useAnimales(currentParams);
   const { data: categoriasData } = useCategorias();
-  const deleteMutation = useDeleteAnimal();
+  const darDeBajaMutation = useDarDeBajaAnimal();
   const { showToast } = useToast();
 
   const animales = animalesData?.data || [];
@@ -40,6 +44,19 @@ export function Animales() {
     isOpen: boolean;
     animal?: Animal;
   }>({ isOpen: false });
+
+  const [darDeBajaModalState, setDarDeBajaModalState] = useState<{
+    isOpen: boolean;
+    animal?: Animal;
+  }>({ isOpen: false });
+
+
+  const detalleAnimal = detallesModalState.animal;
+  
+  // Obtener la URL de imagen correcta para mostrar
+  const detalleImageSrc = detalleAnimal 
+    ? (getCachedAnimalImage(detalleAnimal.ID_Animal) || getImageDisplayUrl(detalleAnimal.Imagen_URL))
+    : null;
 
   const handleFilterChange = (key: keyof AnimalesFilters, value: string | number | undefined) => {
     if (value === '' || value === undefined) {
@@ -88,16 +105,28 @@ export function Animales() {
     setDetallesModalState({ isOpen: false });
   };
 
-  const handleDelete = async (animal: Animal) => {
-    if (window.confirm(`¿Estás seguro de eliminar el animal "${animal.Nombre}"?`)) {
-      try {
-        await deleteMutation.mutateAsync(animal.ID_Animal);
-        showToast('Animal eliminado exitosamente', 'success');
-      } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'Error al eliminar el animal';
-        showToast(errorMessage, 'error');
-      }
+  const openDarDeBajaModal = (animal: Animal) => {
+    setDarDeBajaModalState({ isOpen: true, animal });
+  };
+
+  const closeDarDeBajaModal = () => {
+    setDarDeBajaModalState({ isOpen: false });
+  };
+
+
+  const handleDarDeBaja = (animal: Animal) => {
+    if (!animal.ID_Estado_Animal) {
+      showToast('No se puede dar de baja: el animal no tiene un estado asignado', 'error');
+      return;
     }
+
+    // Verificar que el animal no esté ya dado de baja
+    if (animal.EstadoNombre === 'Baja') {
+      showToast('El animal ya está dado de baja', 'warning');
+      return;
+    }
+
+    openDarDeBajaModal(animal);
   };
 
   const hasActiveFilters = Object.keys(params).length > 0;
@@ -368,6 +397,7 @@ export function Animales() {
                       <th scope="col" className="cell-tight text-center">Peso</th>
                       <th scope="col" className="cell-tight text-center">F. Nac.</th>
                       <th scope="col" className="cell-tight text-center">F. Ingreso</th>
+                      <th scope="col" className="cell-tight text-center">Reprod.</th>
                       <th scope="col" className="cell-tight text-center">Estado</th>
                       <th scope="col" className="cell-tight text-center">Acciones</th>
                     </tr>
@@ -379,10 +409,10 @@ export function Animales() {
                           <div className="fw-semibold">{animal.Nombre}</div>
                         </td>
                         <td className="cell-tight text-center">
-                          <span className="badge bg-secondary">{animal.CategoriaTipo}</span>
+                          <span className="fw-semibold">{animal.CategoriaTipo}</span>
                         </td>
                         <td className="cell-tight text-center">
-                          <span className={`badge ${animal.Sexo === 'F' ? 'bg-warning text-dark' : 'bg-secondary text-white'}`}>
+                          <span className="fw-semibold">
                             {animal.Sexo === 'F' ? 'Hembra' : 'Macho'}
                           </span>
                         </td>
@@ -411,10 +441,12 @@ export function Animales() {
                             </button>
                           ) : (
                             <span className="badge bg-light text-dark">
-                              <i className="bi bi-check-circle me-1"></i>
-                              Activo
+                              ----
                             </span>
                           )}
+                        </td>
+                        <td className="cell-tight text-center">
+                          <span className="fw-medium">{animal.EstadoNombre ?? '----'}</span>
                         </td>
                         <td className="cell-tight text-center">
                           <div className="btn-group" role="group" aria-label="Acciones del animal">
@@ -434,15 +466,21 @@ export function Animales() {
                             >
                               <i className="bi bi-pencil"></i>
                             </button>
-                            <button
-                              className="btn btn-sm btn-outline-danger"
-                              onClick={() => handleDelete(animal)}
-                              disabled={deleteMutation.isPending}
-                              title="Eliminar"
-                              aria-label="Eliminar animal"
-                            >
-                              <i className="bi bi-trash"></i>
-                            </button>
+                             <button
+                               className="btn btn-sm btn-outline-danger"
+                               onClick={() => handleDarDeBaja(animal)}
+                               disabled={darDeBajaMutation.isPending || !animal.ID_Estado_Animal || animal.EstadoNombre === 'Baja'}
+                               title={
+                                 !animal.ID_Estado_Animal 
+                                   ? "Sin estado asignado" 
+                                   : animal.EstadoNombre === 'Baja' 
+                                     ? "Ya está dado de baja" 
+                                     : "Dar de baja"
+                               }
+                               aria-label="Dar de baja animal"
+                             > 
+                               <i className="bi bi-arrow-down-circle"></i>
+                             </button>
                           </div>
                         </td>
                       </tr>
@@ -507,12 +545,19 @@ export function Animales() {
           </div>
         </div>
       )}
+       <AnimalForm
+         animal={modalState.animal}
+         isOpen={modalState.isOpen}
+         onClose={closeModal}
+       />
 
-      <AnimalForm
-        animal={modalState.animal}
-        isOpen={modalState.isOpen}
-        onClose={closeModal}
-      />
+       <DarDeBajaModal
+         animal={darDeBajaModalState.animal || null}
+         isOpen={darDeBajaModalState.isOpen}
+         onClose={closeDarDeBajaModal}
+         onSuccess={closeDarDeBajaModal}
+       />
+
 
       {/* Modal de Fecha Estimada de Parto */}
       {partoModalState.isOpen && partoModalState.animal && (
@@ -597,6 +642,21 @@ export function Animales() {
                 ></button>
               </div>
               <div className="modal-body p-4">
+                {detalleImageSrc && (
+                  <div className="text-center mb-4">
+                    <img
+                      src={detalleImageSrc}
+                      alt={`Imagen de ${detallesModalState.animal.Nombre}`}
+                      className="img-thumbnail"
+                      style={{ maxHeight: 260, objectFit: 'cover' }}
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        console.warn('Error al cargar imagen:', detalleImageSrc);
+                      }}
+                    />
+                  </div>
+                )}
                 <div className="row g-4">
                   {/* Información Básica */}
                   <div className="col-md-6">

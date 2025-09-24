@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useVentas, useCreateVenta, useUpdateVenta, useDeleteVenta } from '../hooks/useVentas';
 import { useAnimales } from '../hooks/useAnimales';
 import { useUsuarios } from '../hooks/useUsuarios';
@@ -16,11 +16,11 @@ interface VentaModalProps {
 function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
   const { data: animalesData } = useAnimales();
   const { data: usuariosData } = useUsuarios();
-  const animales = animalesData?.data || [];
+  const animales = useMemo(() => animalesData?.data || [], [animalesData?.data]);
   const usuarios = usuariosData?.data || [];
 
   const [formData, setFormData] = useState<VentaRequest>({
-    ID_Animal: venta?.ID_Animal || 1,
+    ID_Animal: venta?.ID_Animal || 0,
     Fecha_Venta: venta?.Fecha_Venta || '',
     Tipo_Venta: venta?.Tipo_Venta || '',
     Comprador: venta?.Comprador || '',
@@ -29,9 +29,19 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
     Observaciones: venta?.Observaciones || '',
   });
 
+  // Update ID_Animal when animals are loaded and no venta is being edited
+  useEffect(() => {
+    if (!venta && animales.length > 0 && formData.ID_Animal === 0) {
+      setFormData(prev => ({
+        ...prev,
+        ID_Animal: animales[0].ID_Animal
+      }));
+    }
+  }, [animales, venta, formData.ID_Animal]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.Comprador.trim() && formData.Precio > 0) {
+    if (formData.Comprador.trim() && formData.Precio > 0 && formData.ID_Animal > 0) {
       onSave(formData);
     }
   };
@@ -151,7 +161,11 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
               <button type="button" className="btn btn-secondary" onClick={onClose}>
                 Cancelar
               </button>
-              <button type="submit" className="btn btn-primary">
+              <button 
+                type="submit" 
+                className="btn btn-primary"
+                disabled={!formData.Comprador.trim() || formData.Precio <= 0 || formData.ID_Animal <= 0}
+              >
                 {venta ? 'Actualizar' : 'Crear'}
               </button>
             </div>
