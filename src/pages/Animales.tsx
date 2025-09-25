@@ -55,7 +55,7 @@ export function Animales() {
   
   // Obtener la URL de imagen correcta para mostrar
   const detalleImageSrc = detalleAnimal 
-    ? (getCachedAnimalImage(detalleAnimal.ID_Animal) || getImageDisplayUrl(detalleAnimal.Imagen_URL))
+    ? (getCachedAnimalImage(detalleAnimal.ID_Animal) || getImageDisplayUrl(detalleAnimal.Imagen_URL || undefined))
     : null;
 
   const handleFilterChange = (key: keyof AnimalesFilters, value: string | number | undefined) => {

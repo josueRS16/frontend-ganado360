@@ -51,9 +51,35 @@ export function getImageDisplayUrl(imageUrl: string | undefined): string | null 
  */
 export function validateImageUrl(imageUrl: string): Promise<boolean> {
   return new Promise((resolve) => {
+    // Validar formato de URL primero
+    try {
+      const url = new URL(imageUrl);
+      if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+        resolve(false);
+        return;
+      }
+    } catch {
+      resolve(false);
+      return;
+    }
+
     const img = new Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
+    const timeout = setTimeout(() => {
+      resolve(false);
+    }, 15000); // 15 segundos timeout
+
+    img.onload = () => {
+      clearTimeout(timeout);
+      resolve(true);
+    };
+    
+    img.onerror = () => {
+      clearTimeout(timeout);
+      resolve(false);
+    };
+    
+    // Configurar CORS para imágenes externas
+    img.crossOrigin = 'anonymous';
     img.src = imageUrl;
   });
 }

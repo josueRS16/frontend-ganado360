@@ -27,6 +27,7 @@ export function ImageSelector({
   const [sourceType, setSourceType] = useState<ImageSourceType>('url');
   const [isUploading, setIsUploading] = useState(false);
   const [urlInput, setUrlInput] = useState(value || '');
+  const [urlValidationError, setUrlValidationError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { showToast } = useToast();
 
@@ -61,8 +62,45 @@ export function ImageSelector({
 
   const handleUrlChange = (url: string) => {
     setUrlInput(url);
-    onChange(url);
+    // Solo llamar onChange si la URL es válida
+    if (url.trim() && isValidUrl(url)) {
+      onChange(url);
+    } else if (!url.trim()) {
+      // Si está vacía, limpiar
+      onChange('');
+    }
   };
+
+  // Función para validar URLs
+  const isValidUrl = (string: string): boolean => {
+    try {
+      const url = new URL(string);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
+
+  // Debounced URL validation (validación básica)
+  useEffect(() => {
+    if (sourceType === 'url' && urlInput.trim()) {
+      const timeoutId = setTimeout(() => {
+        if (urlInput.trim()) {
+          if (isValidUrl(urlInput)) {
+            // Solo validar formato básico, no intentar cargar la imagen
+            setUrlValidationError(null);
+          } else {
+            setUrlValidationError('Formato de URL inválido');
+          }
+        }
+      }, 500); // Debounce más corto
+
+      return () => clearTimeout(timeoutId);
+    } else {
+      setUrlValidationError(null);
+    }
+  }, [urlInput, sourceType]);
 
   const validateFile = (file: File): string | null => {
     // Validar tipo de archivo
@@ -130,12 +168,33 @@ export function ImageSelector({
           if (filename) {
             try {
               console.log(`[ImageSelector] Attempting to delete file: ${filename}`);
-              await uploadApi.deleteImage(filename);
+              console.log(`[ImageSelector] Full image URL: ${value}`);
+              
+              // Probar conexión al servidor primero
+              await uploadApi.testServerConnection();
+              
+              // Usar la función de prueba para obtener más información
+              await uploadApi.testDeleteImage(filename);
+              
               console.log(`[ImageSelector] Successfully deleted file: ${filename}`);
-              showToast('Archivo eliminado exitosamente - Backend actualizado', 'success');
-            } catch (error) {
+              showToast('Archivo eliminado exitosamente', 'success');
+            } catch (error: unknown) {
               console.error('[ImageSelector] Error deleting uploaded file:', error);
-              showToast('Error al eliminar el archivo del servidor', 'error');
+              
+              // Proporcionar mensaje de error más específico
+              let errorMessage = 'Error al eliminar el archivo del servidor';
+              if (error && typeof error === 'object' && 'response' in error) {
+                const axiosError = error as { response?: { status?: number } };
+                if (axiosError.response?.status === 404) {
+                  errorMessage = 'El archivo ya no existe en el servidor';
+                } else if (axiosError.response?.status === 403) {
+                  errorMessage = 'No tienes permisos para eliminar este archivo';
+                }
+              } else if (error && typeof error === 'object' && 'message' in error) {
+                errorMessage = (error as { message: string }).message;
+              }
+              
+              showToast(errorMessage, 'error');
               return; // No continuar si falla la eliminación
             }
           } else {
@@ -167,7 +226,11 @@ export function ImageSelector({
 
   const getPreviewImage = (): string | null => {
     if (sourceType === 'url') {
-      return urlInput || value || null;
+      // Mostrar preview si la URL tiene formato válido (no bloquear por validación de imagen)
+      if (urlInput && isValidUrl(urlInput)) {
+        return urlInput;
+      }
+      return value || null;
     }
     // Para archivos, siempre usar el value que viene del props
     return value || null;
@@ -209,17 +272,34 @@ export function ImageSelector({
 
       {/* Input según el tipo seleccionado */}
       {sourceType === 'url' ? (
-        <div className="form-floating">
-          <input
-            type="url"
-            className="form-control"
-            id="imagenUrl"
-            placeholder={placeholder}
-            value={urlInput}
-            onChange={(e) => handleUrlChange(e.target.value)}
-            maxLength={500}
-          />
-          <label htmlFor="imagenUrl">URL de Imagen</label>
+        <div>
+          <div className="form-floating">
+            <input
+              type="url"
+              className={`form-control ${urlValidationError ? 'is-invalid' : ''}`}
+              id="imagenUrl"
+              placeholder={placeholder}
+              value={urlInput}
+              onChange={(e) => handleUrlChange(e.target.value)}
+              maxLength={500}
+            />
+            <label htmlFor="imagenUrl">URL de Imagen</label>
+          </div>
+          
+          {/* Indicadores de validación */}
+          {urlValidationError && (
+            <div className="form-text text-danger">
+              <i className="bi bi-exclamation-triangle me-1"></i>
+              {urlValidationError}
+            </div>
+          )}
+          
+          {urlInput && !urlValidationError && isValidUrl(urlInput) && (
+            <div className="form-text text-success">
+              <i className="bi bi-check-circle me-1"></i>
+              Formato de URL válido
+            </div>
+          )}
         </div>
       ) : (
         <div>
@@ -287,7 +367,11 @@ export function ImageSelector({
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';
-              showToast('Error al cargar la imagen', 'error');
+              console.warn('Image failed to load:', getPreviewImage());
+              // No mostrar toast de error automáticamente, solo en consola
+            }}
+            onLoad={() => {
+              console.log('Image loaded successfully:', getPreviewImage());
             }}
           />
         </div>
