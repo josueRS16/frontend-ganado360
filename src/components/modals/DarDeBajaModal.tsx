@@ -102,7 +102,7 @@ export function DarDeBajaModal({ animal, isOpen, onClose, onSuccess }: DarDeBaja
             <div className="modal-body p-4">
               {/* Información del Animal */}
               <div className="alert alert-warning border-0 mb-4">
-                <div className="d-flex align-items-center">
+                <div className="text-center">
                   <i className="bi bi-exclamation-triangle-fill me-2"></i>
                   <div>
                     <h6 className="mb-1 fw-semibold">¡Atención!</h6>
@@ -113,13 +113,13 @@ export function DarDeBajaModal({ animal, isOpen, onClose, onSuccess }: DarDeBaja
                 </div>
               </div>
 
-              <div className="alert alert-light border-0 mb-4" style={{ backgroundColor: 'var(--color-sage-gray)' }}>
-                <div className="d-flex align-items-center">
+              <div className="alert alert-light border-0 mb-4 bg-dark-subtle " style={{ backgroundColor: 'var(--color-sage-gray)' }}>
+                <div className="text-center">
                   <i className="bi bi-info-circle-fill me-2" style={{ color: 'var(--color-base-green)' }}></i>
                   <div>
                     <h6 className="mb-1 fw-semibold">Animal a dar de baja:</h6>
                     <p className="mb-0" style={{ color: 'var(--color-charcoal)' }}>
-                      <strong>{animal?.Nombre}</strong> - {animal?.CategoriaTipo}
+                      <strong className='text-body'>Nombre: {animal?.Nombre}</strong> - <p className='text-body'>Categoría: {animal?.CategoriaTipo}</p>
                     </p>
                   </div>
                 </div>
@@ -148,25 +148,26 @@ export function DarDeBajaModal({ animal, isOpen, onClose, onSuccess }: DarDeBaja
               {/* Confirmación visual */}
               {fechaFallecimiento && (
                 <div className="alert alert-danger border-0">
-                  <div className="d-flex align-items-center">
+                  <div className="text-center">
                     <i className="bi bi-calendar-x me-2"></i>
                     <div>
-                      <strong>Fecha de fallecimiento:</strong> {new Date(fechaFallecimiento).toLocaleDateString('es-ES', {
+                      <strong className='text-body'>Fecha de fallecimiento:</strong> <p className='text-body'>{new Date(fechaFallecimiento).toLocaleDateString('es-ES', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
                       })}
+                      </p>
                     </div>
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="modal-footer bg-light border-0 p-3">
+            <div className="modal-footer border-0 p-3" style={{ background: 'var(--color-base-green)'}}>
               <div className="d-flex justify-content-end gap-2 w-100">
                 <button
                   type="button"
-                  className="btn btn-outline-secondary"
+                  className="btn btn-secondary"
                   onClick={handleClose}
                   disabled={isSubmitting}
                 >

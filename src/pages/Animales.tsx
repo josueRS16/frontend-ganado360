@@ -390,16 +390,16 @@ export function Animales() {
                 <table className="table table-ganado table-hover align-middle mb-0">
                   <thead>
                     <tr>
-                      <th scope="col" className="cell-tight text-center">Nombre</th>
-                      <th scope="col" className="cell-tight text-center">Categoría</th>
-                      <th scope="col" className="cell-tight text-center">Sexo</th>
-                      <th scope="col" className="cell-tight text-center">Raza</th>
-                      <th scope="col" className="cell-tight text-center">Peso</th>
-                      <th scope="col" className="cell-tight text-center">F. Nac.</th>
-                      <th scope="col" className="cell-tight text-center">F. Ingreso</th>
-                      <th scope="col" className="cell-tight text-center">Reprod.</th>
-                      <th scope="col" className="cell-tight text-center">Estado</th>
-                      <th scope="col" className="cell-tight text-center">Acciones</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">Nombre</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">Categoría</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">Sexo</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">Raza</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-xl-table-cell">Peso</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">F. Nac.</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-xl-table-cell">F. Ingreso</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">Reprod.</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">Estado</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -407,46 +407,60 @@ export function Animales() {
                       <tr key={animal.ID_Animal} className="align-middle">
                         <td className="cell-tight text-center">
                           <div className="fw-semibold">{animal.Nombre}</div>
+                          {/* Información adicional para móviles */}
+                          <div className="d-md-none small text-muted mt-1">
+                            <div className='text-body'>{animal.CategoriaTipo}</div>
+                            <div className='text-body'>{animal.Raza} • {animal.Peso} kg</div>
+                            <div className='text-body'>
+                              {animal.Esta_Preniada === 1 ? (
+                                <span className="text-body">Preñada</span>
+                              ) : (
+                                <span className="text-body">No preñada</span>
+                              )}
+                              {animal.EstadoNombre && ` • ${animal.EstadoNombre}`}
+                            </div>
+                          </div>
                         </td>
-                        <td className="cell-tight text-center">
-                          <span className="fw-semibold">{animal.CategoriaTipo}</span>
+                        <td className="cell-tight text-center text-body d-none d-md-table-cell">
+                          <span className="">{animal.CategoriaTipo}</span>
                         </td>
-                        <td className="cell-tight text-center">
-                          <span className="fw-semibold">
-                            {animal.Sexo === 'F' ? 'Hembra' : 'Macho'}
+                        <td className="cell-tight text-center text-body">
+                          <span className="badge bg-secondary">
+                            {animal.Sexo === 'F' ? 'H' : 'M'}
                           </span>
+                          <div className="d-md-none small text-body">
+                            {animal.Sexo === 'F' ? 'Hembra' : 'Macho'}
+                          </div>
                         </td>
-                        <td className="cell-tight text-center fw-semibold" title={animal.Raza}>{animal.Raza}</td>
-                        <td className="cell-tight text-center">
-                          <span className="fw-medium">{animal.Peso} kg</span>
+                        <td className="cell-tight text-center d-none d-lg-table-cell" title={animal.Raza}>{animal.Raza}</td>
+                        <td className="cell-tight text-center d-none d-xl-table-cell">
+                          <span className="">{animal.Peso} kg</span>
                         </td>
-                        <td className="cell-tight text-center">
-                          <span className="small fw-semibold">{new Date(animal.Fecha_Nacimiento).toLocaleDateString()}</span>
+                        <td className="cell-tight text-center d-none d-lg-table-cell">
+                          <span className="">{new Date(animal.Fecha_Nacimiento).toLocaleDateString()}</span>
                         </td>
-                        <td className="cell-tight text-center">
-                          <span className="small fw-semibold">{new Date(animal.Fecha_Ingreso).toLocaleDateString()}</span>
+                        <td className="cell-tight text-center d-none d-xl-table-cell">
+                          <span className="">{new Date(animal.Fecha_Ingreso).toLocaleDateString()}</span>
                         </td>
-                        <td className="cell-tight text-center">
+                        <td className="cell-tight text-center d-none d-md-table-cell">
                           {animal.Esta_Preniada === 1 ? (
                             <button 
                               className="btn btn-link p-0 text-decoration-none"
                               onClick={() => openPartoModal(animal)}
-                              style={{ border: 'none', background: 'none' }}
                               aria-label="Ver fecha estimada de parto"
                             >
-                              <span className="badge bg-warning text-dark">
-                                {/* <i className="bi bi-heart-fill me-1"></i> */}
+                              <span className="text-warning">
                                 Preñada
                               </span>
                             </button>
                           ) : (
-                            <span className="badge bg-light text-dark">
+                            <span className="text-muted">
                               ----
                             </span>
                           )}
                         </td>
-                        <td className="cell-tight text-center">
-                          <span className="fw-medium">{animal.EstadoNombre ?? '----'}</span>
+                        <td className="cell-tight text-center d-none d-lg-table-cell">
+                          <span className="">{animal.EstadoNombre ?? '----'}</span>
                         </td>
                         <td className="cell-tight text-center">
                           <div className="btn-group" role="group" aria-label="Acciones del animal">
@@ -457,6 +471,7 @@ export function Animales() {
                               aria-label="Ver detalles del animal"
                             >
                               <i className="bi bi-eye"></i>
+                              <span className="d-none d-lg-inline ms-1">Ver</span>
                             </button>
                             <button
                               className="btn btn-sm btn-outline-warning"
@@ -465,6 +480,7 @@ export function Animales() {
                               aria-label="Editar animal"
                             >
                               <i className="bi bi-pencil"></i>
+                              <span className="d-none d-lg-inline ms-1">Editar</span>
                             </button>
                              <button
                                className="btn btn-sm btn-outline-danger"
@@ -480,6 +496,7 @@ export function Animales() {
                                aria-label="Dar de baja animal"
                              > 
                                <i className="bi bi-arrow-down-circle"></i>
+                               <span className="d-none d-lg-inline ms-1">Baja</span>
                              </button>
                           </div>
                         </td>
@@ -566,7 +583,6 @@ export function Animales() {
             <div className="modal-content border-0 shadow-lg">
               <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
                 <h5 className="modal-title d-flex align-items-center">
-                  <i className="bi bi-heart-fill me-2"></i>
                   Fecha Estimada de Parto
                 </h5>
                 <button
@@ -641,201 +657,188 @@ export function Animales() {
                   aria-label="Cerrar modal"
                 ></button>
               </div>
-              <div className="modal-body p-4">
-                {detalleImageSrc && (
-                  <div className="text-center mb-4">
-                    <img
-                      src={detalleImageSrc}
-                      alt={`Imagen de ${detallesModalState.animal.Nombre}`}
-                      className="img-thumbnail"
-                      style={{ maxHeight: 260, objectFit: 'cover' }}
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        console.warn('Error al cargar imagen:', detalleImageSrc);
-                      }}
-                    />
-                  </div>
-                )}
-                <div className="row g-4">
-                  {/* Información Básica */}
-                  <div className="col-md-6">
-                    <div className="card h-100 border-0 shadow-sm">
-                      <div className="card-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
-                        <h6 className="card-title mb-0 d-flex align-items-center">
-                          <i className="bi bi-info-circle-fill me-2"></i>
-                          Información Básica
-                        </h6>
-                      </div>
-                      <div className="card-body">
-                        <div className="row g-3">
-                          <div className="col-12">
-                            <label className="form-label fw-semibold text-muted">Nombre:</label>
-                            <p className="fw-bold fs-5" style={{ color: 'var(--color-base-green)' }}>{detallesModalState.animal.Nombre}</p>
-                          </div>
-                          <div className="col-6">
-                            <label className="form-label fw-semibold text-muted">ID:</label>
-                            <p className="fw-medium">#{detallesModalState.animal.ID_Animal}</p>
-                          </div>
-                          <div className="col-6">
-                            <label className="form-label fw-semibold text-muted">Sexo:</label>
-                            <p className="fw-medium">
-                              <span className={`badge ${detallesModalState.animal.Sexo === 'F' ? 'bg-success' : 'bg-info'}`}>
-                                {detallesModalState.animal.Sexo === 'F' ? 'Hembra' : 'Macho'}
-                              </span>
-                            </p>
-                          </div>
-                          <div className="col-6">
-                            <label className="form-label fw-semibold text-muted">Raza:</label>
-                            <p className="fw-medium">{detallesModalState.animal.Raza}</p>
-                          </div>
-                          <div className="col-6">
-                            <label className="form-label fw-semibold text-muted">Color:</label>
-                            <p className="fw-medium">{detallesModalState.animal.Color}</p>
-                          </div>
-                          <div className="col-6">
-                            <label className="form-label fw-semibold text-muted">Peso:</label>
-                            <p className="fw-medium">{detallesModalState.animal.Peso} kg</p>
-                          </div>
-                          <div className="col-6">
-                            <label className="form-label fw-semibold text-muted">Categoría:</label>
-                            <p className="fw-medium">
-                              <span className="badge bg-secondary">{detallesModalState.animal.CategoriaTipo}</span>
-                            </p>
-                          </div>
-                        </div>
+              <div className="modal-body bg-light bg-dark-subtle" data-bs-theme="auto">
+               {/*  <div className=""> */}
+                  {/* Imagen del Animal */}
+                  {/* Información del Animal - Una sola columna centrada */}
+                  <div className="row justify-content-center">
+                    <div className="col-11 col-9">
+                      <div className="card border-0 shadow-sm bg-body">
+                        <div className="card-body">
+                          {/* Nombre y ID */}
+                          <div className="text-center mb-4">
+                            {detalleImageSrc && (
+                    <div className="text-center mb-4">
+                      <div className="d-inline-block position-relative">
+                        <img
+                          src={detalleImageSrc}
+                          alt={`Imagen de ${detallesModalState.animal.Nombre}`}
+                          className="rounded-3 shadow-sm"
+                          style={{ 
+                            maxHeight: 300, 
+                            maxWidth: 300, 
+                            objectFit: 'cover',
+                            border: '3px solid var(--bs-border-color)'
+                          }}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            console.warn('Error al cargar imagen:', detalleImageSrc);
+                          }}
+                        />
                       </div>
                     </div>
-                  </div>
+                  )}
+                            <h4 className="fw-bold text-body mb-2 text-decoration-underline">{detallesModalState.animal.Nombre}</h4>
+                          </div>
 
-                  {/* Fechas y Estado */}
-                  <div className="col-md-6">
-                    <div className="card h-100 border-0 shadow-sm">
-                      <div className="card-header" style={{ background: 'var(--color-tint1)', color: 'white' }}>
-                        <h6 className="card-title mb-0 d-flex align-items-center">
-                          <i className="bi bi-calendar-event me-2"></i>
-                          Fechas y Estado
-                        </h6>
-                      </div>
-                      <div className="card-body">
-                        <div className="row g-3">
-                          <div className="col-12">
-                            <label className="form-label fw-semibold text-muted">Fecha de Nacimiento:</label>
-                            <p className="fw-medium">{new Date(detallesModalState.animal.Fecha_Nacimiento).toLocaleDateString('es-ES', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}</p>
-                          </div>
-                          <div className="col-12">
-                            <label className="form-label fw-semibold text-muted">Fecha de Ingreso:</label>
-                            <p className="fw-medium">{new Date(detallesModalState.animal.Fecha_Ingreso).toLocaleDateString('es-ES', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}</p>
-                          </div>
-                          <div className="col-12">
-                            <label className="form-label fw-semibold text-muted">Estado Reproductivo:</label>
-                            <p className="fw-medium">
-                              {detallesModalState.animal.Esta_Preniada === 1 ? (
-                                <span className="badge bg-warning text-black">
-                                  <i className="bi bi-heart-pulse me-1"></i>
-                                  Preñada
-                                </span>
-                              ) : (
-                                <span className="badge bg-light text-dark">
-                                  <i className="bi bi-check-circle me-1"></i>
-                                  Activo
-                                </span>
-                              )}
-                            </p>
-                          </div>
-                          {detallesModalState.animal.Esta_Preniada === 1 && (
-                            <>
-                              {detallesModalState.animal.Fecha_Monta && (
-                                <div className="col-12">
-                                  <label className="form-label fw-semibold text-muted">Fecha de Monta:</label>
-                                  <p className="fw-medium">{new Date(detallesModalState.animal.Fecha_Monta).toLocaleDateString('es-ES', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                  })}</p>
+                          {/* Información Básica */}
+                          <div className="row g-3 mb-4">
+                            <div className="col-6">
+                              <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
+                                <div className="text-muted small mb-1">SEXO</div>
+                                <div className="fw-semibold text-body">
+                                  {detallesModalState.animal.Sexo === 'F' ? 'Hembra' : 'Macho'}
                                 </div>
-                              )}
-                              {detallesModalState.animal.Fecha_Estimada_Parto && (
-                                <div className="col-12">
-                                  <label className="form-label fw-semibold text-muted">Fecha Estimada de Parto:</label>
-                                  <p className="fw-medium text-primary">
-                                    {new Date(detallesModalState.animal.Fecha_Estimada_Parto).toLocaleDateString('es-ES', {
-                                      year: 'numeric',
-                                      month: 'long',
-                                      day: 'numeric'
-                                    })}
-                                  </p>
-                                  <div className="alert alert-info py-2">
-                                    <small>
-                                      <strong>Días restantes:</strong> {
-                                        Math.ceil((new Date(detallesModalState.animal.Fecha_Estimada_Parto!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
-                                      } días
-                                    </small>
+                              </div>
+                            </div>
+                            <div className="col-6">
+                              <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
+                                <div className="text-muted small mb-1">PESO</div>
+                                <div className="fw-semibold text-body">{detallesModalState.animal.Peso} kg</div>
+                              </div>
+                            </div>
+                            <div className="col-6">
+                              <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
+                                <div className="text-muted small mb-1">RAZA</div>
+                                <div className="fw-semibold text-body">{detallesModalState.animal.Raza}</div>
+                              </div>
+                            </div>
+                            <div className="col-6">
+                              <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
+                                <div className="text-muted small mb-1">COLOR</div>
+                                <div className="fw-semibold text-body">{detallesModalState.animal.Color}</div>
+                              </div>
+                            </div>
+                            <div className="col-12">
+                              <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
+                                <div className="text-muted small mb-1">CATEGORÍA</div>
+                                <div className="fw-semibold text-body">{detallesModalState.animal.CategoriaTipo}</div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Fechas */}
+                          <div className="row g-3 mb-4">
+                            <div className="col-6">
+                              <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
+                                <div className="text-muted small mb-1">FECHA DE NACIMIENTO</div>
+                                <div className="fw-semibold text-body">
+                                  {new Date(detallesModalState.animal.Fecha_Nacimiento).toLocaleDateString('es-ES', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric'
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="col-6">
+                              <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
+                                <div className="text-muted small mb-1">FECHA DE INGRESO</div>
+                                <div className="fw-semibold text-body">
+                                  {new Date(detallesModalState.animal.Fecha_Ingreso).toLocaleDateString('es-ES', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric'
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Estado Reproductivo */}
+                          <div className="text-center mb-4">
+                            <div className="p-3 border bg-light bg-dark-subtle rounded-3">
+                              <div className="text-muted small mb-1">ESTADO REPRODUCTIVO</div>
+                              <div className="fw-semibold text-body">
+                                {detallesModalState.animal.Esta_Preniada === 1 ? (
+                                  <span className="">Preñada</span>
+                                ) : (
+                                  <span className="">No preñada</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Información de Preñez */}
+                          {detallesModalState.animal.Esta_Preniada === 1 && (
+                            <div className="row g-3 mb-4">
+                              {detallesModalState.animal.Fecha_Monta && (
+                                <div className="col-6">
+                                  <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
+                                    <div className="text-muted small mb-1">FECHA DE MONTA</div>
+                                    <div className="fw-semibold text-body">
+                                      {new Date(detallesModalState.animal.Fecha_Monta).toLocaleDateString('es-ES', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric'
+                                      })}
+                                    </div>
                                   </div>
                                 </div>
                               )}
-                            </>
+                              {detallesModalState.animal.Fecha_Estimada_Parto && (
+                                <div className="col-6">
+                                  <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
+                                    <div className="text-muted small mb-1">FECHA ESTIMADA DE PARTO</div>
+                                    <div className="fw-semibold text-body">
+                                      {new Date(detallesModalState.animal.Fecha_Estimada_Parto).toLocaleDateString('es-ES', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric'
+                                      })}
+                                    </div>
+                                  </div>
+                                  <div className="text-center small text-muted mt-1">
+                                      {Math.ceil((new Date(detallesModalState.animal.Fecha_Estimada_Parto!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} días restantes
+                                    </div>
+                                </div>
+                              )}
+                            </div>
                           )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Información Adicional */}
-                <div className="row mt-3">
-                  <div className="col-12">
-                    <div className="card border-0 shadow-sm">
-                      <div className="card-header" style={{ background: 'var(--color-slate)', color: 'white' }}>
-                        <h6 className="card-title mb-0 d-flex align-items-center">
-                          <i className="bi bi-graph-up me-2"></i>
-                          Información Adicional
-                        </h6>
-                      </div>
-                      <div className="card-body">
-                        <div className="row g-3">
-                          <div className="col-md-4">
-                            <div className="text-center p-3 border rounded">
-                              <i className="bi bi-calendar3 text-primary fs-4 mb-2"></i>
-                              <h6 className="text-muted mb-1">Edad</h6>
-                              <p className="fw-bold text-primary fs-5 mb-0">
-                                {Math.floor((new Date().getTime() - new Date(detallesModalState.animal.Fecha_Nacimiento).getTime()) / (1000 * 60 * 60 * 24 * 365))} años
-                              </p>
+                          {/* Estadísticas Calculadas */}
+                          <div className="row g-3">
+                            <div className="col-4">
+                              <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
+                                <div className="text-muted small mb-1">EDAD</div>
+                                <div className="fw-semibold text-body">
+                                  {Math.floor((new Date().getTime() - new Date(detallesModalState.animal.Fecha_Nacimiento).getTime()) / (1000 * 60 * 60 * 24 * 365))} año/s
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                          <div className="col-md-4">
-                            <div className="text-center p-3 border rounded">
-                              <i className="bi bi-clock-history text-success fs-4 mb-2"></i>
-                              <h6 className="text-muted mb-1">Días en el Sistema</h6>
-                              <p className="fw-bold text-success fs-5 mb-0">
-                                {Math.floor((new Date().getTime() - new Date(detallesModalState.animal.Fecha_Ingreso).getTime()) / (1000 * 60 * 60 * 24))} días
-                              </p>
+                            <div className="col-4">
+                              <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
+                                <div className="text-muted small mb-1">DÍAS EN SISTEMA</div>
+                                <div className="fw-semibold text-body">
+                                  {Math.floor((new Date().getTime() - new Date(detallesModalState.animal.Fecha_Ingreso).getTime()) / (1000 * 60 * 60 * 24))}
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                          <div className="col-md-4">
-                            <div className="text-center p-3 border rounded">
-                              <i className="bi bi-heart-pulse text-success fs-4 mb-2"></i>
-                              <h6 className="text-muted mb-1">Estado de Salud</h6>
-                              <p className="fw-bold text-success fs-5 mb-0">
-                                <span className="badge bg-success">Saludable</span>
-                              </p>
+                            <div className="col-4">
+                              <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
+                                <div className="text-muted small mb-1">ESTADO</div>
+                                <div className="fw-semibold text-body">{detallesModalState.animal.EstadoNombre}</div>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div className="modal-footer bg-light border-0 p-3">
+{/*                 </div>    */}
+            </div>
+              <div className="modal-footer border-0 p-3" data-bs-theme="auto" style={{ background: 'var(--color-base-green)'}}>
                 <div className="d-flex justify-content-end gap-2 w-100">
                 <button
                     type="button"
@@ -850,7 +853,7 @@ export function Animales() {
                   </button>
                   <button
                     type="button"
-                    className="btn btn-outline-secondary"
+                    className="btn btn-secondary"
                     onClick={closeDetallesModal}
                   >
                     <i className="bi bi-x-circle me-2"></i>

@@ -18,7 +18,9 @@ interface AnimalFormProps {
 
 // Helper function to create initial form data
 const createInitialFormData = (animal?: Animal): CreateAnimalRequest => {
-  const sex = (animal?.Sexo as "M" | "F") || "M";
+/*   const sex = (animal?.Sexo as "M" | "F") || "M"; */
+  const sex = (animal?.Sexo as "M" | "F") || null;
+
   const isMale = sex === "M";
   
   return {
@@ -33,7 +35,8 @@ const createInitialFormData = (animal?: Animal): CreateAnimalRequest => {
     Fecha_Monta: isMale ? null : (animal?.Fecha_Monta ? animal.Fecha_Monta.split('T')[0] : null),
     Fecha_Estimada_Parto: isMale ? null : (animal?.Fecha_Estimada_Parto ? animal.Fecha_Estimada_Parto.split('T')[0] : null),
     Fecha_Ingreso: animal?.Fecha_Ingreso ? animal.Fecha_Ingreso.split('T')[0] : '',
-    ID_Categoria: animal?.ID_Categoria || 1,
+    /* ID_Categoria: animal?.ID_Categoria || 1, */
+    ID_Categoria: animal?.ID_Categoria || 0,
     Imagen_URL: animal?.Imagen_URL || null,
   };
 };
@@ -72,6 +75,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
     if (payload.Imagen_URL) {
       cacheAnimalImage(createdId, payload.Imagen_URL);
     }
+    setFormData(createInitialFormData());
   };
 
   const handleUpdateAnimal = async () => {
@@ -201,6 +205,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                           onChange={(e) => setFormData({ ...formData, ID_Categoria: Number(e.target.value) })}
                           required
                         >
+                          <option value="">Seleccionar</option>
                           {categorias.map(categoria => (
                             <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
                               {categoria.Tipo}
@@ -317,18 +322,6 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                         <label htmlFor="fechaIngreso">Fecha de Ingreso</label>
                       </div>
                     </div>
-                    <div className="col-md-6">
-                          <div className="form-floating">
-                            <input
-                              type="date"
-                              className="form-control"
-                              id="fechaMonta"
-                              value={formData.Fecha_Monta || ''}
-                              onChange={(e) => setFormData({ ...formData, Fecha_Monta: e.target.value || null })}
-                            />
-                            <label htmlFor="fechaMonta">Fecha de Monta</label>
-                          </div>
-                        </div>
                   </div>
                 </div>
               </div>
@@ -347,16 +340,22 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                         <select
                           className="form-select"
                           id="estaPreniada"
-                          value={formData.Esta_Preniada ? "true" : "false"}
+                          value={formData.Sexo === null ? "" : (formData.Esta_Preniada ? "true" : "false")}
                           onChange={(e) => setFormData({ ...formData, Esta_Preniada: e.target.value === "true" })}
-                          disabled={formData.Sexo === "M"}
+                          disabled={formData.Sexo === null || formData.Sexo !== "F"}
                         >
-                          <option value="false">
-                            {formData.Sexo === "M" ? "No aplica (Macho)" : "No preñada"}
-                          </option>
-                          <option value="true" disabled={formData.Sexo === "M"}>
-                            {formData.Sexo === "M" ? "No aplica (Macho)" : "Preñada"}
-                          </option>
+                          {formData.Sexo === null ? (
+                            <option value="">Seleccione sexo</option>
+                          ) : formData.Sexo !== "F" ? (
+                            <>
+                              <option value="false">No preñada</option>
+                            </>
+                          ) : (
+                            <>
+                              <option value="false">No preñada</option>
+                              <option value="true">Preñada</option>
+                            </>
+                          )}
                         </select>
                         <label htmlFor="estaPreniada">Estado Reproductivo</label>
                       </div>
@@ -364,6 +363,12 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                         <div className="form-text text-muted">
                           <i className="bi bi-info-circle me-1"></i>
                           Los machos no pueden estar preñados
+                        </div>
+                      )}
+                      {formData.Sexo === null && (
+                        <div className="form-text text-muted">
+                          <i className="bi bi-info-circle me-1"></i>
+                          Seleccione primero el sexo del animal
                         </div>
                       )}
                     </div>
@@ -381,13 +386,26 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                             <label htmlFor="fechaEstimadaParto">Fecha Estimada de Parto</label>
                           </div>
                         </div>
+                        <div className="col-md-6">
+                          <div className="form-floating">
+                            <input
+                              type="date"
+                              className="form-control"
+                              id="fechaMonta"
+                              value={formData.Fecha_Monta || ''}
+                              onChange={(e) => setFormData({ ...formData, Fecha_Monta: e.target.value || null })}
+                            />
+                            <p className="small text-muted">(Opcional)</p>
+                            <label htmlFor="fechaMonta">Fecha de Monta</label>
+                          </div>
+                        </div>
                       </>
                     )}
                   </div>
                 </div>
               </div>
             </div>
-            <div className="modal-footer bg-light border-0 p-3">
+            <div className="modal-footer border-0 p-3" style={{ background: 'var(--color-base-green)'}}>
               <div className="d-flex justify-content-end gap-2 w-100">
               <button 
                   type="submit" 
@@ -408,7 +426,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                 </button>
                 <button 
                   type="button" 
-                  className="btn btn-outline-secondary" 
+                  className="btn btn-secondary" 
                   onClick={handleClose}
                 >
                   <i className="bi bi-x-circle me-2"></i>

@@ -7,11 +7,11 @@ export function useAnimales(filters: AnimalesFilters = {}) {
     queryKey: ['animales', filters],
     queryFn: () => animalesApi.getAll(filters),
     staleTime: 0, // Los datos se consideran obsoletos inmediatamente
-    refetchInterval: 300000, // Revalidar cada 30 segundos
+    refetchInterval: 1000, // Revalidar cada 30 segundos
     refetchOnWindowFocus: true, // Revalidar cuando la ventana recupera el foco
     refetchOnReconnect: true, // Revalidar cuando se recupera la conexión
   });
-}
+} 
 
 export function useAnimal(id: number) {
   return useQuery({
