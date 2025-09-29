@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCategorias, useCreateCategoria, useUpdateCategoria, useDeleteCategoria } from '../hooks/useCategorias';
 import { useToast } from '../context/ToastContext';
+import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { Categoria, CategoriaRequest, UpdateCategoriaRequest } from '../types/api';
 
 interface CategoriaModalProps {
@@ -155,6 +156,15 @@ export function Categorias() {
 
   return (
     <div>
+      {/* Breadcrumb */}
+      <Breadcrumb 
+        items={[
+          { label: 'Dashboard', path: '/' },
+          { label: 'Configuración', path: '#' },
+          { label: 'Categorías', active: true }
+        ]} 
+      />
+      
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>

@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom';
 import { useAnimales } from '../hooks/useAnimales';
 import { useCategorias } from '../hooks/useCategorias';
+import { Breadcrumb } from '../components/ui/Breadcrumb';
 
 interface StatCardProps {
   title: string;
@@ -87,6 +88,13 @@ export function Dashboard() {
 
   return (
     <div className="container-fluid">
+      {/* Breadcrumb */}
+      <Breadcrumb 
+        items={[
+          { label: 'Dashboard', active: true }
+        ]} 
+      />
+      
       {/* Header */}
       <div className="row mb-5">
         <div className="col-12">

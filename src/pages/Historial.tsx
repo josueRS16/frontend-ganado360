@@ -3,6 +3,7 @@ import { useHistorial, useCreateHistorial, useUpdateHistorial, useDeleteHistoria
 import { useAnimales } from '../hooks/useAnimales';
 import { useUsuarios } from '../hooks/useUsuarios';
 import { useToast } from '../context/ToastContext';
+import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { HistorialVeterinario, HistorialVeterinarioRequest } from '../types/api';
 
 interface HistorialModalProps {
@@ -217,6 +218,15 @@ export function Historial() {
 
   return (
     <div>
+      {/* Breadcrumb */}
+      <Breadcrumb 
+        items={[
+          { label: 'Dashboard', path: '/' },
+          { label: 'Gestión', path: '#' },
+          { label: 'Historial Médico', active: true }
+        ]} 
+      />
+      
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>

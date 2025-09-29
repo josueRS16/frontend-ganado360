@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useRoles, useCreateRol, useUpdateRol, useDeleteRol } from '../hooks/useRoles';
 import { useToast } from '../context/ToastContext';
+import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { Rol, RolRequest } from '../types/api';
 
 interface RolModalProps {
@@ -128,6 +129,15 @@ export function Roles() {
 
   return (
     <div>
+      {/* Breadcrumb */}
+      <Breadcrumb 
+        items={[
+          { label: 'Dashboard', path: '/' },
+          { label: 'Configuración', path: '#' },
+          { label: 'Roles', active: true }
+        ]} 
+      />
+      
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>

@@ -4,6 +4,7 @@ import { useAnimales } from '../hooks/useAnimales';
 import { useUsuarios } from '../hooks/useUsuarios';
 import { useQueryParams } from '../hooks/useQueryParams';
 import { useToast } from '../context/ToastContext';
+import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { VentasFilters, Venta, VentaRequest } from '../types/api';
 
 interface VentaModalProps {
@@ -247,6 +248,15 @@ export function Ventas() {
 
   return (
     <div>
+      {/* Breadcrumb */}
+      <Breadcrumb 
+        items={[
+          { label: 'Dashboard', path: '/' },
+          { label: 'Gestión', path: '#' },
+          { label: 'Ventas', active: true }
+        ]} 
+      />
+      
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>

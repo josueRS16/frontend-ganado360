@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useEstados, useCreateEstado, useUpdateEstado, useDeleteEstado } from '../hooks/useEstados';
 import { useToast } from '../context/ToastContext';
+import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { Estado, EstadoRequest } from '../types/api';
 
 interface EstadoModalProps {
@@ -128,6 +129,15 @@ export function Estados() {
 
   return (
     <div>
+      {/* Breadcrumb */}
+      <Breadcrumb 
+        items={[
+          { label: 'Dashboard', path: '/' },
+          { label: 'Configuración', path: '#' },
+          { label: 'Estados', active: true }
+        ]} 
+      />
+      
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
