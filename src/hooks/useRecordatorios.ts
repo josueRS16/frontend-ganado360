@@ -1,12 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { recordatoriosApi } from '../api/recordatorios';
-import type { RecordatoriosFilters, RecordatorioRequest } from '../types/api';
+import type { RecordatoriosFilters, RecordatorioRequest, PaginatedResponse, Recordatorio } from '../types/api';
 
 export function useRecordatorios(filters: RecordatoriosFilters = {}) {
-  return useQuery({
+  return useQuery<PaginatedResponse<Recordatorio>>({
     queryKey: ['recordatorios', filters],
     queryFn: () => recordatoriosApi.getAll(filters),
-    staleTime: 5 * 60 * 1000, // 5 minutos
+    staleTime: 0, // Siempre obtener datos frescos en refetch
   });
 }
 

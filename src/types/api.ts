@@ -119,6 +119,8 @@ export interface AnimalesFilters {
   Sexo?: "M" | "F";
   fechaIngresoDesde?: string;
   fechaIngresoHasta?: string;
+  EstadoNombre?: string;
+  ID_Estado?: number;
   page?: number;
   limit?: number;
 }
@@ -131,6 +133,7 @@ export interface Recordatorio {
   Descripcion: string;
   Fecha_Recordatorio: string;
   AnimalNombre: string;
+  Estado: 'pendiente' | 'hecho';
 }
 
 export interface RecordatorioRequest {
@@ -144,6 +147,9 @@ export interface RecordatoriosFilters {
   ID_Animal?: number;
   fechaDesde?: string;
   fechaHasta?: string;
+  Estado?: 'pendiente' | 'hecho';
+  page?: number;
+  limit?: number;
 }
 
 // Tipos para Historial Veterinario

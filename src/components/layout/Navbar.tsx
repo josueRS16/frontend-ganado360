@@ -1,5 +1,16 @@
 
-import { Link } from 'react-router-dom';
+// Extender el tipo Window para TypeScript
+declare global {
+  interface Window {
+    updateNotificationCount?: () => void;
+  }
+}
+
+
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { useEffect, useState } from 'react';
+import { recordatoriosApi } from '../../api/recordatorios';
 
 interface NavbarProps {
   onToggleSidebar: () => void;
@@ -8,6 +19,33 @@ interface NavbarProps {
 }
 
 export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [notiCount, setNotiCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      try {
+        const res = await recordatoriosApi.getAll({ Estado: 'pendiente' });
+        setNotiCount(res.data.length);
+      } catch {
+        setNotiCount(0);
+      }
+    };
+    fetchCount();
+    // Exponer función global para refrescar el contador desde cualquier parte
+    window.updateNotificationCount = fetchCount;
+    const interval = setInterval(fetchCount, 30000); // 30 segundos
+    return () => {
+      clearInterval(interval);
+      delete window.updateNotificationCount;
+    };
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
   return (
     <nav className="navbar navbar-expand-lg navbar-dark navbar-ganado">
       <div className="container-fluid px-lg-4">
@@ -32,16 +70,27 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
               <small className="text-light fw-normal">Sistema de Gestión Ganadera</small>
             </Link>
           </div>
-        </div>
+  </div>
 
-        {/* Right side actions */}
-        <div className="d-flex align-items-center gap-2">
-          {/* Status indicator */}
-          <div className="me-2 d-none d-xl-block">
-            <span className="badge bg-light text-success px-3 py-2">
-              <i className="bi bi-circle-fill text-success me-1" style={{ fontSize: '0.5rem' }}></i>
-              MKDA
-            </span>
+  {/* Right side actions */}
+  <div className="d-flex align-items-center gap-2">
+
+          {/* Notificación de recordatorios automáticos */}
+          <div className="me-2 position-relative">
+            <button
+              className="btn btn-outline-light border-0 position-relative"
+              style={{ fontSize: '1.5rem' }}
+              title="Recordatorios"
+              onClick={() => navigate('/recordatorios')}
+            >
+              <i className="bi bi-bell-fill"></i>
+              {notiCount > 0 && (
+                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {notiCount}
+                  <span className="visually-hidden">recordatorios</span>
+                </span>
+              )}
+            </button>
           </div>
 
           {/* Theme toggle */}
@@ -101,6 +150,21 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
                   <small className="d-block text-muted">Administración</small>
                 </Link>
               </li>
+              {user && (
+                <>
+                  <li><hr className="dropdown-divider my-1" /></li>
+                  <li>
+                    <button
+                      className="dropdown-item py-2 text-danger"
+                      onClick={handleLogout}
+                      aria-label="Cerrar sesión"
+                    >
+                      <i className="bi bi-box-arrow-right me-2"></i>
+                      Cerrar sesión
+                    </button>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
         </div>

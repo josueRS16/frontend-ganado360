@@ -2,10 +2,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { historialApi } from '../api/historial';
 import type { HistorialVeterinarioRequest } from '../types/api';
 
-export function useHistorial() {
+export function useHistorial(filters: { page?: number; limit?: number } = {}) {
   return useQuery({
-    queryKey: ['historial'],
-    queryFn: () => historialApi.getAll(),
+    queryKey: ['historial', filters],
+    queryFn: () => historialApi.getAll(filters),
     staleTime: 5 * 60 * 1000, // 5 minutos
   });
 }

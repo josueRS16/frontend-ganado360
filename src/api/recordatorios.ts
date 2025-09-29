@@ -4,37 +4,25 @@ import type {
   Recordatorio, 
   RecordatorioRequest, 
   RecordatoriosFilters, 
-  ApiResponse 
+  ApiResponse, 
+  PaginatedResponse
 } from '../types/api';
 
 export const recordatoriosApi = {
-  // GET /recordatorios con filtros opcionales
-  getAll: async (filters: RecordatoriosFilters = {}): Promise<ApiResponse<Recordatorio[]>> => {
+  getAll: (filters: RecordatoriosFilters = {}): Promise<PaginatedResponse<Recordatorio>> => {
     const params = buildParams(filters);
-    const response = await http.get('/recordatorios', { params });
-    return response.data;
+    return http.get('/recordatorios', { params }).then(res => res.data);
   },
-
-  // GET /recordatorios/:id
-  getById: async (id: number): Promise<ApiResponse<Recordatorio>> => {
-    const response = await http.get(`/recordatorios/${id}`);
-    return response.data;
+  getById: (id: number): Promise<ApiResponse<Recordatorio>> => {
+    return http.get(`/recordatorios/${id}`).then(res => res.data);
   },
-
-  // POST /recordatorios
-  create: async (data: RecordatorioRequest): Promise<ApiResponse<Recordatorio>> => {
-    const response = await http.post('/recordatorios', data);
-    return response.data;
+  create: (data: RecordatorioRequest): Promise<ApiResponse<Recordatorio>> => {
+    return http.post('/recordatorios', data).then(res => res.data);
   },
-
-  // PUT /recordatorios/:id
-  update: async (id: number, data: RecordatorioRequest): Promise<ApiResponse<Recordatorio>> => {
-    const response = await http.put(`/recordatorios/${id}`, data);
-    return response.data;
+  update: (id: number, data: RecordatorioRequest): Promise<ApiResponse<Recordatorio>> => {
+    return http.put(`/recordatorios/${id}`, data).then(res => res.data);
   },
-
-  // DELETE /recordatorios/:id
-  delete: async (id: number): Promise<void> => {
-    await http.delete(`/recordatorios/${id}`);
+  delete: (id: number): Promise<void> => {
+    return http.delete(`/recordatorios/${id}`).then(() => {});
   },
 };
