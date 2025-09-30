@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
 
 export interface Toast {
-  id: string;
+  key: string; // texto+tipo
   message: string;
   type: 'success' | 'error' | 'warning' | 'info';
   duration?: number;
@@ -27,31 +27,48 @@ interface ToastProviderProps {
   children: React.ReactNode;
 }
 
+
 export function ToastProvider({ children }: ToastProviderProps) {
   const [toasts, setToasts] = useState<Toast[]>([]);
   // Guardar temporizadores por id
-  // Eliminar lógica de temporizadores individuales
+  const timers = useRef<{ [key: string]: number }>( {} );
 
+  const normalize = (str: string) => str.trim().replace(/\s+/g, ' ').toLowerCase();
   const showToast = useCallback((message: string, type: Toast['type'], duration = 5000) => {
+    const key = `${type}::${normalize(message)}`;
     setToasts(prev => {
-      // Evitar duplicados: si ya hay un toast igual activo, no agregar otro
-      if (prev.some(t => t.message === message && t.type === type)) {
-        return prev;
+      const idx = prev.findIndex(t => t.key === key);
+      if (idx !== -1) {
+        // Ya existe: actualizar y reiniciar temporizador
+        if (timers.current[key]) {
+          clearTimeout(timers.current[key]);
+        }
+        if (duration > 0) {
+          timers.current[key] = window.setTimeout(() => {
+            hideToast(key);
+          }, duration);
+        }
+        // Actualizar el toast (por si cambia duración)
+        const updated = [...prev];
+        updated[idx] = { ...updated[idx], duration };
+        return updated;
       }
-      const id = Math.random().toString(36).substr(2, 9);
-      const toast: Toast = { id, message, type, duration };
-      // Auto-hide toast después de duration
+      // Nuevo toast
       if (duration > 0) {
-        setTimeout(() => {
-          hideToast(id);
+        timers.current[key] = window.setTimeout(() => {
+          hideToast(key);
         }, duration);
       }
-      return [...prev, toast];
+      return [...prev, { key, message, type, duration }];
     });
   }, []);
 
-  const hideToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
+  const hideToast = useCallback((key: string) => {
+    setToasts(prev => prev.filter(toast => toast.key !== key));
+    if (timers.current[key]) {
+      clearTimeout(timers.current[key]);
+      delete timers.current[key];
+    }
   }, []);
 
   return (
@@ -68,9 +85,9 @@ export function ToastProvider({ children }: ToastProviderProps) {
         gap: 12,
         pointerEvents: 'none',
       }}>
-        {toasts.map(toast => (
+        {[...new Map(toasts.map(t => [t.key, t])).values()].map(toast => (
           <div
-            key={toast.id}
+            key={toast.key}
             style={{
               minWidth: 280,
               maxWidth: 400,

@@ -22,14 +22,16 @@ const HistorialModal = ({ historial, isOpen, onClose, onSave }: HistorialModalPr
   const { data: animalesData } = useAnimales({});
   const { data: usuariosData } = useUsuarios();
 
-  const animales = animalesData?.data || [];
+  // Solo mostrar animales en estado 'viva'
+  const animales = (animalesData?.data || []).filter(a => a.EstadoNombre?.toLowerCase() === 'viva');
   const usuarios = usuariosData?.data || [];
 
+  const today = new Date().toISOString().slice(0, 10);
   const [formData, setFormData] = useState<HistorialVeterinarioRequest>({
     ID_Animal: historial?.ID_Animal || 0,
     Tipo_Evento: historial?.Tipo_Evento || '',
     Descripcion: historial?.Descripcion || '',
-    Fecha_Aplicacion: historial?.Fecha_Aplicacion || '',
+    Fecha_Aplicacion: historial?.Fecha_Aplicacion || today,
     Proxima_Fecha: historial?.Proxima_Fecha || '',
     Hecho_Por: historial?.Hecho_Por || 1
   });

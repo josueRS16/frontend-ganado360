@@ -30,7 +30,8 @@ interface RecordatorioModalProps {
 function RecordatorioModal({ recordatorio, isOpen, onClose, onSave }: RecordatorioModalProps) {
   // Mostrar todos los animales sin filtro
   const { data: animalesData } = useAnimales({});
-  const animales = useMemo(() => animalesData?.data || [], [animalesData?.data]);
+  // Solo mostrar animales en estado 'viva'
+  const animales = useMemo(() => (animalesData?.data || []).filter(a => a.EstadoNombre?.toLowerCase() === 'viva'), [animalesData?.data]);
 
   const [formData, setFormData] = useState<RecordatorioRequest>({
     ID_Animal: recordatorio?.ID_Animal || 0,

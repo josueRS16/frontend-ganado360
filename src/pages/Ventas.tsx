@@ -7,6 +7,7 @@ import { useToast } from '../context/ToastContext';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { VentasFilters, Venta, VentaRequest } from '../types/api';
 
+
 interface VentaModalProps {
   venta?: Venta;
   isOpen: boolean;
@@ -14,15 +15,19 @@ interface VentaModalProps {
   onSave: (data: VentaRequest) => void;
 }
 
+
 function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
+
   const { data: animalesData } = useAnimales();
   const { data: usuariosData } = useUsuarios();
-  const animales = useMemo(() => animalesData?.data || [], [animalesData?.data]);
+  // Solo mostrar animales en estado 'viva'
+  const animales = useMemo(() => (animalesData?.data || []).filter(a => a.EstadoNombre?.toLowerCase() === 'viva'), [animalesData?.data]);
   const usuarios = usuariosData?.data || [];
 
+  const today = new Date().toISOString().slice(0, 10);
   const [formData, setFormData] = useState<VentaRequest>({
     ID_Animal: venta?.ID_Animal || 0,
-    Fecha_Venta: venta?.Fecha_Venta || '',
+    Fecha_Venta: venta?.Fecha_Venta || today,
     Tipo_Venta: venta?.Tipo_Venta || '',
     Comprador: venta?.Comprador || '',
     Precio: venta?.Precio || 0,
@@ -266,6 +271,9 @@ export function Ventas() {
     return sum + (typeof precio === 'number' && !isNaN(precio) ? precio : 0);
   }, 0);
 
+  // Formateador para moneda local con separadores
+  const formatMoney = (valor: number) => valor.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
   const hasActiveFilters = Object.keys(params).length > 0;
 
   // Solo mostrar el toast de error global una vez
@@ -318,7 +326,7 @@ export function Ventas() {
             <div className="card bg-success text-white">
               <div className="card-body text-center">
                 <h5 className="card-title">Total Ingresos</h5>
-                <h3 className="card-text">₡{totalIngresos.toLocaleString()}</h3>
+                <h3 className="card-text">₡{formatMoney(totalIngresos)}</h3>
               </div>
             </div>
           </div>
@@ -326,7 +334,7 @@ export function Ventas() {
             <div className="card bg-info text-white">
               <div className="card-body text-center">
                 <h5 className="card-title">Promedio por Venta</h5>
-                <h3 className="card-text">₡{(totalIngresos / ventas.length).toLocaleString()}</h3>
+                <h3 className="card-text">₡{formatMoney(totalIngresos / ventas.length)}</h3>
               </div>
             </div>
           </div>
@@ -382,7 +390,7 @@ export function Ventas() {
                       <span className="badge bg-secondary">{venta.Tipo_Venta}</span>
                     </td>
                     <td>{venta.Comprador}</td>
-                    <td className="fw-bold text-success">₡{venta.Precio.toLocaleString()}</td>
+                    <td className="fw-bold text-success">₡{formatMoney(venta.Precio)}</td>
                     <td>{venta.UsuarioNombre}</td>
                     <td>
                       <div className="btn-group" role="group">
