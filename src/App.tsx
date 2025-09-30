@@ -1,3 +1,4 @@
+import PrivateRoute from './components/PrivateRoute';
 import { Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastProvider } from './context/ToastContext';
@@ -37,8 +38,13 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+<<<<<<< HEAD
           <Route path="/" element={<Layout />}>
             <Route element={<PrivateRoute />}>
+=======
+          <Route element={<PrivateRoute />}>
+            <Route path="/" element={<Layout />}>
+>>>>>>> main
               <Route index element={<Dashboard />} />
               <Route path="animales" element={<Animales />} />
               <Route path="animales-detalle" element={<AnimalesDetalle />} />
@@ -49,6 +55,7 @@ function App() {
               <Route path="recordatorios" element={<Recordatorios />} />
               <Route path="historial" element={<Historial />} />
               <Route path="ventas" element={<Ventas />} />
+<<<<<<< HEAD
             </Route>
             <Route path="*" element={
               <div className="text-center py-5">
@@ -58,6 +65,17 @@ function App() {
                 <a href="/" className="btn btn-primary">Ir al Dashboard</a>
               </div>
             } />
+=======
+              <Route path="*" element={
+                <div className="text-center py-5">
+                  <h1 className="display-1">404</h1>
+                  <p className="fs-3"><span className="text-danger">Oops!</span> Página no encontrada.</p>
+                  <p className="fs-5">La página que buscas no existe.</p>
+                  <a href="/" className="btn btn-primary">Ir al Dashboard</a>
+                </div>
+              } />
+            </Route>
+>>>>>>> main
           </Route>
         </Routes>
       </ToastProvider>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAnimalesConDetalle } from '../hooks/useAnimales';
 import { useCategorias } from '../hooks/useCategorias';
 import { useQueryParams } from '../hooks/useQueryParams';
+import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { AnimalesFilters } from '../types/api';
 
 export function AnimalesDetalle() {
@@ -45,6 +46,15 @@ export function AnimalesDetalle() {
 
   return (
     <div>
+      {/* Breadcrumb */}
+      <Breadcrumb 
+        items={[
+          { label: 'Dashboard', path: '/' },
+          { label: 'Animales', path: '/animales' },
+          { label: 'Vista Detallada', active: true }
+        ]} 
+      />
+      
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>

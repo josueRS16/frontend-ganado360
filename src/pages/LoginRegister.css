@@ -6,6 +6,10 @@
 [data-bs-theme="dark"] .login-form {
   background: rgba(30, 34, 33, 0.98) !important;
   color: #e8eaea;
+<<<<<<< HEAD
+=======
+  box-shadow: 0 4px 24px rgba(0,0,0,0.45);
+>>>>>>> main
 }
 
 [data-bs-theme="dark"] .login-form h2 {

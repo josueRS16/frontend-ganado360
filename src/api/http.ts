@@ -9,7 +9,6 @@ if (!baseURL) {
   throw new Error('VITE_API_URL is required');
 }
 
-console.log('🔧 HTTP: Base URL configured as:', baseURL);
 
 const http = axios.create({
   baseURL,
@@ -22,10 +21,6 @@ const http = axios.create({
 // Interceptor para requests - log de auditoría
 http.interceptors.request.use(
   (config) => {
-    console.log(`[HTTP] ${config.method?.toUpperCase()} ${config.url}`, {
-      params: config.params,
-      data: config.data,
-    });
     return config;
   },
   (error: AxiosError) => {
@@ -37,7 +32,6 @@ http.interceptors.request.use(
 // Interceptor para responses - manejo de errores
 http.interceptors.response.use(
   (response: AxiosResponse) => {
-    console.log(`[HTTP] Response ${response.status}:`, response.data);
     return response;
   },
   (error: AxiosError) => {

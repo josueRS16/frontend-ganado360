@@ -89,7 +89,6 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
 
     // NOTA: La eliminación de archivos se maneja desde el botón "eliminar imagen" 
     // que envía DELETE request al backend. Aquí solo actualizamos la información.
-    console.log(`[AnimalForm] Updating animal with image URL: ${newImageUrl}`);
 
     const payload: CreateAnimalRequest = {
       ...formData,

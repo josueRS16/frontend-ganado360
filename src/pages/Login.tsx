@@ -15,7 +15,11 @@ const Login: React.FC = () => {
       setRecordar(true);
     }
   }, []);
+
   const [password, setPassword] = useState('');
+
+  const [contraseña, setContraseña] = useState('');
+
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -28,6 +32,7 @@ const Login: React.FC = () => {
       return;
     }
     try {
+ 
       const res = await authApi.login({ correo, password });
       if (res.token) {
         localStorage.setItem('token', res.token);
@@ -41,6 +46,8 @@ const Login: React.FC = () => {
       } else {
         setError('Respuesta inválida del servidor.');
       }
+
+   
     } catch (err: any) {
       const msg = err?.response?.data?.message || 'Error al iniciar sesión';
       if (msg.includes('Correo o contraseña incorrectos')) {
