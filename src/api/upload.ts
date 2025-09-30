@@ -40,13 +40,9 @@ export const uploadApi = {
       
       if (!response.ok) {
         const errorText = await response.text();
-        console.error(`[UploadAPI] Error response: ${errorText}`);
         throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
-      
-      console.log(`[UploadAPI] Successfully deleted file: ${filename}`);
     } catch (error: unknown) {
-      console.error(`[UploadAPI] Error deleting file ${filename}:`, error);
       throw error;
     }
   },
@@ -92,75 +88,5 @@ export const uploadApi = {
   },
 
   // Función de prueba para diagnosticar problemas con deleteImage
-  testDeleteImage: async (filename: string): Promise<void> => {
-    console.log(`[UploadAPI] Testing deleteImage with filename: ${filename}`);
-    console.log(`[UploadAPI] VITE_API_URL: ${import.meta.env.VITE_API_URL}`);
-    console.log(`[UploadAPI] Full URL will be: ${import.meta.env.VITE_API_URL}/api/upload/image/${filename}`);
-    
-    try {
-      await uploadApi.deleteImage(filename);
-      console.log(`[UploadAPI] Test successful!`);
-    } catch (error) {
-      console.error(`[UploadAPI] Test failed:`, error);
-      throw error;
-    }
-  },
-
-  // Función para probar la conectividad del servidor
-  testServerConnection: async (): Promise<void> => {
-    const baseURL = import.meta.env.VITE_API_URL;
-    console.log(`[UploadAPI] Testing server connection to: ${baseURL}`);
-    
-    try {
-      const response = await fetch(`${baseURL}/api/health`, {
-        method: 'GET',
-      });
-      console.log(`[UploadAPI] Health check status: ${response.status}`);
-    } catch (error) {
-      console.error(`[UploadAPI] Health check failed:`, error);
-    }
-  },
-
-  // Función de debugging global
-  debugDeleteImage: async (filename: string): Promise<void> => {
-    console.log('=== DEBUG DELETE IMAGE ===');
-    console.log(`Filename: ${filename}`);
-    console.log(`VITE_API_URL: ${import.meta.env.VITE_API_URL}`);
-    
-    const baseURL = import.meta.env.VITE_API_URL;
-    const fullUrl = `${baseURL}/api/upload/image/${filename}`;
-    console.log(`Full URL: ${fullUrl}`);
-    
-    try {
-      console.log('Testing server connection...');
-      const healthResponse = await fetch(`${baseURL}/api/health`);
-      console.log(`Health check: ${healthResponse.status}`);
-      
-      console.log('Attempting DELETE request...');
-      const deleteResponse = await fetch(fullUrl, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      console.log(`DELETE Response Status: ${deleteResponse.status}`);
-      console.log(`DELETE Response OK: ${deleteResponse.ok}`);
-      
-      if (!deleteResponse.ok) {
-        const errorText = await deleteResponse.text();
-        console.error(`DELETE Error: ${errorText}`);
-      } else {
-        console.log('DELETE successful!');
-      }
-      
-    } catch (error) {
-      console.error('DELETE failed:', error);
-    }
-    
-    console.log('=== END DEBUG ===');
-  }
+  // ...existing code...
 };
-
-// Hacer la función de debugging disponible globalmente
-(window as unknown as { debugDeleteImage: typeof uploadApi.debugDeleteImage }).debugDeleteImage = uploadApi.debugDeleteImage;

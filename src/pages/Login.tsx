@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { authApi } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -6,6 +6,15 @@ import './LoginRegister.css';
 
 const Login: React.FC = () => {
   const [correo, setCorreo] = useState('');
+  const [recordar, setRecordar] = useState(false);
+  // Al cargar, recuperar correo si está guardado
+  useEffect(() => {
+    const savedCorreo = localStorage.getItem('recordarCorreo');
+    if (savedCorreo) {
+      setCorreo(savedCorreo);
+      setRecordar(true);
+    }
+  }, []);
   const [contraseña, setContraseña] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -20,6 +29,11 @@ const Login: React.FC = () => {
     }
     try {
       const res = await authApi.login({ Correo: correo, Contraseña: contraseña });
+      if (recordar) {
+        localStorage.setItem('recordarCorreo', correo);
+      } else {
+        localStorage.removeItem('recordarCorreo');
+      }
       login(res.data);
       navigate('/');
     } catch (err: any) {
@@ -44,6 +58,16 @@ const Login: React.FC = () => {
           value={contraseña}
           onChange={e => setContraseña(e.target.value)}
         />
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+          <input
+            type="checkbox"
+            id="recordar"
+            checked={recordar}
+            onChange={e => setRecordar(e.target.checked)}
+            style={{ marginRight: 8 }}
+          />
+          <label htmlFor="recordar">Recordar usuario</label>
+        </div>
         <button type="submit">Entrar</button>
         <p>¿No tienes cuenta? <a href="/register">Regístrate</a></p>
       </form>

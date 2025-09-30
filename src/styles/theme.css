@@ -122,6 +122,14 @@
   background: var(--sidebar-hover);
   color: var(--color-base-green);
   text-decoration: none;
+  transform: translateX(2px);
+}
+
+/* Dark mode hover improvements */
+[data-bs-theme="dark"] .sidebar-ganado .nav-link:hover {
+  background: var(--sidebar-hover);
+  color: var(--color-tint1);
+  text-decoration: none;
 }
 
 .sidebar-ganado .nav-link.active {
@@ -149,6 +157,11 @@
   letter-spacing: 0.05em;
   padding: 0.75rem 1rem 0.25rem;
   margin-top: 1rem;
+}
+
+/* Dark mode para section headers */
+[data-bs-theme="dark"] .sidebar-section-header {
+  color: var(--color-sage-gray);
 }
 
 /* Cards KPI académicas */
@@ -507,6 +520,47 @@
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
+}
+
+/* Breadcrumb styles */
+.breadcrumb-nav {
+  margin-bottom: 1rem;
+}
+
+.breadcrumb-nav .breadcrumb {
+  background: transparent;
+  padding: 0.75rem 0;
+  margin-bottom: 0;
+  font-size: 0.875rem;
+}
+
+.breadcrumb-nav .breadcrumb-item {
+  color: var(--color-slate);
+}
+
+.breadcrumb-nav .breadcrumb-item.active {
+  color: var(--color-base-green);
+  font-weight: 600;
+}
+
+.breadcrumb-nav .breadcrumb-item + .breadcrumb-item::before {
+  color: var(--color-slate);
+  content: var(--bs-breadcrumb-divider, "›");
+  font-weight: 600;
+}
+
+/* Dark mode breadcrumb */
+[data-bs-theme="dark"] .breadcrumb-nav .breadcrumb-item {
+  color: var(--color-sage-gray);
+}
+
+[data-bs-theme="dark"] .breadcrumb-nav .breadcrumb-item.active {
+  color: var(--color-gold);
+  font-weight: 600;
+}
+
+[data-bs-theme="dark"] .breadcrumb-nav .breadcrumb-item + .breadcrumb-item::before {
+  color: var(--color-sage-gray);
 }
 
 /* Print styles */

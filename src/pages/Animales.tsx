@@ -7,6 +7,7 @@ import { useDarDeBajaAnimal } from '../hooks/useEstadoAnimal';
 import { AnimalForm } from './AnimalForm';
 import { Pagination } from '../components/ui/Pagination';
 import { DarDeBajaModal } from '../components/modals/DarDeBajaModal';
+import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { AnimalesFilters, Animal } from '../types/api';
 import { getCachedAnimalImage } from '../utils/imageCache';
 import { getImageDisplayUrl } from '../utils/imageUtils';
@@ -145,6 +146,14 @@ export function Animales() {
 
   return (
     <div className="container-fluid">
+      {/* Breadcrumb */}
+      <Breadcrumb 
+        items={[
+          { label: 'Dashboard', path: '/' },
+          { label: 'Animales', active: true }
+        ]} 
+      />
+      
       {/* Header */}
       <div className="row mb-4">
         <div className="col-12">

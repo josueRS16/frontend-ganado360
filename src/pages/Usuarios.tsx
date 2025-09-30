@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useUsuarios, useCreateUsuario, useUpdateUsuario, useDeleteUsuario } from '../hooks/useUsuarios';
 import { useRoles } from '../hooks/useRoles';
 import { useToast } from '../context/ToastContext';
+import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { Usuario, UsuarioRequest } from '../types/api';
 
 interface UsuarioModalProps {
@@ -176,6 +177,15 @@ export function Usuarios() {
 
   return (
     <div>
+      {/* Breadcrumb */}
+      <Breadcrumb 
+        items={[
+          { label: 'Dashboard', path: '/' },
+          { label: 'Configuración', path: '#' },
+          { label: 'Usuarios', active: true }
+        ]} 
+      />
+      
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
