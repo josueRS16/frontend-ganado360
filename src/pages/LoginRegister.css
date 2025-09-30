@@ -1,3 +1,50 @@
+/* MODO OSCURO: Mejor contraste para login/register */
+[data-bs-theme="dark"] .login-bg {
+  background-color: #181c1b !important;
+}
+
+[data-bs-theme="dark"] .login-form {
+  background: rgba(30, 34, 33, 0.98) !important;
+  color: #e8eaea;
+}
+
+[data-bs-theme="dark"] .login-form h2 {
+  color: #e8eaea;
+}
+
+[data-bs-theme="dark"] .login-form input {
+  background: #232826;
+  color: #e8eaea;
+  border: 1px solid #444;
+}
+
+[data-bs-theme="dark"] .login-form input::placeholder {
+  color: #bfc9d1;
+  opacity: 0.85;
+}
+
+[data-bs-theme="dark"] .login-form label {
+  color: #e8eaea;
+}
+
+[data-bs-theme="dark"] .login-form button {
+  background: #2d3a4b;
+  color: #fff;
+}
+
+[data-bs-theme="dark"] .login-form button:hover {
+  background: #1a2230;
+}
+
+[data-bs-theme="dark"] .error-message {
+  color: #ffb3b3;
+  background: #3a2323;
+}
+
+[data-bs-theme="dark"] .success-message {
+  color: #b6ffb3;
+  background: #233a23;
+}
 .login-bg {
   min-height: 100vh;
   width: 100vw;

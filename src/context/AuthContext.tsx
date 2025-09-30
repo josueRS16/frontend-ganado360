@@ -2,9 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { Usuario } from '../types/api';
 
+type UsuarioSesion = Partial<Pick<Usuario, 'Nombre' | 'Correo' | 'RolID'>> & { [key: string]: any };
 interface AuthContextType {
-  user: Usuario | null;
-  login: (user: Usuario) => void;
+  user: UsuarioSesion | null;
+  login: (user: UsuarioSesion) => void;
   logout: () => void;
 }
 
@@ -20,7 +21,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
     return () => { delete window.logoutApp; };
   }, []);
-  const [user, setUser] = useState<Usuario | null>(() => {
+  const [user, setUser] = useState<UsuarioSesion | null>(() => {
     const stored = localStorage.getItem('user');
     return stored ? JSON.parse(stored) : null;
   });
@@ -33,7 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user]);
 
-  const login = (user: Usuario) => setUser(user);
+  const login = (user: UsuarioSesion) => setUser(user);
   const logout = () => setUser(null);
 
   return (

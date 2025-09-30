@@ -29,7 +29,16 @@ const Register: React.FC = () => {
       setSuccess('¡Registro exitoso! Ahora puedes iniciar sesión.');
       setTimeout(() => navigate('/login'), 1500);
     } catch (err: any) {
-      setError(err?.response?.data?.error || 'Error al registrar');
+      const msg = err?.response?.data?.message || err?.response?.data?.error || 'Error al registrar';
+      if (msg.includes('ya está registrado')) {
+        setError('El correo ya está registrado. Intenta con otro.');
+      } else if (msg.includes('campos son obligatorios')) {
+        setError('Por favor, complete todos los campos.');
+      } else if (msg.includes('contraseña debe tener al menos')) {
+        setError('La contraseña debe tener al menos 6 caracteres.');
+      } else {
+        setError(msg);
+      }
     }
   };
 

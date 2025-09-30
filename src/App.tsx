@@ -14,6 +14,7 @@ import { Historial } from './pages/Historial';
 import { Ventas } from './pages/Ventas';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import PrivateRoute from './components/PrivateRoute';
 
 // Crear QueryClient con configuración optimizada
 const queryClient = new QueryClient({
@@ -37,16 +38,18 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="animales" element={<Animales />} />
-            <Route path="animales-detalle" element={<AnimalesDetalle />} />
-            <Route path="categorias" element={<Categorias />} />
-            <Route path="roles" element={<Roles />} />
-            <Route path="usuarios" element={<Usuarios />} />
-            <Route path="estados" element={<Estados />} />
-            <Route path="recordatorios" element={<Recordatorios />} />
-            <Route path="historial" element={<Historial />} />
-            <Route path="ventas" element={<Ventas />} />
+            <Route element={<PrivateRoute />}>
+              <Route index element={<Dashboard />} />
+              <Route path="animales" element={<Animales />} />
+              <Route path="animales-detalle" element={<AnimalesDetalle />} />
+              <Route path="categorias" element={<Categorias />} />
+              <Route path="roles" element={<Roles />} />
+              <Route path="usuarios" element={<Usuarios />} />
+              <Route path="estados" element={<Estados />} />
+              <Route path="recordatorios" element={<Recordatorios />} />
+              <Route path="historial" element={<Historial />} />
+              <Route path="ventas" element={<Ventas />} />
+            </Route>
             <Route path="*" element={
               <div className="text-center py-5">
                 <h1 className="display-1">404</h1>

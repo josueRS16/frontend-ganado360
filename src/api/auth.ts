@@ -7,8 +7,8 @@ export interface LoginRequest {
 }
 
 export const authApi = {
-  login: async (data: LoginRequest): Promise<ApiResponse<Usuario>> => {
-    const response = await http.post('/usuarios/login', data);
+  login: async (data: { correo: string; password: string }) => {
+    const response = await http.post('/auth/login', data);
     return response.data;
   },
 };
