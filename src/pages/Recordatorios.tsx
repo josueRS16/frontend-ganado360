@@ -155,7 +155,15 @@ export function Recordatorios() {
       await http.patch(`/recordatorios/${recordatorio.ID_Recordatorio}/estado`, { estado: nuevoEstado });
       showToast(`Recordatorio marcado como ${nuevoEstado === 'hecho' ? 'realizado' : 'pendiente'}`, 'success');
       refetch();
-      if (window.updateNotificationCount) window.updateNotificationCount();
+      // Refrescar contador de notificaciones, reintentando si la función aún no está lista
+      const tryUpdateNotificationCount = (retries = 5) => {
+        if (window.updateNotificationCount) {
+          window.updateNotificationCount();
+        } else if (retries > 0) {
+          setTimeout(() => tryUpdateNotificationCount(retries - 1), 200);
+        }
+      };
+      tryUpdateNotificationCount();
     } catch (error: any) {
       showToast('Error al cambiar el estado', 'error');
     }
@@ -217,9 +225,15 @@ export function Recordatorios() {
       closeModal();
       // Refrescar tabla y contador de notificaciones inmediatamente
       refetch();
-      if (window.updateNotificationCount) {
-        window.updateNotificationCount();
-      }
+      // Refrescar contador de notificaciones, reintentando si la función aún no está lista
+      const tryUpdateNotificationCount2 = (retries = 5) => {
+        if (window.updateNotificationCount) {
+          window.updateNotificationCount();
+        } else if (retries > 0) {
+          setTimeout(() => tryUpdateNotificationCount2(retries - 1), 200);
+        }
+      };
+      tryUpdateNotificationCount2();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Error al guardar el recordatorio';
       showToast(errorMessage, 'error');
@@ -233,9 +247,15 @@ export function Recordatorios() {
         showToast('Recordatorio eliminado exitosamente', 'success');
         // Refrescar tabla y contador de notificaciones inmediatamente
         refetch();
-        if (window.updateNotificationCount) {
-          window.updateNotificationCount();
-        }
+        // Refrescar contador de notificaciones, reintentando si la función aún no está lista
+        const tryUpdateNotificationCount3 = (retries = 5) => {
+          if (window.updateNotificationCount) {
+            window.updateNotificationCount();
+          } else if (retries > 0) {
+            setTimeout(() => tryUpdateNotificationCount3(retries - 1), 200);
+          }
+        };
+        tryUpdateNotificationCount3();
       } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : 'Error al eliminar el recordatorio';
         showToast(errorMessage, 'error');

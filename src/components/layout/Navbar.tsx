@@ -26,8 +26,9 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
   useEffect(() => {
     const fetchCount = async () => {
       try {
-        const res = await recordatoriosApi.getAll({ Estado: 'pendiente' });
-        setNotiCount(res.data.length);
+  const res = await recordatoriosApi.getAll({ Estado: 'pendiente' });
+  // res: PaginatedResponse<Recordatorio[]>
+  setNotiCount(Array.isArray(res.data) ? res.data.length : 0);
       } catch {
         setNotiCount(0);
       }

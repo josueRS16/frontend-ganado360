@@ -184,6 +184,15 @@ export function Historial() {
       try {
         await deleteMutation.mutateAsync(item.ID_Evento);
         showToast('Historial eliminado exitosamente', 'success');
+        // Actualizar contador de notificaciones
+        const tryUpdateNotificationCount = (retries = 5) => {
+          if (window.updateNotificationCount) {
+            window.updateNotificationCount();
+          } else if (retries > 0) {
+            setTimeout(() => tryUpdateNotificationCount(retries - 1), 200);
+          }
+        };
+        tryUpdateNotificationCount();
       } catch {
         showToast('Error al eliminar el historial', 'error');
       }
@@ -200,6 +209,15 @@ export function Historial() {
         showToast('Historial creado exitosamente', 'success');
       }
       closeModal();
+      // Actualizar contador de notificaciones
+      const tryUpdateNotificationCount = (retries = 5) => {
+        if (window.updateNotificationCount) {
+          window.updateNotificationCount();
+        } else if (retries > 0) {
+          setTimeout(() => tryUpdateNotificationCount(retries - 1), 200);
+        }
+      };
+      tryUpdateNotificationCount();
     } catch {
       showToast('Error al guardar el historial', 'error');
     }
