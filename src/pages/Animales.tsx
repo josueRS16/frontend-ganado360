@@ -415,7 +415,7 @@ export function Animales() {
                     {animales.map((animal) => (
                       <tr key={animal.ID_Animal} className="align-middle">
                         <td className="cell-tight text-center">
-                          <div className="fw-semibold">{animal.Nombre}</div>
+                          <div className="text-body">{animal.Nombre}</div>
                           {/* Información adicional para móviles */}
                           <div className="d-md-none small text-muted mt-1">
                             <div className='text-body'>{animal.CategoriaTipo}</div>

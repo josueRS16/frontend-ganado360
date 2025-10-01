@@ -52,3 +52,11 @@ export function useDeleteVenta() {
     },
   });
 }
+
+export function useTiposVenta() {
+  return useQuery({
+    queryKey: ['tipos-venta'],
+    queryFn: () => ventasApi.getTiposVenta(),
+    staleTime: 10 * 60 * 1000, // 10 minutos
+  });
+}

@@ -82,6 +82,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   };
 
   const handleLinkClick = () => {
+    // Hacer scroll hacia arriba
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     // Cerrar sidebar en móvil después de hacer clic
     if (window.innerWidth < 992) {
       onClose();

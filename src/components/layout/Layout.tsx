@@ -77,7 +77,7 @@ export function Layout() {
           onClose={closeSidebar}
         />
         
-        <main className="flex-grow-1 p-3 p-lg-4">
+        <main className="flex-grow-1 p-3 p-lg-4" style={{ backgroundColor: "var(--main-bg)" }}>
           <div className="container-fluid">
             <Outlet />
           </div>

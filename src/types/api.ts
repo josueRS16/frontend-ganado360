@@ -83,6 +83,36 @@ export interface Animal {
   Imagen_URL?: string | null;
 }
 
+export interface AnimalConDetalle {
+  ID_Animal: number;
+  Nombre: string;
+  Sexo: string;
+  Color: string;
+  Peso: number;
+  Fecha_Nacimiento: string;
+  Raza: string;
+  Esta_Preniada: boolean;
+  Fecha_Monta: string | null;
+  Fecha_Estimada_Parto: string | null;
+  Fecha_Ingreso: string;
+  ID_Categoria: number;
+  Imagen_URL: string | null;
+  ID_Estado_Animal: number;
+  ID_Estado: number;
+  Fecha_Fallecimiento: string | null;
+  AnimalNombre: string;
+  EstadoNombre: string;
+  CategoriaTipo: string;
+  ID_Venta: number | null;
+  Fecha_Venta: string | null;
+  Precio: number | null;
+  Comprador: string | null;
+  Tipo_Venta: string | null;
+  Registrado_Por: number;
+  Observaciones: string | null;
+  UsuarioNombre: string;
+}
+
 export interface CreateAnimalRequest {
   Nombre: string;
   Sexo: "M" | "F";
@@ -120,7 +150,11 @@ export interface AnimalesFilters {
   fechaIngresoDesde?: string;
   fechaIngresoHasta?: string;
   EstadoNombre?: string;
+  Esta_Preniada?: boolean;
   ID_Estado?: number;
+  fechaVentaDesde?: string;
+  fechaVentaHasta?: string;
+  Tipo_Venta?: string;
   page?: number;
   limit?: number;
 }
