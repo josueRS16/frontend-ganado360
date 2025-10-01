@@ -6,9 +6,9 @@ import type {
 } from '../types/api';
 
 export const historialApi = {
-  // GET /historial
-  getAll: async (): Promise<ApiResponse<HistorialVeterinario[]>> => {
-    const response = await http.get('/historial');
+  // GET /historial con paginación
+  getAll: async (filters: { page?: number; limit?: number } = {}): Promise<any> => {
+    const response = await http.get('/historial', { params: filters });
     return response.data;
   },
 

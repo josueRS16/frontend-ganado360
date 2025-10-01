@@ -1,3 +1,9 @@
+// Extender window para logoutApp
+declare global {
+  interface Window {
+    logoutApp?: () => void;
+  }
+}
 import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navbar } from './Navbar';
@@ -5,6 +11,28 @@ import { Sidebar } from './Sidebar';
 import { ToastContainer } from '../ui/ToastContainer';
 
 export function Layout() {
+  // Cierre de sesión automático tras 1 minuto de inactividad
+  useEffect(() => {
+  let timeoutId: number;
+    const resetTimer = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        // Cerrar sesión si existe función global
+        if (window.logoutApp) window.logoutApp();
+      }, 600000); // 10 minutos
+    };
+    // Eventos de actividad
+    ['mousemove', 'keydown', 'mousedown', 'touchstart'].forEach(event => {
+      window.addEventListener(event, resetTimer);
+    });
+    resetTimer();
+    return () => {
+      clearTimeout(timeoutId);
+      ['mousemove', 'keydown', 'mousedown', 'touchstart'].forEach(event => {
+        window.removeEventListener(event, resetTimer);
+      });
+    };
+  }, []);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
 

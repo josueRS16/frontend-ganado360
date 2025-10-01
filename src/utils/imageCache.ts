@@ -9,7 +9,6 @@ export const cacheAnimalImage = async (animalId: number, imageUrl: string) => {
     // For external URLs, we can't cache them due to CORS restrictions
     // We'll just validate that the URL exists but won't cache the content
     if (isExternalUrl(imageUrl)) {
-      console.log(`[ImageCache] Skipping cache for external URL: ${imageUrl}`);
       
       // Try to validate the external URL exists (using no-cors mode)
       try {
@@ -17,7 +16,6 @@ export const cacheAnimalImage = async (animalId: number, imageUrl: string) => {
           mode: 'no-cors',
           cache: 'no-store'
         });
-        console.log(`[ImageCache] External URL validated: ${imageUrl}`);
       } catch (error) {
         console.warn(`[ImageCache] External URL validation failed: ${imageUrl}`, error);
       }
@@ -36,7 +34,6 @@ export const cacheAnimalImage = async (animalId: number, imageUrl: string) => {
     reader.onloadend = () => {
       try {
         localStorage.setItem(buildKey(animalId), reader.result as string);
-        console.log(`[ImageCache] Successfully cached image for animal ${animalId}`);
       } catch (error) {
         console.warn(`[ImageCache] Failed to store in localStorage:`, error);
       }

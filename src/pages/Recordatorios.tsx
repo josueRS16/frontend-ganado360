@@ -1,5 +1,19 @@
+// Extender el tipo Window para refetchRecordatorios
+declare global {
+  interface Window {
+    refetchRecordatorios?: () => void;
+  }
+}
+// Extender el tipo Window para fetchAutoRecordatorios
+declare global {
+  interface Window {
+    fetchAutoRecordatorios?: () => void;
+  }
+}
+
 import { useState, useEffect, useMemo } from 'react';
 import { useRecordatorios, useCreateRecordatorio, useUpdateRecordatorio, useDeleteRecordatorio } from '../hooks/useRecordatorios';
+import http from '../api/http';
 import { useAnimales } from '../hooks/useAnimales';
 import { useQueryParams } from '../hooks/useQueryParams';
 import { useToast } from '../context/ToastContext';
@@ -14,8 +28,10 @@ interface RecordatorioModalProps {
 }
 
 function RecordatorioModal({ recordatorio, isOpen, onClose, onSave }: RecordatorioModalProps) {
-  const { data: animalesData } = useAnimales();
-  const animales = useMemo(() => animalesData?.data || [], [animalesData?.data]);
+  // Mostrar todos los animales sin filtro
+  const { data: animalesData } = useAnimales({});
+  // Solo mostrar animales en estado 'viva'
+  const animales = useMemo(() => (animalesData?.data || []).filter(a => a.EstadoNombre?.toLowerCase() === 'viva'), [animalesData?.data]);
 
   const [formData, setFormData] = useState<RecordatorioRequest>({
     ID_Animal: recordatorio?.ID_Animal || 0,
@@ -125,8 +141,47 @@ function RecordatorioModal({ recordatorio, isOpen, onClose, onSave }: Recordator
 }
 
 export function Recordatorios() {
+  // Filtro de estado: '' (todos), 'pendiente', 'hecho'
+  const [estadoFiltro, setEstadoFiltro] = useState<'' | 'pendiente' | 'hecho'>('');
+  const [page, setPage] = useState<number>(() => Number(localStorage.getItem('recordatoriosPage')) || 1);
+  const [limit, setLimit] = useState<number>(() => Number(localStorage.getItem('recordatoriosLimit')) || 10);
   const { params } = useQueryParams<RecordatoriosFilters>();
-  const { data, isLoading, error } = useRecordatorios(params);
+  const { data, isLoading, error, refetch } = useRecordatorios({ ...params, Estado: estadoFiltro || undefined, page, limit });
+  // El resultado de useRecordatorios es PaginatedResponse<Recordatorio>
+  const recordatorios: Recordatorio[] = Array.isArray(data?.data) ? data?.data : [];
+  const pagination = data?.pagination;
+  // Acción para cambiar estado
+  const handleChangeEstado = async (recordatorio: Recordatorio, nuevoEstado: 'pendiente' | 'hecho') => {
+    try {
+      await http.patch(`/recordatorios/${recordatorio.ID_Recordatorio}/estado`, { estado: nuevoEstado });
+      showToast(`Recordatorio marcado como ${nuevoEstado === 'hecho' ? 'realizado' : 'pendiente'}`, 'success');
+      refetch();
+      // Refrescar contador de notificaciones, reintentando si la función aún no está lista
+      const tryUpdateNotificationCount = (retries = 5) => {
+        if (window.updateNotificationCount) {
+          window.updateNotificationCount();
+        } else if (retries > 0) {
+          setTimeout(() => tryUpdateNotificationCount(retries - 1), 200);
+        }
+      };
+      tryUpdateNotificationCount();
+    } catch (error: any) {
+      showToast('Error al cambiar el estado', 'error');
+    }
+  };
+  // Exponer función global para forzar refetch de la tabla desde otros módulos
+  useEffect(() => {
+    window.refetchRecordatorios = refetch;
+    return () => {
+      delete window.refetchRecordatorios;
+    };
+  }, [refetch]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [refetch]);
   const createMutation = useCreateRecordatorio();
   const updateMutation = useUpdateRecordatorio();
   const deleteMutation = useDeleteRecordatorio();
@@ -137,9 +192,16 @@ export function Recordatorios() {
     recordatorio?: Recordatorio;
   }>({ isOpen: false });
 
-  const [showFilters, setShowFilters] = useState(false);
 
-  const recordatorios = data?.data || [];
+  // ...ya definido arriba
+  // Guardar selección de página y límite
+  useEffect(() => {
+    localStorage.setItem('recordatoriosPage', String(page));
+  }, [page]);
+  useEffect(() => {
+    localStorage.setItem('recordatoriosLimit', String(limit));
+    setPage(1); // Volver a la primera página al cambiar el límite
+  }, [limit]);
 
   const openModal = (recordatorio?: Recordatorio) => {
     setModalState({ isOpen: true, recordatorio });
@@ -162,6 +224,17 @@ export function Recordatorios() {
         showToast('Recordatorio creado exitosamente', 'success');
       }
       closeModal();
+      // Refrescar tabla y contador de notificaciones inmediatamente
+      refetch();
+      // Refrescar contador de notificaciones, reintentando si la función aún no está lista
+      const tryUpdateNotificationCount2 = (retries = 5) => {
+        if (window.updateNotificationCount) {
+          window.updateNotificationCount();
+        } else if (retries > 0) {
+          setTimeout(() => tryUpdateNotificationCount2(retries - 1), 200);
+        }
+      };
+      tryUpdateNotificationCount2();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Error al guardar el recordatorio';
       showToast(errorMessage, 'error');
@@ -173,6 +246,17 @@ export function Recordatorios() {
       try {
         await deleteMutation.mutateAsync(recordatorio.ID_Recordatorio);
         showToast('Recordatorio eliminado exitosamente', 'success');
+        // Refrescar tabla y contador de notificaciones inmediatamente
+        refetch();
+        // Refrescar contador de notificaciones, reintentando si la función aún no está lista
+        const tryUpdateNotificationCount3 = (retries = 5) => {
+          if (window.updateNotificationCount) {
+            window.updateNotificationCount();
+          } else if (retries > 0) {
+            setTimeout(() => tryUpdateNotificationCount3(retries - 1), 200);
+          }
+        };
+        tryUpdateNotificationCount3();
       } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : 'Error al eliminar el recordatorio';
         showToast(errorMessage, 'error');
@@ -180,7 +264,6 @@ export function Recordatorios() {
     }
   };
 
-  const hasActiveFilters = Object.keys(params).length > 0;
 
   if (error) {
     return (
@@ -211,26 +294,30 @@ export function Recordatorios() {
           </p>
         </div>
         <div className="d-flex gap-2">
-          <button
-            className="btn btn-outline-secondary"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            Filtros {hasActiveFilters && <span className="badge bg-primary ms-1">{Object.keys(params).length}</span>}
-          </button>
+          {/* Botón de filtros eliminado por solicitud */}
           <button className="btn btn-primary" onClick={() => openModal()}>
             Nuevo Recordatorio
           </button>
         </div>
       </div>
 
-      {/* Content */}
+      {/* Filtro de estado */}
+      <div className="mb-3">
+        <div className="btn-group" role="group" aria-label="Filtro estado">
+          <button className={`btn btn-sm ${estadoFiltro === '' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setEstadoFiltro('')}>Todos</button>
+          <button className={`btn btn-sm ${estadoFiltro === 'pendiente' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setEstadoFiltro('pendiente')}>Pendientes</button>
+          <button className={`btn btn-sm ${estadoFiltro === 'hecho' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setEstadoFiltro('hecho')}>Realizados</button>
+        </div>
+      </div>
+
+
       {isLoading ? (
         <div className="d-flex justify-content-center py-5">
           <div className="spinner-border text-primary" role="status">
             <span className="visually-hidden">Cargando recordatorios...</span>
           </div>
         </div>
-      ) : recordatorios.length === 0 ? (
+  ) : recordatorios.length === 0 ? (
         <div className="card">
           <div className="card-body text-center py-5">
             <h5 className="text-muted">No hay recordatorios registrados</h5>
@@ -250,24 +337,39 @@ export function Recordatorios() {
                   <th>Animal</th>
                   <th>Descripción</th>
                   <th>Fecha</th>
+                  <th>Estado</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                {recordatorios.map((recordatorio) => (
+                {recordatorios.map((recordatorio: Recordatorio) => (
                   <tr key={recordatorio.ID_Recordatorio}>
                     <td className="fw-semibold">{recordatorio.Titulo}</td>
                     <td>{recordatorio.AnimalNombre}</td>
                     <td>{recordatorio.Descripcion}</td>
                     <td>{new Date(recordatorio.Fecha_Recordatorio).toLocaleDateString()}</td>
                     <td>
+                      <span className={`badge ${recordatorio.Estado === 'hecho' ? 'bg-success' : 'bg-warning text-dark'}`}>
+                        {recordatorio.Estado === 'hecho' ? 'Realizado' : 'Pendiente'}
+                      </span>
+                    </td>
+                    <td>
                       <div className="btn-group" role="group">
-                        <button
-                          className="btn btn-sm btn-outline-primary"
-                          onClick={() => openModal(recordatorio)}
-                        >
-                          Editar
-                        </button>
+                        {recordatorio.Estado === 'pendiente' ? (
+                          <button
+                            className="btn btn-sm btn-outline-success"
+                            onClick={() => handleChangeEstado(recordatorio, 'hecho')}
+                          >
+                            Realizado
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn-sm btn-outline-warning"
+                            onClick={() => handleChangeEstado(recordatorio, 'pendiente')}
+                          >
+                            Pendiente
+                          </button>
+                        )}
                         <button
                           className="btn btn-sm btn-outline-danger"
                           onClick={() => handleDelete(recordatorio)}
@@ -282,8 +384,48 @@ export function Recordatorios() {
               </tbody>
             </table>
           </div>
+
         </div>
       )}
+
+      {/* Paginación y cantidad por página abajo de la tabla */}
+      <div className="d-flex justify-content-between align-items-center mt-3 mb-2">
+        <div>
+          <label className="me-2">Ver:</label>
+          <select
+            className="form-select d-inline-block w-auto"
+            value={limit}
+            onChange={e => setLimit(Number(e.target.value))}
+            style={{ minWidth: 70 }}
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+          </select>
+          <span className="ms-2">por página</span>
+        </div>
+        {pagination && (
+          <nav>
+            <ul className="pagination pagination-sm mb-0">
+              <li className={`page-item${!pagination.hasPrevPage ? ' disabled' : ''}`}>
+                <button className="page-link" onClick={() => setPage(1)} disabled={!pagination.hasPrevPage}>&laquo;</button>
+              </li>
+              <li className={`page-item${!pagination.hasPrevPage ? ' disabled' : ''}`}>
+                <button className="page-link" onClick={() => setPage(page - 1)} disabled={!pagination.hasPrevPage}>&lsaquo;</button>
+              </li>
+              <li className="page-item disabled">
+                <span className="page-link">Página {pagination.currentPage} de {pagination.totalPages}</span>
+              </li>
+              <li className={`page-item${!pagination.hasNextPage ? ' disabled' : ''}`}>
+                <button className="page-link" onClick={() => setPage(page + 1)} disabled={!pagination.hasNextPage}>&rsaquo;</button>
+              </li>
+              <li className={`page-item${!pagination.hasNextPage ? ' disabled' : ''}`}>
+                <button className="page-link" onClick={() => setPage(pagination.totalPages)} disabled={!pagination.hasNextPage}>&raquo;</button>
+              </li>
+            </ul>
+          </nav>
+        )}
+      </div>
 
       <RecordatorioModal
         recordatorio={modalState.recordatorio}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useVentas, useCreateVenta, useUpdateVenta, useDeleteVenta } from '../hooks/useVentas';
 import { useAnimales } from '../hooks/useAnimales';
 import { useUsuarios } from '../hooks/useUsuarios';
@@ -7,6 +7,7 @@ import { useToast } from '../context/ToastContext';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { VentasFilters, Venta, VentaRequest } from '../types/api';
 
+
 interface VentaModalProps {
   venta?: Venta;
   isOpen: boolean;
@@ -14,15 +15,19 @@ interface VentaModalProps {
   onSave: (data: VentaRequest) => void;
 }
 
+
 function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
+
   const { data: animalesData } = useAnimales();
   const { data: usuariosData } = useUsuarios();
-  const animales = useMemo(() => animalesData?.data || [], [animalesData?.data]);
+  // Solo mostrar animales en estado 'viva'
+  const animales = useMemo(() => (animalesData?.data || []).filter(a => a.EstadoNombre?.toLowerCase() === 'viva'), [animalesData?.data]);
   const usuarios = usuariosData?.data || [];
 
+  const today = new Date().toISOString().slice(0, 10);
   const [formData, setFormData] = useState<VentaRequest>({
     ID_Animal: venta?.ID_Animal || 0,
-    Fecha_Venta: venta?.Fecha_Venta || '',
+    Fecha_Venta: venta?.Fecha_Venta || today,
     Tipo_Venta: venta?.Tipo_Venta || '',
     Comprador: venta?.Comprador || '',
     Precio: venta?.Precio || 0,
@@ -116,7 +121,7 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
                 <div className="col-md-6">
                   <label htmlFor="precio" className="form-label">Precio</label>
                   <div className="input-group">
-                    <span className="input-group-text">$</span>
+                    <span className="input-group-text">₡</span>
                     <input
                       type="number"
                       className="form-control"
@@ -216,7 +221,32 @@ export function Ventas() {
       }
       closeModal();
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Error al guardar la venta';
+      let errorMessage = 'Error al guardar la venta';
+      // Si el error viene del backend y tiene un mensaje, úsalo
+      if (error && typeof error === 'object') {
+        // Axios custom error
+        if ('message' in error && typeof error.message === 'string' && error.message) {
+          errorMessage = error.message;
+        } else if (
+          'originalError' in error &&
+          error.originalError &&
+          typeof error.originalError === 'object' &&
+          'response' in error.originalError &&
+          error.originalError.response &&
+          typeof error.originalError.response === 'object' &&
+          'data' in error.originalError.response &&
+          error.originalError.response.data &&
+          typeof error.originalError.response.data === 'object' &&
+          'message' in error.originalError.response.data &&
+          typeof error.originalError.response.data.message === 'string'
+        ) {
+          errorMessage = error.originalError.response.data.message;
+        }
+      }
+      // Mensaje especial para estado "viva"
+      if (errorMessage.includes('Solo se pueden vender animales que estén en estado')) {
+        errorMessage = 'Solo puedes vender animales que estén en estado "viva". Por favor, selecciona un animal válido.';
+      }
       showToast(errorMessage, 'error');
     }
   };
@@ -233,17 +263,28 @@ export function Ventas() {
     }
   };
 
-  const totalIngresos = ventas.reduce((sum, venta) => sum + venta.Precio, 0);
+  const totalIngresos = ventas.reduce((sum, venta) => {
+    let precio = venta.Precio;
+    if (typeof precio === 'string') {
+      precio = parseFloat(precio);
+    }
+    return sum + (typeof precio === 'number' && !isNaN(precio) ? precio : 0);
+  }, 0);
+
+  // Formateador para moneda local con separadores
+  const formatMoney = (valor: number) => valor.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const hasActiveFilters = Object.keys(params).length > 0;
 
-  if (error) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        <h4 className="alert-heading">Error al cargar las ventas</h4>
-        <p>{error.message || 'Ocurrió un error inesperado'}</p>
-      </div>
-    );
+  // Solo mostrar el toast de error global una vez
+  const errorShownRef = useRef(false);
+  if (error && !errorShownRef.current) {
+    showToast(error.message || 'Ocurrió un error inesperado', 'error');
+    errorShownRef.current = true;
+    return null;
+  }
+  if (!error && errorShownRef.current) {
+    errorShownRef.current = false;
   }
 
   return (
@@ -285,7 +326,7 @@ export function Ventas() {
             <div className="card bg-success text-white">
               <div className="card-body text-center">
                 <h5 className="card-title">Total Ingresos</h5>
-                <h3 className="card-text">${totalIngresos.toLocaleString()}</h3>
+                <h3 className="card-text">₡{formatMoney(totalIngresos)}</h3>
               </div>
             </div>
           </div>
@@ -293,7 +334,7 @@ export function Ventas() {
             <div className="card bg-info text-white">
               <div className="card-body text-center">
                 <h5 className="card-title">Promedio por Venta</h5>
-                <h3 className="card-text">${(totalIngresos / ventas.length).toLocaleString()}</h3>
+                <h3 className="card-text">₡{formatMoney(totalIngresos / ventas.length)}</h3>
               </div>
             </div>
           </div>
@@ -349,7 +390,7 @@ export function Ventas() {
                       <span className="badge bg-secondary">{venta.Tipo_Venta}</span>
                     </td>
                     <td>{venta.Comprador}</td>
-                    <td className="fw-bold text-success">${venta.Precio.toLocaleString()}</td>
+                    <td className="fw-bold text-success">₡{formatMoney(venta.Precio)}</td>
                     <td>{venta.UsuarioNombre}</td>
                     <td>
                       <div className="btn-group" role="group">

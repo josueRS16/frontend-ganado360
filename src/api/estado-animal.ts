@@ -41,6 +41,7 @@ export const estadoAnimalApi = {
   // PUT /estado-animal/:id (cambiar estado a "Baja" con fecha de fallecimiento)
   darDeBaja: async (params: { idEstadoAnimal: number; fechaFallecimiento: string }): Promise<void> => {
     await http.put(`/estado-animal/${params.idEstadoAnimal}`, {
+      ID_Estado: 10, // Estado "baja"
       Fecha_Fallecimiento: params.fechaFallecimiento
     });
   },

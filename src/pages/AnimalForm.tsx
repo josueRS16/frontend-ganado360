@@ -76,6 +76,10 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
       cacheAnimalImage(createdId, payload.Imagen_URL);
     }
     setFormData(createInitialFormData());
+    // Refrescar contador/tabla de notificaciones si existe función global
+    if (window.updateNotificationCount) {
+      window.updateNotificationCount();
+    }
   };
 
   const handleUpdateAnimal = async () => {
@@ -85,7 +89,6 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
 
     // NOTA: La eliminación de archivos se maneja desde el botón "eliminar imagen" 
     // que envía DELETE request al backend. Aquí solo actualizamos la información.
-    console.log(`[AnimalForm] Updating animal with image URL: ${newImageUrl}`);
 
     const payload: CreateAnimalRequest = {
       ...formData,
@@ -96,12 +99,14 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
       id: animal.ID_Animal,
       data: payload
     });
-    
     showToast('Animal actualizado exitosamente', 'success');
-
     // Cachear nueva imagen si es externa
     if (payload.Imagen_URL && !uploadApi.isLocalUploadedImage(payload.Imagen_URL)) {
       cacheAnimalImage(animal.ID_Animal, payload.Imagen_URL);
+    }
+    // Refrescar contador/tabla de notificaciones si existe función global
+    if (window.updateNotificationCount) {
+      window.updateNotificationCount();
     }
   };
 
