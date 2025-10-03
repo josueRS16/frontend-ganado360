@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useEstados, useCreateEstado, useUpdateEstado, useDeleteEstado } from '../hooks/useEstados';
-import { useToast } from '../context/ToastContext';
+import { useToast } from '../hooks/useToast';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { Estado, EstadoRequest } from '../types/api';
 

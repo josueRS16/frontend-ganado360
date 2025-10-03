@@ -2,6 +2,7 @@ import http from './http';
 import { buildParams } from '../utils/params';
 import type { 
   Animal, 
+  AnimalConDetalle,
   CreateAnimalRequest,
   UpdateAnimalRequest,
   AnimalesFilters, 
@@ -44,8 +45,9 @@ export const animalesApi = {
   },
 
   // GET /animales-con-detalle
-  getAllWithDetail: async (): Promise<ApiResponse<Animal[]>> => {
-    const response = await http.get('/animales/con-detalle');
+  getAllWithDetail: async (filters: AnimalesFilters = {}): Promise<PaginatedResponse<AnimalConDetalle[]>> => {
+    const params = buildParams(filters);
+    const response = await http.get('/animales/con-detalle', { params });
     return response.data;
   },
 

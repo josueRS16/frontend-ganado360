@@ -56,11 +56,14 @@ export function useDeleteAnimal() {
   });
 }
 
-export function useAnimalesConDetalle() {
+export function useAnimalesConDetalle(filters: AnimalesFilters = {}) {
   return useQuery({
-    queryKey: ['animales-con-detalle'],
-    queryFn: () => animalesApi.getAllWithDetail(),
-    staleTime: 5 * 60 * 1000,
+    queryKey: ['animales-con-detalle', filters],
+    queryFn: () => animalesApi.getAllWithDetail(filters),
+    staleTime: 0,
+    refetchInterval: 1000,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   });
 }
 

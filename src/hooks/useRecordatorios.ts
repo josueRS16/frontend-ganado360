@@ -3,7 +3,7 @@ import { recordatoriosApi } from '../api/recordatorios';
 import type { RecordatoriosFilters, RecordatorioRequest, PaginatedResponse, Recordatorio } from '../types/api';
 
 export function useRecordatorios(filters: RecordatoriosFilters = {}) {
-  return useQuery<PaginatedResponse<Recordatorio>>({
+  return useQuery<PaginatedResponse<Recordatorio[]>>({
     queryKey: ['recordatorios', filters],
     queryFn: () => recordatoriosApi.getAll(filters),
     staleTime: 0, // Siempre obtener datos frescos en refetch

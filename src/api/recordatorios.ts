@@ -9,7 +9,7 @@ import type {
 } from '../types/api';
 
 export const recordatoriosApi = {
-  getAll: (filters: RecordatoriosFilters = {}): Promise<PaginatedResponse<Recordatorio>> => {
+  getAll: (filters: RecordatoriosFilters = {}): Promise<PaginatedResponse<Recordatorio[]>> => {
     const params = buildParams(filters);
     return http.get('/recordatorios', { params }).then(res => res.data);
   },

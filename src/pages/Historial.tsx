@@ -7,7 +7,7 @@ import {
 } from '../hooks/useHistorial';
 import { useAnimales } from '../hooks/useAnimales';
 import { useUsuarios } from '../hooks/useUsuarios';
-import { useToast } from '../context/ToastContext';
+import { useToast } from '../hooks/useToast';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { HistorialVeterinario, HistorialVeterinarioRequest } from '../types/api';
 

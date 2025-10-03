@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useUsuarios, useCreateUsuario, useUpdateUsuario, useDeleteUsuario } from '../hooks/useUsuarios';
 import { useRoles } from '../hooks/useRoles';
-import { useToast } from '../context/ToastContext';
+import { useToast } from '../hooks/useToast';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { Usuario, UsuarioRequest } from '../types/api';
 

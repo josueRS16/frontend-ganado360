@@ -3,7 +3,7 @@ import { useVentas, useCreateVenta, useUpdateVenta, useDeleteVenta } from '../ho
 import { useAnimales } from '../hooks/useAnimales';
 import { useUsuarios } from '../hooks/useUsuarios';
 import { useQueryParams } from '../hooks/useQueryParams';
-import { useToast } from '../context/ToastContext';
+import { useToast } from '../hooks/useToast';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { VentasFilters, Venta, VentaRequest } from '../types/api';
 
