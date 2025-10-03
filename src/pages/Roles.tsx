@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRoles, useCreateRol, useUpdateRol, useDeleteRol } from '../hooks/useRoles';
-import { useToast } from '../context/ToastContext';
+import { useToast } from '../hooks/useToast';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { Rol, RolRequest } from '../types/api';
 

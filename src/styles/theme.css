@@ -28,6 +28,8 @@
   --sidebar-active-bg: var(--color-tint1);
   --sidebar-active-border: var(--color-base-green);
   
+  --main-bg: #FCFCFA;
+  
   --table-head-bg: var(--color-charcoal);
   --table-head-color: #FFFFFF;
   --table-hover-bg: rgba(18, 107, 50, 0.06);
@@ -64,6 +66,9 @@
   --sidebar-bg: #232826;
   --sidebar-text: #d1d5d3;
   --sidebar-hover: rgba(18, 107, 50, 0.2);
+  
+  /* Main background para dark */
+  --main-bg: #0e1211;
   
   /* Tables en dark */
   --table-head-bg: #161a19;

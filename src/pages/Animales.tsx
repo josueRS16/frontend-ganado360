@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAnimales } from '../hooks/useAnimales';
 import { useCategorias } from '../hooks/useCategorias';
 import { useQueryParams } from '../hooks/useQueryParams';
-import { useToast } from '../context/ToastContext';
+import { useToast } from '../hooks/useToast';
 import { useDarDeBajaAnimal } from '../hooks/useEstadoAnimal';
 import { AnimalForm } from './AnimalForm';
 import { Pagination } from '../components/ui/Pagination';
@@ -415,7 +415,7 @@ export function Animales() {
                     {animales.map((animal) => (
                       <tr key={animal.ID_Animal} className="align-middle">
                         <td className="cell-tight text-center">
-                          <div className="fw-semibold">{animal.Nombre}</div>
+                          <div className="text-body">{animal.Nombre}</div>
                           {/* Información adicional para móviles */}
                           <div className="d-md-none small text-muted mt-1">
                             <div className='text-body'>{animal.CategoriaTipo}</div>
@@ -480,7 +480,6 @@ export function Animales() {
                               aria-label="Ver detalles del animal"
                             >
                               <i className="bi bi-eye"></i>
-                              <span className="d-none d-lg-inline ms-1">Ver</span>
                             </button>
                             <button
                               className="btn btn-sm btn-outline-warning"
@@ -489,7 +488,6 @@ export function Animales() {
                               aria-label="Editar animal"
                             >
                               <i className="bi bi-pencil"></i>
-                              <span className="d-none d-lg-inline ms-1">Editar</span>
                             </button>
                              <button
                                className="btn btn-sm btn-outline-danger"
@@ -505,7 +503,6 @@ export function Animales() {
                                aria-label="Dar de baja animal"
                              > 
                                <i className="bi bi-arrow-down-circle"></i>
-                               <span className="d-none d-lg-inline ms-1">Baja</span>
                              </button>
                           </div>
                         </td>

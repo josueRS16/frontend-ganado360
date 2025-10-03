@@ -100,11 +100,11 @@ export function Dashboard() {
         <div className="col-12">
           <div className="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-3">
             <div>
-              <h1 className="h2 mb-2 d-flex align-items-center" style={{ color: 'var(--color-base-green)' }}>
+              <h1 className="h2 mb-2 d-flex align-items-center page-title-dark" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-speedometer2 me-3"></i>
                 Dashboard Ejecutivo
               </h1>
-              <p className="text-muted mb-0 fs-6">
+              <p className="mb-0 fs-6">
                 Resumen integral del sistema de gestión ganadera • Tiempo real
               </p>
             </div>
@@ -113,7 +113,7 @@ export function Dashboard() {
                 <i className="bi bi-diagram-3-fill me-2"></i>
                 Gestionar Animales
               </Link>
-              <Link to="/recordatorios" className="btn btn-outline-secondary">
+              <Link to="/recordatorios" className="btn btn-secondary">
                 <i className="bi bi-calendar-check me-2"></i>
                 Ver Recordatorios
               </Link>

@@ -37,4 +37,12 @@ export const ventasApi = {
   delete: async (id: number): Promise<void> => {
     await http.delete(`/ventas/${id}`);
   },
+
+  // GET /ventas/tipos
+  getTiposVenta: async (): Promise<ApiResponse<string[]>> => {
+    // Implementación temporal - retorna tipos comunes de venta
+    return {
+      data: ['Venta directa', 'Subasta', 'Venta por peso', 'Venta por cabeza']
+    };
+  },
 };

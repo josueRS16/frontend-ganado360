@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useCreateAnimal, useUpdateAnimal } from '../hooks/useAnimales';
 import { useCategorias } from '../hooks/useCategorias';
-import { useToast } from '../context/ToastContext';
+import { useToast } from '../hooks/useToast';
 import type { Animal, CreateAnimalRequest } from '../types/api';
 import { cacheAnimalImage } from '../utils/imageCache';
 import { ImageSelector } from '../components/ui/ImageSelector';

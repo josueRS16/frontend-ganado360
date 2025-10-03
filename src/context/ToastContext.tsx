@@ -1,27 +1,6 @@
-import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
-
-export interface Toast {
-  key: string; // texto+tipo
-  message: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-  duration?: number;
-}
-
-interface ToastContextType {
-  toasts: Toast[];
-  showToast: (message: string, type: Toast['type'], duration?: number) => void;
-  hideToast: (id: string) => void;
-}
-
-const ToastContext = createContext<ToastContextType | null>(null);
-
-export function useToast() {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToast must be used within ToastProvider');
-  }
-  return context;
-}
+import React, { useState, useCallback, useRef } from 'react';
+import type { Toast } from '../types/toast';
+import { ToastContext } from './ToastContextInstance';
 
 interface ToastProviderProps {
   children: React.ReactNode;
@@ -34,6 +13,15 @@ export function ToastProvider({ children }: ToastProviderProps) {
   const timers = useRef<{ [key: string]: number }>( {} );
 
   const normalize = (str: string) => str.trim().replace(/\s+/g, ' ').toLowerCase();
+  
+  const hideToast = useCallback((key: string) => {
+    setToasts(prev => prev.filter(toast => toast.key !== key));
+    if (timers.current[key]) {
+      clearTimeout(timers.current[key]);
+      delete timers.current[key];
+    }
+  }, []);
+
   const showToast = useCallback((message: string, type: Toast['type'], duration = 5000) => {
     const key = `${type}::${normalize(message)}`;
     setToasts(prev => {
@@ -61,15 +49,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
       }
       return [...prev, { key, message, type, duration }];
     });
-  }, []);
-
-  const hideToast = useCallback((key: string) => {
-    setToasts(prev => prev.filter(toast => toast.key !== key));
-    if (timers.current[key]) {
-      clearTimeout(timers.current[key]);
-      delete timers.current[key];
-    }
-  }, []);
+  }, [hideToast]);
 
   return (
     <ToastContext.Provider value={{ toasts, showToast, hideToast }}>
@@ -91,7 +71,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
             style={{
               minWidth: 280,
               maxWidth: 400,
-              background: toast.type === 'error' ? '#f44336' : toast.type === 'success' ? '#4caf50' : toast.type === 'warning' ? '#ff9800' : '#2196f3',
+              background: toast.type === 'error' ? '#f44336' : toast.type === 'success' ? '#1F691B' : toast.type === 'warning' ? '#ff9800' : '#2196f3',
               color: '#fff',
               borderRadius: 8,
               boxShadow: '0 2px 8px rgba(0,0,0,0.15)',

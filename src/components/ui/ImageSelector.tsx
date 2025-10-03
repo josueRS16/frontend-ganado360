@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useToast } from '../../context/ToastContext';
+import { useToast } from '../../hooks/useToast';
 import { uploadApi } from '../../api/upload';
 import { removeCachedAnimalImage } from '../../utils/imageCache';
 
