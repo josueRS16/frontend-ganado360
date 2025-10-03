@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
-import { ToastContainer } from '../ui/ToastContainer';
 
 export function Layout() {
   // Cierre de sesión automático tras 1 minuto de inactividad
@@ -84,7 +83,6 @@ export function Layout() {
         </main>
       </div>
 
-      <ToastContainer />
 
       <footer className="footer-ganado mt-auto">
         <div className="container-fluid px-4 py-4">

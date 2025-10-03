@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCategorias, useCreateCategoria, useUpdateCategoria, useDeleteCategoria } from '../hooks/useCategorias';
-import { useToast } from '../context/ToastContext';
+import { useToast } from '../hooks/useToast';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { Categoria, CategoriaRequest, UpdateCategoriaRequest } from '../types/api';
 

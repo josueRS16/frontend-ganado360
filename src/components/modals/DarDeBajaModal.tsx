@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDarDeBajaAnimal } from '../../hooks/useEstadoAnimal';
-import { useToast } from '../../context/ToastContext';
+import { useToast } from '../../hooks/useToast';
 import type { Animal } from '../../types/api';
 
 interface DarDeBajaModalProps {

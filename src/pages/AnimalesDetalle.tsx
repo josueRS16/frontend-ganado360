@@ -664,7 +664,6 @@ export function AnimalesDetalle() {
                             </div>
                           )}
                           <h4 className="fw-bold text-body mb-2 text-decoration-underline">{detallesModalState.animal.Nombre}</h4>
-                          <p className="text-muted">ID: {detallesModalState.animal.ID_Animal}</p>
                         </div>
 
                         {/* Información Básica */}
@@ -833,6 +832,10 @@ export function AnimalesDetalle() {
                                       <div>{detallesModalState.animal.Comprador}</div>
                                     </div>
                                   )}
+                                    <div className="mt-2">
+                                      <div className="small text-muted">REGISTRADO POR</div>
+                                      <div className="fw-semibold text-body">Usuario: {detallesModalState.animal.UsuarioNombre}</div>
+                                    </div>
                                 </div>
                               </div>
                             </div>
@@ -840,8 +843,8 @@ export function AnimalesDetalle() {
                         )}
 
                         {/* Estadísticas Calculadas */}
-                        <div className="row g-3">
-                          <div className="col-4">
+                        <div className="row g-3 mb-4">
+                          <div className="col-6">
                             <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
                               <div className="text-muted small mb-1">EDAD</div>
                               <div className="fw-semibold text-body">
@@ -849,18 +852,12 @@ export function AnimalesDetalle() {
                               </div>
                             </div>
                           </div>
-                          <div className="col-4">
+                          <div className="col-6">
                             <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
                               <div className="text-muted small mb-1">DÍAS EN SISTEMA</div>
                               <div className="fw-semibold text-body">
                                 {Math.floor((new Date().getTime() - new Date(detallesModalState.animal.Fecha_Ingreso).getTime()) / (1000 * 60 * 60 * 24))}
                               </div>
-                            </div>
-                          </div>
-                          <div className="col-4">
-                            <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-1">REGISTRADO POR</div>
-                              <div className="fw-semibold text-body">Usuario: {detallesModalState.animal.UsuarioNombre}</div>
                             </div>
                           </div>
                         </div>
