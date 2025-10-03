@@ -68,7 +68,7 @@ const HistorialModal = ({ historial, isOpen, onClose, onSave }: HistorialModalPr
                   <select
                     className="form-select"
                     id="animal"
-                    value={formData.ID_Animal}
+                    value={formData.ID_Animal ?? ""}
                     onChange={e => setFormData({ ...formData, ID_Animal: Number(e.target.value) })}
                     required
                   >

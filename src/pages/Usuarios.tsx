@@ -85,7 +85,7 @@ function UsuarioModal({ usuario, isOpen, onClose, onSave }: UsuarioModalProps) {
                   <select
                     className="form-select"
                     id="rol"
-                    value={formData.RolID}
+                    value={formData.RolID ?? ""}
                     onChange={(e) => setFormData({ ...formData, RolID: Number(e.target.value) })}
                     required
                   >

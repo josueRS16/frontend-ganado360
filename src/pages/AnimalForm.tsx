@@ -176,7 +176,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                         <select
                           className="form-select"
                           id="sexo"
-                          value={formData.Sexo}
+                          value={formData.Sexo ?? ""}
                           onChange={(e) => {
                             const newSex = e.target.value as "M" | "F";
                             // Reset pregnancy-related fields when switching to male
@@ -206,7 +206,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                         <select
                           className="form-select"
                           id="categoria"
-                          value={formData.ID_Categoria}
+                          value={formData.ID_Categoria ?? ""}
                           onChange={(e) => setFormData({ ...formData, ID_Categoria: Number(e.target.value) })}
                           required
                         >
@@ -225,7 +225,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                         <select
                           className="form-select raza-select"
                           id="raza"
-                          value={formData.Raza}
+                          value={formData.Raza ?? ""}
                           onChange={(e) => setFormData({ ...formData, Raza: e.target.value })}
                           required
                         >
