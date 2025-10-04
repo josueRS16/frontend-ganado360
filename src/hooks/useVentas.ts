@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ventasApi } from '../api/ventas';
-import type { VentasFilters, VentaRequest } from '../types/api';
+import type { VentasFilters, VentaRequest, PaginatedResponse, Venta } from '../types/api';
 
 export function useVentas(filters: VentasFilters = {}) {
-  return useQuery({
+  return useQuery<PaginatedResponse<Venta[]>>({
     queryKey: ['ventas', filters],
     queryFn: () => ventasApi.getAll(filters),
     staleTime: 5 * 60 * 1000, // 5 minutos
