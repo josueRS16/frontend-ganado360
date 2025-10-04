@@ -4,12 +4,13 @@ import type {
   Venta, 
   VentaRequest, 
   VentasFilters, 
-  ApiResponse 
+  ApiResponse,
+  PaginatedResponse 
 } from '../types/api';
 
 export const ventasApi = {
   // GET /ventas con filtros opcionales
-  getAll: async (filters: VentasFilters = {}): Promise<ApiResponse<Venta[]>> => {
+  getAll: async (filters: VentasFilters = {}): Promise<PaginatedResponse<Venta[]>> => {
     const params = buildParams(filters);
     const response = await http.get('/ventas', { params });
     return response.data;
