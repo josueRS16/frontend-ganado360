@@ -496,6 +496,80 @@ export function Ventas() {
         </div>
       </div>
 
+      {/* Desktop Filters Panel */}
+      <div className="row mb-4">
+        <div className="col-12">
+          <div className="filters-panel d-none d-lg-block">
+            <div className="d-flex justify-content-between align-items-center">
+              <h6 className="mb-0 fw-semibold d-flex align-items-center section-title-dark" style={{ color: 'var(--color-base-green)' }}>
+                <i className="bi bi-funnel-fill me-2"></i>
+                Filtros de Búsqueda
+              </h6>
+              {hasActiveFilters && (
+                <button className="btn btn-outline-secondary btn-sm" onClick={clearAllFilters}>
+                  <i className="bi bi-x-circle me-1"></i>
+                  Limpiar Filtros
+                </button>
+              )}
+            </div>
+            <div className="row">
+              <div className="col-md-3">
+                <label className="form-label">Animal</label>
+                <select
+                  className="form-select"
+                  value={params.ID_Animal || ''}
+                  onChange={(e) => handleFilterChange('ID_Animal', e.target.value ? Number(e.target.value) : undefined)}
+                  aria-label="Filtrar por animal"
+                >
+                  <option value="">Todos los animales</option>
+                  {animales.map((animal) => (
+                    <option key={animal.ID_Animal} value={animal.ID_Animal}>
+                      {animal.Nombre} - {animal.CategoriaTipo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-3">
+                <label className="form-label">Tipo de Venta</label>
+                <select
+                  className="form-select"
+                  value={params.Tipo_Venta || ''}
+                  onChange={(e) => handleFilterChange('Tipo_Venta', e.target.value || undefined)}
+                  aria-label="Filtrar por tipo de venta"
+                >
+                  <option value="">Todos los tipos</option>
+                  {tiposVenta.map((tipo) => (
+                    <option key={tipo} value={tipo}>
+                      {tipo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-3">
+                <label className="form-label">Fecha desde</label>
+                <input
+                  type="date"
+                  className="form-control"
+                  value={params.fechaDesde || ''}
+                  onChange={(e) => handleFilterChange('fechaDesde', e.target.value || undefined)}
+                  aria-label="Fecha desde"
+                />
+              </div>
+              <div className="col-md-3">
+                <label className="form-label">Fecha hasta</label>
+                <input
+                  type="date"
+                  className="form-control"
+                  value={params.fechaHasta || ''}
+                  onChange={(e) => handleFilterChange('fechaHasta', e.target.value || undefined)}
+                  aria-label="Fecha hasta"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Estadísticas Minimalistas */}
       {/* {ventas.length > 0 && ( */}
         <div className="row mb-3">
@@ -703,80 +777,6 @@ export function Ventas() {
           </div>
         </div>
       {/* )} */}
-
-      {/* Desktop Filters Panel */}
-      <div className="row mb-4">
-        <div className="col-12">
-          <div className="filters-panel d-none d-lg-block">
-            <div className="d-flex justify-content-between align-items-center">
-              <h6 className="mb-0 fw-semibold d-flex align-items-center section-title-dark" style={{ color: 'var(--color-base-green)' }}>
-                <i className="bi bi-funnel-fill me-2"></i>
-                Filtros de Búsqueda
-              </h6>
-              {hasActiveFilters && (
-                <button className="btn btn-outline-secondary btn-sm" onClick={clearAllFilters}>
-                  <i className="bi bi-x-circle me-1"></i>
-                  Limpiar Filtros
-                </button>
-              )}
-            </div>
-            <div className="row">
-              <div className="col-md-3">
-                <label className="form-label">Animal</label>
-                <select
-                  className="form-select"
-                  value={params.ID_Animal || ''}
-                  onChange={(e) => handleFilterChange('ID_Animal', e.target.value ? Number(e.target.value) : undefined)}
-                  aria-label="Filtrar por animal"
-                >
-                  <option value="">Todos los animales</option>
-                  {animales.map((animal) => (
-                    <option key={animal.ID_Animal} value={animal.ID_Animal}>
-                      {animal.Nombre} - {animal.CategoriaTipo}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-md-3">
-                <label className="form-label">Tipo de Venta</label>
-                <select
-                  className="form-select"
-                  value={params.Tipo_Venta || ''}
-                  onChange={(e) => handleFilterChange('Tipo_Venta', e.target.value || undefined)}
-                  aria-label="Filtrar por tipo de venta"
-                >
-                  <option value="">Todos los tipos</option>
-                  {tiposVenta.map((tipo) => (
-                    <option key={tipo} value={tipo}>
-                      {tipo}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-md-3">
-                <label className="form-label">Fecha desde</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  value={params.fechaDesde || ''}
-                  onChange={(e) => handleFilterChange('fechaDesde', e.target.value || undefined)}
-                  aria-label="Fecha desde"
-                />
-              </div>
-              <div className="col-md-3">
-                <label className="form-label">Fecha hasta</label>
-                <input
-                  type="date"
-                  className="form-control"
-                  value={params.fechaHasta || ''}
-                  onChange={(e) => handleFilterChange('fechaHasta', e.target.value || undefined)}
-                  aria-label="Fecha hasta"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Mobile Filters Offcanvas */}
       <div className="offcanvas offcanvas-start filters-offcanvas" tabIndex={-1} id="filtersOffcanvas">
