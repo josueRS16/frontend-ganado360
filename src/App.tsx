@@ -15,6 +15,9 @@ import { Ventas } from './pages/Ventas';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import PrivateRoute from './components/PrivateRoute';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import VerifyCode from './pages/VerifyCode';
 
 // Crear QueryClient con configuración optimizada
 const queryClient = new QueryClient({
@@ -37,6 +40,9 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/verify-code" element={<VerifyCode />} />
           {/* Password reset routes removed */}
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<Layout />}>

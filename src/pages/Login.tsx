@@ -87,7 +87,8 @@ const Login: React.FC = () => {
           <label htmlFor="recordar">Recordar usuario</label>
         </div>
         <button type="submit">Entrar</button>
-  <p>¿No tienes cuenta? <a href="/register">Regístrate</a></p>
+        <p>¿No tienes cuenta? <a href="/register">Regístrate</a></p>
+        <p>¿Olvidaste tu contraseña? <a href="/forgot-password">Recupérala aquí</a></p>
       </form>
     </div>
   );

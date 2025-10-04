@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const ResetPassword: React.FC = () => {
+const VerifyCode: React.FC = () => {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
-  const [newPassword, setNewPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -14,20 +13,17 @@ const ResetPassword: React.FC = () => {
     setError('');
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/reset-password`, {
-        correo: email,
-        code,
-        newPassword,
-      });
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/verify-code`, { correo: email, code });
+      console.log('Respuesta del servidor:', response.data);
       setMessage(response.data.message);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Error al restablecer la contraseña.');
+      setError(err.response?.data?.message || 'Error al verificar el código.');
     }
   };
 
   return (
-    <div className="reset-password">
-      <h1>Restablecer Contraseña</h1>
+    <div className="verify-code">
+      <h1>Verificar Código</h1>
       <form onSubmit={handleSubmit}>
         <label htmlFor="email">Correo Electrónico:</label>
         <input
@@ -45,15 +41,7 @@ const ResetPassword: React.FC = () => {
           onChange={(e) => setCode(e.target.value)}
           required
         />
-        <label htmlFor="newPassword">Nueva Contraseña:</label>
-        <input
-          type="password"
-          id="newPassword"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Restablecer Contraseña</button>
+        <button type="submit">Verificar Código</button>
       </form>
       {message && <p className="success-message">{message}</p>}
       {error && <p className="error-message">{error}</p>}
@@ -61,4 +49,4 @@ const ResetPassword: React.FC = () => {
   );
 };
 
-export default ResetPassword;
+export default VerifyCode;
