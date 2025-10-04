@@ -208,6 +208,16 @@ export interface HistorialVeterinarioRequest {
   Hecho_Por: number;
 }
 
+export interface HistorialFilters {
+  ID_Animal?: number;
+  Tipo_Evento?: string;
+  fechaDesde?: string;
+  fechaHasta?: string;
+  Hecho_Por?: number;
+  page?: number;
+  limit?: number;
+}
+
 // Tipos para Estados
 export interface Estado {
   ID_Estado: number;

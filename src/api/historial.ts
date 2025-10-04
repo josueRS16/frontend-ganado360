@@ -2,12 +2,13 @@ import http from './http';
 import type { 
   HistorialVeterinario, 
   HistorialVeterinarioRequest, 
+  HistorialFilters,
   ApiResponse 
 } from '../types/api';
 
 export const historialApi = {
   // GET /historial con paginación
-  getAll: async (filters: { page?: number; limit?: number } = {}): Promise<any> => {
+  getAll: async (filters: HistorialFilters = {}): Promise<any> => {
     const response = await http.get('/historial', { params: filters });
     return response.data;
   },
