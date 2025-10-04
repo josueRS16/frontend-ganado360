@@ -266,4 +266,8 @@ export interface VentasFilters {
   ID_Animal?: number;
   fechaDesde?: string;
   fechaHasta?: string;
+  Tipo_Venta?: string;
+  Comprador?: string;
+  page?: number;
+  limit?: number;
 }
