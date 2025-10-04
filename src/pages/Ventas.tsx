@@ -24,8 +24,27 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
   const { data: usuariosData } = useUsuarios();
   const { data: tiposVentaData } = useTiposVenta();
   
-  // Solo mostrar animales en estado 'viva'
-  const animales = useMemo(() => (animalesData?.data || []).filter(a => a.EstadoNombre?.toLowerCase() === 'viva'), [animalesData?.data]);
+  // Para nueva venta: solo animales vivos, para edición: incluir el animal actual
+  const animales = useMemo(() => {
+    const todosAnimales = animalesData?.data || [];
+    
+    if (venta) {
+      // Para edición: incluir el animal actual sin importar su estado
+      const animalActual = todosAnimales.find(a => a.ID_Animal === venta.ID_Animal);
+      const animalesVivos = todosAnimales.filter(a => a.EstadoNombre?.toLowerCase() === 'viva');
+      
+      // Combinar el animal actual con los animales vivos, evitando duplicados
+      const animalesCombinados = [...animalesVivos];
+      if (animalActual && !animalesVivos.find(a => a.ID_Animal === animalActual.ID_Animal)) {
+        animalesCombinados.unshift(animalActual);
+      }
+      
+      return animalesCombinados;
+    } else {
+      // Para nueva venta: solo animales vivos
+      return todosAnimales.filter(a => a.EstadoNombre?.toLowerCase() === 'viva');
+    }
+  }, [animalesData?.data, venta]);
   const usuarios = usuariosData?.data || [];
   const tiposVenta = tiposVentaData?.data || [];
 
@@ -109,7 +128,9 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
           </div>
           <form onSubmit={handleSubmit}>
             <div className="modal-body p-4">
-              <p className="text-muted small">Solo animales vivos</p>
+              <p className="text-muted small">
+                {venta ? 'Para edición: se muestra el animal actual + animales vivos' : 'Solo animales vivos'}
+              </p>
               <div className="row g-3">
                 <div className="col-md-6">
                   <label htmlFor="animal" className="form-label fw-semibold">Animal</label>

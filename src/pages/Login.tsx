@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { authApi } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import './LoginRegister.css';
 
 const Login: React.FC = () => {
@@ -18,7 +18,6 @@ const Login: React.FC = () => {
 
   const [password, setPassword] = useState('');
 
-  const [contraseña, setContraseña] = useState('');
 
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -48,8 +47,8 @@ const Login: React.FC = () => {
       }
 
    
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || 'Error al iniciar sesión';
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Error al iniciar sesión';
       if (msg.includes('Correo o contraseña incorrectos')) {
         setError('Correo o contraseña incorrectos.');
       } else if (msg.includes('Correo y contraseña requeridos')) {

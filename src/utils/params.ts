@@ -1,7 +1,7 @@
 /**
  * Construye URLSearchParams omitiendo valores undefined, null o string vacío
  */
-export function buildParams<T extends Record<string, any>>(obj: T): URLSearchParams {
+export function buildParams<T extends Record<string, unknown>>(obj: T): URLSearchParams {
   const params = new URLSearchParams();
   
   Object.entries(obj).forEach(([key, value]) => {
