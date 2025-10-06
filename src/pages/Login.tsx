@@ -17,8 +17,6 @@ const Login: React.FC = () => {
   }, []);
 
   const [password, setPassword] = useState('');
-
-
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -88,6 +86,7 @@ const Login: React.FC = () => {
         </div>
         <button type="submit">Entrar</button>
         <p>¿No tienes cuenta? <a href="/register">Regístrate</a></p>
+        <p>¿Olvidaste tu contraseña? <a href="/forgot-password">Recupérala aquí</a></p>
       </form>
     </div>
   );
