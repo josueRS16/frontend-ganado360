@@ -1,12 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { usuariosApi } from '../api/usuarios';
-import type { UsuarioRequest } from '../types/api';
+import type { UsuarioRequest, UsuariosFilters } from '../types/api';
 
-export function useUsuarios() {
+export function useUsuarios(filters: UsuariosFilters = {}) {
   return useQuery({
-    queryKey: ['usuarios'],
-    queryFn: () => usuariosApi.getAll(),
-    staleTime: 5 * 60 * 1000, // 5 minutos
+    queryKey: ['usuarios', filters],
+    queryFn: () => usuariosApi.getAll(filters),
+    staleTime: 0, // Los datos se consideran obsoletos inmediatamente
+    refetchInterval: 30000, // Revalidar cada 30 segundos
+    refetchOnWindowFocus: true, // Revalidar cuando la ventana recupera el foco
+    refetchOnReconnect: true, // Revalidar cuando se recupera la conexión
   });
 }
 

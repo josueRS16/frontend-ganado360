@@ -5,7 +5,7 @@ import { buildParams, parseParams } from '../utils/params';
 /**
  * Hook para manejar query parameters de la URL de forma tipada
  */
-export function useQueryParams<T extends Record<string, any>>() {
+export function useQueryParams<T extends Record<string, unknown>>() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Obtener parámetros actuales como objeto tipado

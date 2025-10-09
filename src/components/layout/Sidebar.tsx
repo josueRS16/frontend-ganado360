@@ -55,7 +55,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       title: 'Gestión',
       items: [
         { path: '/recordatorios', label: 'Recordatorios', description: 'Próximas tareas', icon: 'bi-calendar-check' },
-        { path: '/historial', label: 'Historial Médico', description: 'Eventos veterinarios', icon: 'bi-heart-pulse' },
+        { path: '/historial', label: 'Historial Veterinario', description: 'Eventos veterinarios', icon: 'bi-heart-pulse' },
         { path: '/ventas', label: 'Ventas', description: 'Registro de ventas', icon: 'bi-cash-coin' },
       ]
     },

@@ -30,20 +30,16 @@ export const uploadApi = {
     const baseURL = import.meta.env.VITE_API_URL;
     const fullUrl = `${baseURL}/upload/image/${filename}`;
     
-    try {
-      const response = await fetch(fullUrl, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
-      }
-    } catch (error: unknown) {
-      throw error;
+    const response = await fetch(fullUrl, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
     }
   },
 

@@ -2,13 +2,15 @@ import http from './http';
 import type { 
   Estado, 
   EstadoRequest, 
-  ApiResponse 
+  EstadosFilters,
+  ApiResponse,
+  PaginatedResponse 
 } from '../types/api';
 
 export const estadosApi = {
-  // GET /estados
-  getAll: async (): Promise<ApiResponse<Estado[]>> => {
-    const response = await http.get('/estados');
+  // GET /estados con filtros y paginación
+  getAll: async (filters: EstadosFilters = {}): Promise<PaginatedResponse<Estado[]>> => {
+    const response = await http.get('/estados', { params: filters });
     return response.data;
   },
 

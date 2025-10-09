@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { rolesApi } from '../api/roles';
-import type { RolRequest } from '../types/api';
+import type { RolRequest, RolesFilters } from '../types/api';
 
-export function useRoles() {
+export function useRoles(filters: RolesFilters = {}) {
   return useQuery({
-    queryKey: ['roles'],
-    queryFn: () => rolesApi.getAll(),
+    queryKey: ['roles', filters],
+    queryFn: () => rolesApi.getAll(filters),
     staleTime: 10 * 60 * 1000, // 10 minutos
   });
 }

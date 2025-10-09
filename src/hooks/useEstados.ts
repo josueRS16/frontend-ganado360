@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { estadosApi } from '../api/estados';
-import type { EstadoRequest } from '../types/api';
+import type { EstadoRequest, EstadosFilters } from '../types/api';
 
-export function useEstados() {
+export function useEstados(filters: EstadosFilters = {}) {
   return useQuery({
-    queryKey: ['estados'],
-    queryFn: () => estadosApi.getAll(),
+    queryKey: ['estados', filters],
+    queryFn: () => estadosApi.getAll(filters),
     staleTime: 10 * 60 * 1000, // 10 minutos
   });
 }

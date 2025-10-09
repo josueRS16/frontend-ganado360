@@ -3,13 +3,15 @@ import type {
   Categoria, 
   CategoriaRequest, 
   UpdateCategoriaRequest,
-  ApiResponse 
+  CategoriasFilters,
+  ApiResponse,
+  PaginatedResponse 
 } from '../types/api';
 
 export const categoriasApi = {
-  // GET /categorias
-  getAll: async (): Promise<ApiResponse<Categoria[]>> => {
-    const response = await http.get('/categorias');
+  // GET /categorias con filtros y paginación
+  getAll: async (filters: CategoriasFilters = {}): Promise<PaginatedResponse<Categoria[]>> => {
+    const response = await http.get('/categorias', { params: filters });
     return response.data;
   },
 

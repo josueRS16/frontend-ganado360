@@ -7,7 +7,7 @@ const Register: React.FC = () => {
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
   const [contraseña, setContraseña] = useState('');
-  const [rolID, setRolID] = useState(2); // Por defecto, rol de usuario normal
+  const [rolID] = useState(2); // Por defecto, rol de usuario normal
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
@@ -28,8 +28,10 @@ const Register: React.FC = () => {
       await registerApi.register({ Nombre: nombre, Correo: correo, Contraseña: contraseña, RolID: rolID });
       setSuccess('¡Registro exitoso! Ahora puedes iniciar sesión.');
       setTimeout(() => navigate('/login'), 1500);
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.response?.data?.error || 'Error al registrar';
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string; error?: string } } })?.response?.data?.message || 
+                  (err as { response?: { data?: { message?: string; error?: string } } })?.response?.data?.error || 
+                  'Error al registrar';
       if (msg.includes('ya está registrado')) {
         setError('El correo ya está registrado. Intenta con otro.');
       } else if (msg.includes('campos son obligatorios')) {
