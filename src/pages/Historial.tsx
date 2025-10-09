@@ -249,6 +249,13 @@ export function Historial() {
 
   const [modalState, setModalState] = useState<{ isOpen: boolean; historial?: HistorialVeterinario }>({ isOpen: false });
 
+  // Estado local para los valores de los filtros de texto
+  const [textFilterValues, setTextFilterValues] = useState<{
+    Tipo_Evento: string;
+  }>({
+    Tipo_Evento: params.Tipo_Evento || '',
+  });
+
   const handleFilterChange = (key: keyof HistorialFilters, value: string | number | undefined) => {
     if (value === '' || value === undefined) {
       const newParams = { ...params };
@@ -259,8 +266,31 @@ export function Historial() {
     }
   };
 
+  const handleTextInputChange = (key: 'Tipo_Evento', value: string) => {
+    // Solo actualizar el estado local, no aplicar el filtro
+    setTextFilterValues(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const handleSearchClick = (key: 'Tipo_Evento') => {
+    // Aplicar el filtro solo cuando se hace clic en "Buscar"
+    const value = textFilterValues[key];
+    if (value.trim() === '') {
+      const newParams = { ...params };
+      delete newParams[key];
+      updateParams(newParams);
+    } else {
+      updateParams({ [key]: value.trim() });
+    }
+  };
+
   const clearAllFilters = () => {
     clearParams();
+    setTextFilterValues({
+      Tipo_Evento: '',
+    });
   };
 
   const handlePageChange = (page: number) => {
@@ -413,14 +443,24 @@ export function Historial() {
               </div>
               <div className="col-md-3">
                 <label className="form-label">Tipo de Evento</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={params.Tipo_Evento || ''}
-                  onChange={(e) => handleFilterChange('Tipo_Evento', e.target.value || undefined)}
-                  placeholder="Ej: Vacunación, Tratamiento..."
-                  aria-label="Filtrar por tipo de evento"
-                />
+                <div className="input-group">
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={textFilterValues.Tipo_Evento}
+                    onChange={(e) => handleTextInputChange('Tipo_Evento', e.target.value)}
+                    placeholder="Ej: Vacunación, Tratamiento..."
+                    aria-label="Filtrar por tipo de evento"
+                  />
+                  <button 
+                    className="btn btn-outline-secondary" 
+                    type="button"
+                    onClick={() => handleSearchClick('Tipo_Evento')}
+                    title="Buscar"
+                  >
+                    <i className="bi bi-search"></i>
+                  </button>
+                </div>
               </div>
               <div className="col-md-2">
                 <label className="form-label">Fecha desde</label>
@@ -492,14 +532,24 @@ export function Historial() {
             </div>
             <div className="col-12">
               <label className="form-label">Tipo de Evento</label>
-              <input
-                type="text"
-                className="form-control"
-                value={params.Tipo_Evento || ''}
-                onChange={(e) => handleFilterChange('Tipo_Evento', e.target.value || undefined)}
-                placeholder="Ej: Vacunación, Tratamiento..."
-                aria-label="Filtrar por tipo de evento"
-              />
+              <div className="input-group">
+                <input
+                  type="text"
+                  className="form-control"
+                  value={textFilterValues.Tipo_Evento}
+                  onChange={(e) => handleTextInputChange('Tipo_Evento', e.target.value)}
+                  placeholder="Ej: Vacunación, Tratamiento..."
+                  aria-label="Filtrar por tipo de evento"
+                />
+                <button 
+                  className="btn btn-outline-secondary" 
+                  type="button"
+                  onClick={() => handleSearchClick('Tipo_Evento')}
+                  title="Buscar"
+                >
+                  <i className="bi bi-search"></i>
+                </button>
+              </div>
             </div>
             <div className="col-12">
               <label className="form-label">Fecha desde</label>

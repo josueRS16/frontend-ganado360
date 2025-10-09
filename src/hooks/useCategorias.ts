@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { categoriasApi } from '../api/categorias';
-import type { CategoriaRequest, UpdateCategoriaRequest } from '../types/api';
+import type { CategoriaRequest, UpdateCategoriaRequest, CategoriasFilters } from '../types/api';
 
-export function useCategorias() {
+export function useCategorias(filters: CategoriasFilters = {}) {
   return useQuery({
-    queryKey: ['categorias'],
-    queryFn: () => categoriasApi.getAll(),
+    queryKey: ['categorias', filters],
+    queryFn: () => categoriasApi.getAll(filters),
     staleTime: 10 * 60 * 1000, // 10 minutos - datos más estables
   });
 }

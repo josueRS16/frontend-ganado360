@@ -170,11 +170,8 @@ export function ImageSelector({
               console.log(`[ImageSelector] Attempting to delete file: ${filename}`);
               console.log(`[ImageSelector] Full image URL: ${value}`);
               
-              // Probar conexión al servidor primero
-              await uploadApi.testServerConnection();
-              
-              // Usar la función de prueba para obtener más información
-              await uploadApi.testDeleteImage(filename);
+              // Eliminar imagen directamente
+              await uploadApi.deleteImage(filename);
               
               console.log(`[ImageSelector] Successfully deleted file: ${filename}`);
               showToast('Archivo eliminado exitosamente', 'success');

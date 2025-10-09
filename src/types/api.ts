@@ -34,6 +34,13 @@ export interface RolRequest {
   Nombre: string;
 }
 
+export interface RolesFilters {
+  Nombre?: string;
+  page?: number;
+  limit?: number;
+  [key: string]: unknown;
+}
+
 // Tipos para Usuarios
 export interface Usuario {
   ID_Usuario: number;
@@ -51,6 +58,15 @@ export interface UsuarioRequest {
   RolID: number;
 }
 
+export interface UsuariosFilters {
+  Nombre?: string;
+  Correo?: string;
+  RolNombre?: string;
+  page?: number;
+  limit?: number;
+  [key: string]: unknown;
+}
+
 // Tipos para Categorías
 export interface Categoria {
   ID_Categoria: number;
@@ -62,6 +78,13 @@ export interface CategoriaRequest {
 }
 
 export type UpdateCategoriaRequest = CategoriaRequest;
+
+export interface CategoriasFilters {
+  Tipo?: string;
+  page?: number;
+  limit?: number;
+  [key: string]: unknown;
+}
 
 // Tipos para Animales
 export interface Animal {
@@ -157,6 +180,7 @@ export interface AnimalesFilters {
   Tipo_Venta?: string;
   page?: number;
   limit?: number;
+  [key: string]: unknown;
 }
 
 // Tipos para Recordatorios
@@ -184,6 +208,7 @@ export interface RecordatoriosFilters {
   Estado?: 'pendiente' | 'hecho';
   page?: number;
   limit?: number;
+  [key: string]: unknown;
 }
 
 // Tipos para Historial Veterinario
@@ -216,6 +241,7 @@ export interface HistorialFilters {
   Hecho_Por?: number;
   page?: number;
   limit?: number;
+  [key: string]: unknown;
 }
 
 // Tipos para Estados
@@ -226,6 +252,13 @@ export interface Estado {
 
 export interface EstadoRequest {
   Nombre: string;
+}
+
+export interface EstadosFilters {
+  Nombre?: string;
+  page?: number;
+  limit?: number;
+  [key: string]: unknown;
 }
 
 // Tipos para Estado Animal
@@ -246,6 +279,7 @@ export interface EstadoAnimalRequest {
 
 export interface EstadoAnimalFilters {
   ID_Animal?: number;
+  [key: string]: unknown;
 }
 
 // Tipos para Ventas
@@ -280,4 +314,5 @@ export interface VentasFilters {
   Comprador?: string;
   page?: number;
   limit?: number;
+  [key: string]: unknown;
 }

@@ -1,8 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
-import { AuthContext, type AuthContextType } from './AuthContextInstance';
+import { AuthContext } from './AuthContextInstance';
 
-type UsuarioSesion = Partial<Pick<AuthContextType['user'], 'Nombre' | 'Correo' | 'RolID'>> & { [key: string]: unknown };
+type UsuarioSesion = {
+  Nombre?: string;
+  Correo?: string;
+  RolID?: number;
+  [key: string]: unknown;
+};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();

@@ -2,13 +2,15 @@ import http from './http';
 import type { 
   Usuario, 
   UsuarioRequest, 
-  ApiResponse 
+  UsuariosFilters,
+  ApiResponse,
+  PaginatedResponse 
 } from '../types/api';
 
 export const usuariosApi = {
-  // GET /usuarios
-  getAll: async (): Promise<ApiResponse<Usuario[]>> => {
-    const response = await http.get('/usuarios');
+  // GET /usuarios con filtros y paginación
+  getAll: async (filters: UsuariosFilters = {}): Promise<PaginatedResponse<Usuario[]>> => {
+    const response = await http.get('/usuarios', { params: filters });
     return response.data;
   },
 

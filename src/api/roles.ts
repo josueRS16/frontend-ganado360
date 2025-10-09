@@ -2,13 +2,15 @@ import http from './http';
 import type { 
   Rol, 
   RolRequest, 
-  ApiResponse 
+  RolesFilters,
+  ApiResponse,
+  PaginatedResponse 
 } from '../types/api';
 
 export const rolesApi = {
-  // GET /roles
-  getAll: async (): Promise<ApiResponse<Rol[]>> => {
-    const response = await http.get('/roles');
+  // GET /roles con filtros y paginación
+  getAll: async (filters: RolesFilters = {}): Promise<PaginatedResponse<Rol[]>> => {
+    const response = await http.get('/roles', { params: filters });
     return response.data;
   },
 
