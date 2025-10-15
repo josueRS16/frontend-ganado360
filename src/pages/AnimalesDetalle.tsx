@@ -823,7 +823,7 @@ export function AnimalesDetalle() {
                                     </div>
                                     <div className="col-4">
                                       <div className="small text-muted">PRECIO</div>
-                                      <div>${detallesModalState.animal.Precio?.toLocaleString()}</div>
+                                      <div>₡{detallesModalState.animal.Total?.toLocaleString()}</div>
                                     </div>
                                   </div>
                                   {detallesModalState.animal.Comprador && (
