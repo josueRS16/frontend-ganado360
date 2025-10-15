@@ -128,7 +128,7 @@ export interface AnimalConDetalle {
   CategoriaTipo: string;
   ID_Venta: number | null;
   Fecha_Venta: string | null;
-  Precio: number | null;
+  Total: number | null;
   Comprador: string | null;
   Tipo_Venta: string | null;
   Registrado_Por: number;
@@ -282,6 +282,16 @@ export interface EstadoAnimalFilters {
   [key: string]: unknown;
 }
 
+// Tipos para Moneda
+export type Moneda = 'CRC' | 'USD';
+
+export interface TipoCambio {
+  moneda: Moneda;
+  tasa: number; // Tasa de cambio respecto a CRC (moneda base)
+  fecha: string;
+  activo: boolean;
+}
+
 // Tipos para Ventas
 export interface Venta {
   ID_Venta: number;
@@ -294,6 +304,25 @@ export interface Venta {
   Observaciones: string;
   AnimalNombre: string;
   UsuarioNombre: string;
+  // Nuevos campos de facturación
+  Numero_Factura?: string;
+  Vendedor?: string;
+  Metodo_Pago?: string;
+  Precio_Unitario?: number;
+  Cantidad?: number;
+  Subtotal?: number;
+  IVA_Porcentaje?: number;
+  IVA_Monto?: number;
+  Total?: number;
+  // Campos de moneda
+  Moneda?: Moneda;
+  Tipo_Cambio?: number;
+  // Campos adicionales para detalle
+  AnimalRaza?: string;
+  AnimalSexo?: string;
+  AnimalPeso?: string;
+  AnimalColor?: string;
+  CategoriaTipo?: string;
 }
 
 export interface VentaRequest {
@@ -301,9 +330,19 @@ export interface VentaRequest {
   Fecha_Venta: string;
   Tipo_Venta: string;
   Comprador: string;
-  Precio: number;
+  Precio?: number; // Ahora opcional si se usa Precio_Unitario
   Registrado_Por: number;
-  Observaciones: string;
+  Observaciones?: string;
+  // Nuevos campos de facturación
+  Vendedor: string;
+  Metodo_Pago?: string;
+  Precio_Unitario: number;
+  Cantidad?: number;
+  Subtotal?: number;
+  IVA_Porcentaje?: number;
+  // Campos de moneda
+  Moneda?: Moneda;
+  Tipo_Cambio?: number;
 }
 
 export interface VentasFilters {
@@ -312,7 +351,44 @@ export interface VentasFilters {
   fechaHasta?: string;
   Tipo_Venta?: string;
   Comprador?: string;
+  Numero_Factura?: string;
   page?: number;
   limit?: number;
   [key: string]: unknown;
+}
+
+export interface VentaFacturaPDF {
+  ID_Venta: number;
+  Numero_Factura: string;
+  Fecha_Venta: string;
+  Comprador: string;
+  Vendedor: string;
+  Metodo_Pago: string;
+  Cantidad: number;
+  Precio_Unitario: string;
+  Subtotal: string;
+  IVA_Porcentaje: string;
+  IVA_Monto: string;
+  Total: string;
+  Animal_Nombre: string;
+  Animal_Raza: string;
+  Animal_Sexo: string;
+  Animal_Peso: string;
+  Animal_Color: string;
+  Animal_Categoria: string;
+  Registrado_Por_Nombre: string;
+  Observaciones: string;
+  // Campos de moneda
+  Moneda?: string;
+  Tipo_Cambio?: string;
+}
+
+export interface VentasEstadisticas {
+  total_ventas: number;
+  monto_total: string;
+  subtotal_total: string;
+  iva_total: string;
+  promedio_venta: string;
+  venta_minima: string;
+  venta_maxima: string;
 }

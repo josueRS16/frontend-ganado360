@@ -5,7 +5,9 @@ import type {
   VentaRequest, 
   VentasFilters, 
   ApiResponse,
-  PaginatedResponse 
+  PaginatedResponse,
+  VentaFacturaPDF,
+  VentasEstadisticas
 } from '../types/api';
 
 export const ventasApi = {
@@ -39,11 +41,35 @@ export const ventasApi = {
     await http.delete(`/ventas/${id}`);
   },
 
+  // GET /ventas/:id/factura-pdf
+  getFacturaPDF: async (id: number): Promise<ApiResponse<VentaFacturaPDF>> => {
+    const response = await http.get(`/ventas/${id}/factura-pdf`);
+    return response.data;
+  },
+
+  // GET /ventas/factura/numero/:numero
+  getByNumeroFactura: async (numero: string): Promise<ApiResponse<Venta>> => {
+    const response = await http.get(`/ventas/factura/numero/${numero}`);
+    return response.data;
+  },
+
+  // GET /ventas/estadisticas
+  getEstadisticas: async (filters: { fechaDesde?: string; fechaHasta?: string } = {}): Promise<ApiResponse<VentasEstadisticas>> => {
+    const params = buildParams(filters);
+    const response = await http.get('/ventas/estadisticas', { params });
+    return response.data;
+  },
+
   // GET /ventas/tipos
   getTiposVenta: async (): Promise<ApiResponse<string[]>> => {
     // Implementación temporal - retorna tipos comunes de venta
     return {
-      data: ['Venta directa', 'Subasta', 'Venta por peso', 'Venta por cabeza']
+      data: ['Directa', 'Subasta', 'Venta por peso', 'Venta por cabeza']
     };
+  },
+
+  // GET /ventas/metodos-pago (helper local)
+  getMetodosPago: (): string[] => {
+    return ['Efectivo', 'Sinpe Móvil', 'Transferencia', 'Cheque', 'Tarjeta'];
   },
 };
