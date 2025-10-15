@@ -3,10 +3,25 @@ import { authApi } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import './LoginRegister.css';
+import ReCAPTCHA from 'react-google-recaptcha';
+
+declare global {
+  interface Window {
+    grecaptcha: {
+      execute: (siteKey: string, options: { action: string }) => Promise<string>;
+    };
+  }
+}
 
 const Login: React.FC = () => {
   const [correo, setCorreo] = useState('');
   const [recordar, setRecordar] = useState(false);
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
   // Al cargar, recuperar correo si está guardado
   useEffect(() => {
     const savedCorreo = localStorage.getItem('recordarCorreo');
@@ -16,21 +31,45 @@ const Login: React.FC = () => {
     }
   }, []);
 
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
-  const { login } = useAuth();
+  const executeReCAPTCHA = async () => {
+    if (window.grecaptcha) {
+      const token = await window.grecaptcha.execute(
+        import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+        { action: 'login' }
+      );
+      setCaptchaToken(token);
+    }
+  };
 
+  useEffect(() => {
+    executeReCAPTCHA();
+  }, []);
+
+  const handleCaptchaChange = (token: string | null) => {
+    if (token) {
+      setCaptchaToken(token);
+    } else {
+      setError('Por favor, completa el CAPTCHA.');
+    }
+  };
+
+  // Ajustar el tipo de datos enviado a authApi.login
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (!captchaToken) {
+      setError('Por favor, completa el CAPTCHA.');
+      return;
+    }
+
     if (!correo || !password) {
       setError('Por favor, complete todos los campos.');
       return;
     }
+
     try {
- 
-      const res = await authApi.login({ correo, password });
+      const res = await authApi.login({ correo, password, captchaToken });
       if (res.token) {
         localStorage.setItem('token', res.token);
         if (recordar) {
@@ -43,8 +82,6 @@ const Login: React.FC = () => {
       } else {
         setError('Respuesta inválida del servidor.');
       }
-
-   
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Error al iniciar sesión';
       if (msg.includes('Correo o contraseña incorrectos')) {
@@ -87,6 +124,10 @@ const Login: React.FC = () => {
         <button type="submit">Entrar</button>
         <p>¿No tienes cuenta? <a href="/register">Regístrate</a></p>
         <p>¿Olvidaste tu contraseña? <a href="/forgot-password">Recupérala aquí</a></p>
+        <ReCAPTCHA
+          sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+          onChange={handleCaptchaChange}
+        />
       </form>
     </div>
   );
