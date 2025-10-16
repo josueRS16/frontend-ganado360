@@ -31,20 +31,6 @@ const Login: React.FC = () => {
     }
   }, []);
 
-  const executeReCAPTCHA = async () => {
-    if (window.grecaptcha) {
-      const token = await window.grecaptcha.execute(
-        import.meta.env.VITE_RECAPTCHA_SITE_KEY,
-        { action: 'login' }
-      );
-      setCaptchaToken(token);
-    }
-  };
-
-  useEffect(() => {
-    executeReCAPTCHA();
-  }, []);
-
   const handleCaptchaChange = (token: string | null) => {
     if (token) {
       setCaptchaToken(token);
