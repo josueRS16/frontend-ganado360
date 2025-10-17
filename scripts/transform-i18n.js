@@ -1,42 +1,22 @@
 /**
- * jscodeshift transform: reemplaza textos estáticos conocidos por {t('key')}
- * - Solo modifica JSXText y valores de atributos JSX exactos que coincidan con el mapa.
- * - No añade useTranslation automáticamente dentro de componentes; solo marca archivos
- *   que requieren import/useTranslation si no lo tienen (para revisión).
+ * jscodeshift transform: reemplaza textos exactos por {t('key')}
+ * - Usa el mapping generado por scripts/jsx-strings.json -> scripts/i18n-map.json
  *
- * Ejecutar:
+ * Ejecutar después de generar scripts/i18n-map.json:
  * npx jscodeshift -t scripts/transform-i18n.js src --extensions=tsx,jsx --parser=tsx
  */
-const map = {
-  "Ganado360": "app_name",
-  "Sistema de Gestión Ganadera": "app_subtitle",
-  "Ventas": "ventas",
-  "Animales": "animales",
-  "Recordatorios": "recordatorios",
-  "Acciones Rápidas": "acciones_rapidas",
-  "Gestionar Animales": "gestionar_animales",
-  "Ver y editar ganado": "ver_y_editar_ganado",
-  "Registrar Venta": "registrar_venta",
-  "Nueva transacción": "nueva_transaccion",
-  "Ver Recordatorios": "ver_recordatorios",
-  "Próximas tareas": "proximas_tareas",
-  "Gestionar Usuarios": "gestionar_usuarios",
-  "Administración": "administracion",
-  "Cerrar sesión": "cerrar_sesion",
-  "Cambiar a inglés": "cambiar_a_ingles",
-  "Cambiar a español": "cambiar_a_espanol",
-  "Acciones Rápidas": "acciones_rapidas",
-  "Confirmar": "confirmar",
-  "Cancelar": "cancelar"
-};
+const fs = require('fs');
+const path = require('path');
 
-module.exports = function(fileInfo, api, options) {
+module.exports = function(fileInfo, api) {
   const j = api.jscodeshift;
   const root = j(fileInfo.source);
-  let modified = false;
-  const filePath = fileInfo.path;
+  const mapPath = path.join(process.cwd(), 'scripts', 'i18n-map.json');
+  if (!fs.existsSync(mapPath)) return null;
+  const map = JSON.parse(fs.readFileSync(mapPath, 'utf8')); // { "Original Text": "key_name", ... }
 
-  // Helper to create JSXExpression: {t('key')}
+  let modified = false;
+
   function makeTCall(key) {
     return j.jsxExpressionContainer(
       j.callExpression(j.identifier('t'), [j.literal(key)])
@@ -48,9 +28,9 @@ module.exports = function(fileInfo, api, options) {
     const raw = path.node.value || '';
     const text = raw.replace(/\s+/g, ' ').trim();
     if (!text) return;
-    if (map[text]) {
-      // replace the JSXText node with expression {t('key')}
-      j(path).replaceWith(makeTCall(map[text]));
+    const key = map[text];
+    if (key) {
+      j(path).replaceWith(makeTCall(key));
       modified = true;
     }
   });
@@ -59,31 +39,31 @@ module.exports = function(fileInfo, api, options) {
   root.find(j.JSXAttribute).forEach(path => {
     const val = path.node.value;
     if (!val) return;
-    // cases: JSXExpressionContainer, Literal (StringLiteral), JSXText not typical
-    if (val.type === 'Literal' && typeof val.value === 'string') {
-      const text = val.value.trim();
-      if (map[text]) {
-        path.get('value').replace(makeTCall(map[text]));
+    if (val.type === 'Literal' || val.type === 'StringLiteral') {
+      const text = String(val.value || '').trim();
+      const key = map[text];
+      if (key) {
+        path.get('value').replace(makeTCall(key));
         modified = true;
       }
     }
-    if (val.type === 'JSXExpressionContainer' && val.expression.type === 'Literal' && typeof val.expression.value === 'string') {
-      const text = val.expression.value.trim();
-      if (map[text]) {
-        path.get('value').replace(makeTCall(map[text]));
+    if (val.type === 'JSXExpressionContainer' && val.expression.type === 'StringLiteral') {
+      const text = String(val.expression.value || '').trim();
+      const key = map[text];
+      if (key) {
+        path.get('value').replace(makeTCall(key));
         modified = true;
       }
     }
   });
 
-  // If we modified the file, ensure there is an import from react-i18next.
   if (modified) {
+    // ensure import { useTranslation } from 'react-i18next' exists
     const hasImport = root.find(j.ImportDeclaration, {
       source: { value: 'react-i18next' }
     }).size();
 
     if (!hasImport) {
-      // add: import { useTranslation } from 'react-i18next';
       const firstImport = root.find(j.ImportDeclaration).at(0);
       const newImport = j.importDeclaration(
         [j.importSpecifier(j.identifier('useTranslation'))],
@@ -96,7 +76,6 @@ module.exports = function(fileInfo, api, options) {
       }
     }
 
-    // Write back source
     return root.toSource({ quote: 'single' });
   }
 

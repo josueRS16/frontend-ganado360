@@ -16,35 +16,40 @@ module.exports = function(fileInfo, api) {
   });
   if (!importsI18n.size()) return null;
 
-  // Helper: check if file already references identifier 't'
+  // If file already references identifier 't' somewhere, skip
   const usesT = root.find(j.Identifier, { name: 't' }).size() > 0;
-
-  // If file already uses t somewhere, nothing to add
   if (usesT) return null;
 
-  // Find function declarations and function expressions assigned to const (arrow)
-  const functionNodes = [];
+  // Find top-level function components:
+  // FunctionDeclaration and const X = () => { ... }
+  root.find(j.ExportNamedDeclaration).forEach(() => {}); // no-op to ensure parse
 
-  root.find(j.FunctionDeclaration).forEach(p => functionNodes.push(p));
+  // Function declarations
+  root.find(j.FunctionDeclaration).forEach(p => {
+    const body = p.node.body;
+    if (!body || body.type !== 'BlockStatement') return;
+    const hasUseTranslationCall = j(body).find(j.CallExpression, { callee: { name: 'useTranslation' } }).size() > 0;
+    if (!hasUseTranslationCall) {
+      const stmt = j.variableDeclaration('const', [
+        j.variableDeclarator(
+          j.objectPattern([j.property('init', j.identifier('t'), j.identifier('t'))]),
+          j.callExpression(j.identifier('useTranslation'), [])
+        )
+      ]);
+      body.body.unshift(stmt);
+      modified = true;
+    }
+  });
+
+  // Arrow functions assigned to const
   root.find(j.VariableDeclarator, {
     init: { type: 'ArrowFunctionExpression' }
-  }).forEach(p => functionNodes.push(p));
-
-  functionNodes.forEach(p => {
-    let body;
-    if (p.node.type === 'FunctionDeclaration') {
-      body = p.node.body;
-    } else if (p.node.type === 'VariableDeclarator') {
-      body = p.node.init.body;
-    }
-    if (!body || body.type !== 'BlockStatement') return;
-
-    // check if body already contains useTranslation call
-    const hasUseTranslationCall = j(body).find(j.CallExpression, {
-      callee: { name: 'useTranslation' }
-    }).size() > 0;
-
-    // if not, insert const { t } = useTranslation(); at top of body
+  }).forEach(p => {
+    const init = p.node.init;
+    const body = init.body;
+    if (!body) return;
+    if (body.type !== 'BlockStatement') return;
+    const hasUseTranslationCall = j(body).find(j.CallExpression, { callee: { name: 'useTranslation' } }).size() > 0;
     if (!hasUseTranslationCall) {
       const stmt = j.variableDeclaration('const', [
         j.variableDeclarator(
