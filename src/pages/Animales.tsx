@@ -11,9 +11,11 @@ import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { AnimalesFilters, Animal } from '../types/api';
 import { getCachedAnimalImage } from '../utils/imageCache';
 import { getImageDisplayUrl } from '../utils/imageUtils';
+import TranslatedCell from '../components/ui/TranslatedCell';
 import { useTranslation } from 'react-i18next';
 
 export function Animales() {
+  const { t } = useTranslation();
   const { params, updateParams, clearParams } = useQueryParams<AnimalesFilters>();
   
   // Set default pagination parameters if not present
@@ -26,7 +28,6 @@ export function Animales() {
   const { data: categoriasData } = useCategorias();
   const darDeBajaMutation = useDarDeBajaAnimal();
   const { showToast } = useToast();
-  const { t } = useTranslation();
 
   const animales = animalesData?.data || [];
   const categorias = categoriasData?.data || [];
@@ -135,12 +136,8 @@ export function Animales() {
   const hasActiveFilters = Object.keys(params).length > 0;
 
   // Si tenías cabeceras definidas fuera, móvalas dentro:
-  const tableHeaders = useMemo(() => [
-    t('nombre'),
-    t('sexo'),
-    t('categoria'),
-    t('fecha_nacimiento'),
-    t('acciones')
+  const headers = useMemo(() => [
+    t('nombre'), t('sexo'), t('categoria'), t('fecha_nacimiento'), t('acciones')
   ], [t]);
 
   const sexoLabels = useMemo(() => ({

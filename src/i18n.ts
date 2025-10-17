@@ -10,7 +10,6 @@ i18n
     resources: {
       es: {
         translation: {
-
             app_name: 'Ganado360',
           app_subtitle: 'Sistema de Gestión Ganadera',
           abrir_menu: 'Abrir menú de navegación',
@@ -26,7 +25,14 @@ i18n
           administracion: 'Administración',
           cerrar_sesion: 'Cerrar sesión',
           cambiar_a_ingles: 'Cambiar a inglés',
-          cambiar_a_espanol: 'Cambiar a español'
+          cambiar_a_espanol: 'Cambiar a español',
+          dashboard: 'Inicio',
+          animales: 'Animales',
+          ventas: 'Ventas',
+          categorias: 'Categorías',
+          editar: 'Editar',
+          eliminar: 'Eliminar',
+          guardar: 'Guardar'
         }
       },
       en: {

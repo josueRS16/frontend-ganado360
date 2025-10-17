@@ -1,6 +1,6 @@
-
 import { Link, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -21,6 +21,7 @@ interface MenuSection {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
+  const { t } = useTranslation();
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Detectar modo oscuro
@@ -42,33 +43,14 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     return () => observer.disconnect();
   }, []);
 
-  const menuSections: MenuSection[] = [
-    {
-      title: 'Principal',
-      items: [
-        { path: '/', label: 'Dashboard', description: 'Resumen general', icon: 'bi-speedometer2' },
-        { path: '/animales', label: 'Animales', description: 'Gestión de ganado', icon: 'bi-diagram-3-fill' },
-        { path: '/animales-detalle', label: 'Vista Detallada', description: 'Información completa', icon: 'bi-list-columns-reverse' },
-      ]
-    },
-    {
-      title: 'Gestión',
-      items: [
-        { path: '/recordatorios', label: 'Recordatorios', description: 'Próximas tareas', icon: 'bi-calendar-check' },
-        { path: '/historial', label: 'Historial Médico', description: 'Eventos veterinarios', icon: 'bi-heart-pulse' },
-        { path: '/ventas', label: 'Ventas', description: 'Registro de ventas', icon: 'bi-cash-coin' },
-      ]
-    },
-    {
-      title: 'Configuración',
-      items: [
-        { path: '/categorias', label: 'Categorías', description: 'Tipos de ganado', icon: 'bi-tags' },
-        { path: '/estados', label: 'Estados', description: 'Estados del ganado', icon: 'bi-flag' },
-        { path: '/roles', label: 'Roles', description: 'Roles de usuario', icon: 'bi-person-badge' },
-        { path: '/usuarios', label: 'Usuarios', description: 'Gestión de usuarios', icon: 'bi-people' },
-      ]
-    }
-  ];
+  const navItems = useMemo(() => [
+    { to: '/', label: t('dashboard'), icon: 'bi-house' },
+    { to: '/animales', label: t('animales'), icon: 'bi-diagram-3-fill' },
+    { to: '/ventas', label: t('ventas'), icon: 'bi-cash-coin' },
+    { to: '/recordatorios', label: t('recordatorios'), icon: 'bi-calendar-check' },
+    { to: '/categorias', label: t('categorias'), icon: 'bi-tags' },
+    { to: '/usuarios', label: t('usuarios'), icon: 'bi-people-fill' }
+  ], [t]);
 
   const isActive = (path: string) => {
     if (path === '/') {
@@ -112,9 +94,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
         <div className="offcanvas-body p-0">
           <nav className="nav flex-column" role="menubar">
-            {menuSections.map((section) => (
+            {/* {menuSections.map((section) => (
               <div key={section.title} role="none">
-                {/* Section header */}
+                {/* Section header 
                 <div 
                   className="sidebar-section-header"
                   role="presentation"
@@ -123,7 +105,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   {section.title}
                 </div>
                 
-                {/* Section items */}
+                {/* Section items 
                 {section.items.map((item) => {
                   const isItemActive = isActive(item.path);
                   return (
@@ -187,7 +169,17 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   );
                 })}
               </div>
-            ))}
+            ))} */}
+            <ul className="nav flex-column">
+              {navItems.map(item => (
+                <li key={item.to} className="nav-item">
+                  <Link to={item.to} className="nav-link">
+                    <i className={`bi ${item.icon} me-2`}></i>
+                    <span>{item.label}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </nav>
         </div>
       </div>
