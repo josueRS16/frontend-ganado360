@@ -11,6 +11,7 @@ import { Breadcrumb } from '../components/ui/Breadcrumb';
 import type { AnimalesFilters, Animal } from '../types/api';
 import { getCachedAnimalImage } from '../utils/imageCache';
 import { getImageDisplayUrl } from '../utils/imageUtils';
+import { useTranslation } from 'react-i18next';
 
 export function Animales() {
   const { params, updateParams, clearParams } = useQueryParams<AnimalesFilters>();
@@ -25,6 +26,7 @@ export function Animales() {
   const { data: categoriasData } = useCategorias();
   const darDeBajaMutation = useDarDeBajaAnimal();
   const { showToast } = useToast();
+  const { t } = useTranslation();
 
   const animales = animalesData?.data || [];
   const categorias = categoriasData?.data || [];
