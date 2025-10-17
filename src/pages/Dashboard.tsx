@@ -1,8 +1,8 @@
-
 import { Link } from 'react-router-dom';
 import { useAnimales } from '../hooks/useAnimales';
 import { useCategorias } from '../hooks/useCategorias';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
+import { useMemo } from 'react';
 
 interface StatCardProps {
   title: string;
@@ -56,12 +56,14 @@ export function Dashboard() {
   const { data: animalesData, isLoading: loadingAnimales } = useAnimales();
   const { data: categoriasData, isLoading: loadingCategorias } = useCategorias();
 
-  const animales = animalesData?.data || [];
   const categorias = categoriasData?.data || [];
 
+  // Filtrar solo animales vivos usando lógica de Recordatorios
+  const animalesVivos = useMemo(() => (animalesData?.data || []).filter(a => a.EstadoNombre?.toLowerCase() === 'viva'), [animalesData?.data]);
+
   // Calcular estadísticas
-  const totalAnimales = animales.length;
-  const animalesPorSexo = animales.reduce((acc: Record<string, number>, animal) => {
+  const totalAnimales = animalesVivos.length;
+  const animalesPorSexo = animalesVivos.reduce((acc: Record<string, number>, animal) => {
     acc[animal.Sexo] = (acc[animal.Sexo] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
@@ -69,21 +71,15 @@ export function Dashboard() {
   const hembras = animalesPorSexo.F || 0;
   const machos = animalesPorSexo.M || 0;
 
-  const animalesPreniadas = animales.filter(animal => animal.Esta_Preniada === 1).length;
+  const animalesPreniadas = animalesVivos.filter(animal => animal.Esta_Preniada === 1).length;
 
-  const animalesPorCategoria = animales.reduce((acc: Record<string, number>, animal) => {
+  const animalesPorCategoria = animalesVivos.reduce((acc: Record<string, number>, animal) => {
     acc[animal.CategoriaTipo] = (acc[animal.CategoriaTipo] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
   if (loadingAnimales || loadingCategorias) {
-    return (
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
-        <div className="spinner-border" style={{ color: 'var(--color-base-green)' }} role="status">
-          <span className="visually-hidden">Cargando datos del sistema...</span>
-        </div>
-      </div>
-    );
+    return <div>Cargando datos...</div>;
   }
 
   return (
