@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAnimales } from '../hooks/useAnimales';
 import { useCategorias } from '../hooks/useCategorias';
 import { useQueryParams } from '../hooks/useQueryParams';
@@ -133,6 +133,20 @@ export function Animales() {
   };
 
   const hasActiveFilters = Object.keys(params).length > 0;
+
+  // Si tenías cabeceras definidas fuera, móvalas dentro:
+  const tableHeaders = useMemo(() => [
+    t('nombre'),
+    t('sexo'),
+    t('categoria'),
+    t('fecha_nacimiento'),
+    t('acciones')
+  ], [t]);
+
+  const sexoLabels = useMemo(() => ({
+    M: t('sexo_m'),
+    F: t('sexo_f')
+  }), [t]);
 
   if (error) {
     return (

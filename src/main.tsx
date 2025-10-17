@@ -1,4 +1,5 @@
 import './i18n';
+import React, { Suspense } from 'react';
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
@@ -11,11 +12,13 @@ import './styles/theme.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <Router>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </Router>
-  </StrictMode>,
+  <React.StrictMode>
+    <Suspense fallback={null}>
+      <Router>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </Router>
+    </Suspense>
+  </React.StrictMode>,
 )

@@ -10,7 +10,8 @@ i18n
     resources: {
       es: {
         translation: {
-          app_name: 'Ganado360',
+
+            app_name: 'Ganado360',
           app_subtitle: 'Sistema de Gestión Ganadera',
           abrir_menu: 'Abrir menú de navegación',
           recordatorios: 'Recordatorios',
