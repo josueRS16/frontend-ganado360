@@ -13,7 +13,7 @@ import { getCachedAnimalImage } from '../utils/imageCache';
 import { getImageDisplayUrl } from '../utils/imageUtils';
 
 export function Animales() {
-  const { params, updateParams, clearParams } = useQueryParams<AnimalesFilters>();
+  const { params, updateParams, clearParams, setParams } = useQueryParams<AnimalesFilters>();
   
   // Set default pagination parameters if not present
   const currentParams: AnimalesFilters = {
@@ -61,11 +61,12 @@ export function Animales() {
 
   const handleFilterChange = (key: keyof AnimalesFilters, value: string | number | undefined) => {
     if (value === '' || value === undefined) {
+      // Elimina la clave usando setParams para forzar el borrado completo
       const newParams = { ...params };
       delete newParams[key];
-      updateParams(newParams);
+      setParams(newParams);
     } else {
-      updateParams({ [key]: value });
+      updateParams({ ...params, [key]: value });
     }
   };
 
@@ -208,32 +209,50 @@ export function Animales() {
             <div className="row">
               <div className="col-md-3">
                 <label className="form-label">Categoría</label>
-                <select
-                  className="form-select"
-                  value={params.ID_Categoria || ''}
-                  onChange={(e) => handleFilterChange('ID_Categoria', e.target.value ? Number(e.target.value) : undefined)}
-                  aria-label="Filtrar por categoría"
-                >
-                  <option value="">Todas las categorías</option>
-                  {categorias.map((categoria) => (
-                    <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
-                      {categoria.Tipo}
-                    </option>
-                  ))}
-                </select>
+                <div style={{ position: 'relative' }}>
+                  <select
+                    className="form-select"
+                    key={params.ID_Categoria === undefined ? Math.random() : params.ID_Categoria}
+                    value={params.ID_Categoria || ''}
+                    onChange={(e) => {
+                      if (e.target.value === '' || e.target.value === undefined) {
+                        handleFilterChange('ID_Categoria', undefined);
+                      } else {
+                        handleFilterChange('ID_Categoria', Number(e.target.value));
+                      }
+                    }}
+                    aria-label="Filtrar por categoría"
+                  >
+                    <option value="">Todas las categorías</option>
+                    {categorias.map((categoria) => (
+                      <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
+                        {categoria.Tipo}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div className="col-md-2">
                 <label className="form-label">Sexo</label>
-                <select
-                  className="form-select"
-                  value={params.Sexo || ''}
-                  onChange={(e) => handleFilterChange('Sexo', e.target.value as "M" | "F" || undefined)}
-                  aria-label="Filtrar por sexo"
-                >
-                  <option value="">Todos</option>
-                  <option value="M">Macho</option>
-                  <option value="F">Hembra</option>
-                </select>
+                <div style={{ position: 'relative' }}>
+                  <select
+                    className="form-select"
+                    key={params.Sexo === undefined ? Math.random() : params.Sexo}
+                    value={params.Sexo || ''}
+                    onChange={(e) => {
+                      if (e.target.value === '' || e.target.value === undefined) {
+                        handleFilterChange('Sexo', undefined);
+                      } else {
+                        handleFilterChange('Sexo', e.target.value as "M" | "F");
+                      }
+                    }}
+                    aria-label="Filtrar por sexo"
+                  >
+                    <option value="">Todos</option>
+                    <option value="M">Macho</option>
+                    <option value="F">Hembra</option>
+                  </select>
+                </div>
               </div>
               <div className="col-md-3">
                 <label className="form-label">Ingreso desde</label>
@@ -278,32 +297,50 @@ export function Animales() {
           <div className="row g-3">
             <div className="col-12">
               <label className="form-label">Categoría</label>
-              <select
-                className="form-select"
-                value={params.ID_Categoria || ''}
-                onChange={(e) => handleFilterChange('ID_Categoria', e.target.value ? Number(e.target.value) : undefined)}
-                aria-label="Filtrar por categoría"
-              >
-                <option value="">Todas las categorías</option>
-                {categorias.map((categoria) => (
-                  <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
-                    {categoria.Tipo}
-                  </option>
-                ))}
-              </select>
+              <div style={{ position: 'relative' }}>
+                <select
+                  className="form-select"
+                  key={params.ID_Categoria === undefined ? Math.random() : params.ID_Categoria}
+                  value={params.ID_Categoria || ''}
+                  onChange={(e) => {
+                    if (e.target.value === '' || e.target.value === undefined) {
+                      handleFilterChange('ID_Categoria', undefined);
+                    } else {
+                      handleFilterChange('ID_Categoria', Number(e.target.value));
+                    }
+                  }}
+                  aria-label="Filtrar por categoría"
+                >
+                  <option value="">Todas las categorías</option>
+                  {categorias.map((categoria) => (
+                    <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
+                      {categoria.Tipo}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
             <div className="col-12">
               <label className="form-label">Sexo</label>
-              <select
-                className="form-select"
-                value={params.Sexo || ''}
-                onChange={(e) => handleFilterChange('Sexo', e.target.value as "M" | "F" || undefined)}
-                aria-label="Filtrar por sexo"
-              >
-                <option value="">Todos</option>
-                <option value="M">Macho</option>
-                <option value="F">Hembra</option>
-              </select>
+              <div style={{ position: 'relative' }}>
+                <select
+                  className="form-select"
+                  key={params.Sexo === undefined ? Math.random() : params.Sexo}
+                  value={params.Sexo || ''}
+                  onChange={(e) => {
+                    if (e.target.value === '' || e.target.value === undefined) {
+                      handleFilterChange('Sexo', undefined);
+                    } else {
+                      handleFilterChange('Sexo', e.target.value as "M" | "F");
+                    }
+                  }}
+                  aria-label="Filtrar por sexo"
+                >
+                  <option value="">Todos</option>
+                  <option value="M">Macho</option>
+                  <option value="F">Hembra</option>
+                </select>
+              </div>
             </div>
             <div className="col-12">
               <label className="form-label">Ingreso desde</label>
