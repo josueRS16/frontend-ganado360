@@ -190,14 +190,29 @@ export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalP
                     <table className="table table-borderless mb-0">
                       <tbody>
                         <tr>
-                          <td className="text-muted">Precio Unitario:</td>
+                          <td className="text-muted">Precio:</td>
                           <td className="text-end fw-semibold">
-                            <CurrencyValue
-                              value={venta.Precio_Unitario || venta.Precio}
-                              originalCurrency={venta.Moneda || 'CRC'}
-                              showOriginal={venta.Moneda && venta.Moneda !== monedaSeleccionada}
-                              showSymbol={true}
-                            />
+                            {(() => {
+                              // Robust fallback: prefer Precio_Unitario, then Precio, then 0
+                              let precio = 0;
+                              if (typeof venta.Precio_Unitario === 'number' && !isNaN(venta.Precio_Unitario)) {
+                                precio = venta.Precio_Unitario;
+                              } else if (typeof venta.Precio === 'number' && !isNaN(venta.Precio)) {
+                                precio = venta.Precio;
+                              } else if (venta.Precio_Unitario != null && !isNaN(Number(venta.Precio_Unitario))) {
+                                precio = Number(venta.Precio_Unitario);
+                              } else if (venta.Precio != null && !isNaN(Number(venta.Precio))) {
+                                precio = Number(venta.Precio);
+                              }
+                              return (
+                                <CurrencyValue
+                                  value={precio}
+                                  originalCurrency={venta.Moneda || 'CRC'}
+                                  showOriginal={venta.Moneda && venta.Moneda !== monedaSeleccionada}
+                                  showSymbol={true}
+                                />
+                              );
+                            })()}
                           </td>
                         </tr>
                         <tr>
@@ -208,7 +223,7 @@ export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalP
                           <td className="text-muted">Subtotal:</td>
                           <td className="text-end fw-semibold">
                             <CurrencyValue
-                              value={venta.Subtotal || venta.Precio}
+                              value={typeof venta.Subtotal === 'number' ? venta.Subtotal : Number(venta.Precio || 0) * Number(venta.Cantidad || 1)}
                               originalCurrency={venta.Moneda || 'CRC'}
                               showOriginal={venta.Moneda && venta.Moneda !== monedaSeleccionada}
                               showSymbol={true}
@@ -221,7 +236,7 @@ export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalP
                           </td>
                           <td className="text-end fw-semibold">
                             <CurrencyValue
-                              value={venta.IVA_Monto || 0}
+                              value={typeof venta.IVA_Monto === 'number' ? venta.IVA_Monto : (Number(venta.Subtotal || venta.Precio || 0) * Number(venta.IVA_Porcentaje || 12) / 100)}
                               originalCurrency={venta.Moneda || 'CRC'}
                               showOriginal={venta.Moneda && venta.Moneda !== monedaSeleccionada}
                               showSymbol={true}
@@ -233,12 +248,22 @@ export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalP
                             TOTAL:
                           </td>
                           <td className="text-end fs-5 fw-bold" style={{ color: 'var(--color-base-green)' }}>
-                            <CurrencyValue
-                              value={venta.Total || venta.Precio}
-                              originalCurrency={venta.Moneda || 'CRC'}
-                              showOriginal={venta.Moneda && venta.Moneda !== monedaSeleccionada}
-                              showSymbol={true}
-                            />
+                            {(() => {
+                              const cantidad = Number(venta.Cantidad ?? 1);
+                              const precioUnitario = Number(venta.Precio_Unitario ?? venta.Precio ?? 0);
+                              const subtotal = typeof venta.Subtotal === 'number' ? venta.Subtotal : precioUnitario * cantidad;
+                              const ivaPorcentaje = Number(venta.IVA_Porcentaje ?? 12);
+                              const iva = typeof venta.IVA_Monto === 'number' ? venta.IVA_Monto : subtotal * ivaPorcentaje / 100;
+                              const total = typeof venta.Total === 'number' ? venta.Total : subtotal + iva;
+                              return (
+                                <CurrencyValue
+                                  value={total}
+                                  originalCurrency={venta.Moneda || 'CRC'}
+                                  showOriginal={venta.Moneda && venta.Moneda !== monedaSeleccionada}
+                                  showSymbol={true}
+                                />
+                              );
+                            })()}
                           </td>
                         </tr>
                       </tbody>

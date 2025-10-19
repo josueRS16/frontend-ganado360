@@ -107,58 +107,38 @@ export async function generarFacturaPDF(factura: VentaFacturaPDF): Promise<void>
 
   autoTable(doc, {
     startY: yPos,
-    head: [['Descripción del Animal', 'Cant.', 'Precio Unit.', 'Método de Pago', 'Observaciones']],
+    head: [['Descripción', 'Cant.', 'Precio', 'Pago', 'Obs.']],
     body: [
       [
         animalInfo,
-        factura.Cantidad.toString(),
+        factura.Cantidad?.toString() || '1',
         formatCurrency(factura.Precio_Unitario),
         factura.Metodo_Pago,
-        factura.Observaciones
+        (factura.Observaciones || '').slice(0, 60) // Limita observaciones
       ]
     ],
     theme: 'grid',
     headStyles: {
       fillColor: colorPrimario,
       textColor: [255, 255, 255] as [number, number, number],
-      fontSize: 10,
+      fontSize: 9,
       fontStyle: 'bold',
       halign: 'center',
-      cellPadding: 4
+      cellPadding: 2
     },
     bodyStyles: {
-      fontSize: 9,
+      fontSize: 8,
       textColor: colorTexto,
-      cellPadding: 4,
+      cellPadding: 2,
       lineColor: colorBorde,
       lineWidth: 0.1
     },
     columnStyles: {
-      0: { 
-        cellWidth: 45, 
-        halign: 'left',
-        valign: 'top'
-      },
-      1: { 
-        cellWidth: 20, 
-        halign: 'center',
-        valign: 'top'
-      },
-      2: { 
-        cellWidth: 35, 
-        halign: 'left',
-        valign: 'top'
-      },
-        3: { 
-          cellWidth: 35, 
-          halign: 'center',
-          valign: 'top'
-        },
-        4: { 
-          cellWidth: 51, 
-          halign: 'left',
-          valign: 'top'
-        }
+      0: { cellWidth: 40, halign: 'left', valign: 'top' },
+      1: { cellWidth: 15, halign: 'center', valign: 'top' },
+      2: { cellWidth: 25, halign: 'left', valign: 'top' },
+      3: { cellWidth: 25, halign: 'center', valign: 'top' },
+      4: { cellWidth: 35, halign: 'left', valign: 'top' }
     },
     margin: { left: margin, right: margin },
     styles: {
@@ -172,14 +152,26 @@ export async function generarFacturaPDF(factura: VentaFacturaPDF): Promise<void>
 
   // ===== TOTALES =====
   const finalY = doc.lastAutoTable.finalY + 15;
-  
-  // Crear tabla de totales simple
+  // Calcular totales si no vienen del backend
+  const cantidad = Number(factura.Cantidad ?? 1);
+  const precioUnitario = Number(factura.Precio_Unitario ?? 0);
+  const subtotal = typeof factura.Subtotal === 'number' && !isNaN(factura.Subtotal)
+    ? factura.Subtotal
+    : precioUnitario * cantidad;
+  const ivaPorcentaje = Number(factura.IVA_Porcentaje ?? 12);
+  const iva = typeof factura.IVA_Monto === 'number' && !isNaN(factura.IVA_Monto)
+    ? factura.IVA_Monto
+    : subtotal * ivaPorcentaje / 100;
+  const total = typeof factura.Total === 'number' && !isNaN(factura.Total)
+    ? factura.Total
+    : subtotal + iva;
+
   autoTable(doc, {
     startY: finalY,
     body: [
-      ['SUBTOTAL:', formatCurrency(factura.Subtotal)],
-      [`IVA (${factura.IVA_Porcentaje}%):`, formatCurrency(factura.IVA_Monto)],
-      ['TOTAL:', formatCurrency(factura.Total)]
+      ['SUBTOTAL:', formatCurrency(subtotal)],
+      [`IVA (${ivaPorcentaje}%):`, formatCurrency(iva)],
+      ['TOTAL:', formatCurrency(total)]
     ],
     theme: 'plain',
     bodyStyles: {
@@ -268,16 +260,13 @@ export async function generarFacturaPDF(factura: VentaFacturaPDF): Promise<void>
  * @returns String con formato ₡X,XXX.XX
  */
 function formatCurrency(valor: string | number): string {
+  if (valor === null || valor === undefined) return '₡0.00';
   const numValue = typeof valor === 'string' ? parseFloat(valor) : valor;
   if (isNaN(numValue)) return '₡0.00';
-  
-  // Formatear con separadores de miles y asegurar máximo 2 decimales
-  const formatted = numValue.toLocaleString('es-CR', { 
-    minimumFractionDigits: 2, 
-    maximumFractionDigits: 2 
+  const formatted = numValue.toLocaleString('es-CR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
   });
-  
-  // Limitar longitud para evitar desbordes en columnas pequeñas
   const result = `₡${formatted}`;
   return result.length > 15 ? `₡${numValue.toFixed(0)}` : result;
 }

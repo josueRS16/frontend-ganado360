@@ -11,6 +11,7 @@ import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { CurrencySelector, CurrencyValue } from '../components/ui/CurrencySelector';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { generarFacturaPDF } from '../utils/facturasPDF';
+import { ventasApi } from '../api/ventas';
 import { VentaDetalleModal } from '../components/modals/VentaDetalleModal';
 import type { VentasFilters, Venta, VentaRequest, Moneda } from '../types/api';
 
@@ -612,8 +613,30 @@ export function Ventas() {
         });
         showToast('Venta actualizada exitosamente', 'success');
       } else {
-        await createMutation.mutateAsync(formData);
+        const created = await createMutation.mutateAsync(formData);
         showToast('Venta creada exitosamente', 'success');
+        // Si el backend devuelve la venta creada, intentar descargar la factura cuando esté disponible
+        const createdId = created?.data?.ID_Venta;
+        if (createdId) {
+          // Poll the venta endpoint until Numero_Factura is set (backend may generate it asynchronously)
+          const maxAttempts = 20;
+          const delayMs = 1000;
+          let found = false;
+          for (let attempt = 0; attempt < maxAttempts; attempt++) {
+            try {
+              const ventaResp = await ventasApi.getById(Number(createdId));
+              const ventaData = ventaResp?.data;
+              if (ventaData && ventaData.Numero_Factura) {
+                found = true;
+                break;
+              }
+            } catch (err) {
+              // ignore and retry
+            }
+            await new Promise(res => setTimeout(res, delayMs));
+          }
+          // Mensaje eliminado: la factura se puede descargar desde la lista
+        }
       }
       closeModal();
     } catch (error: unknown) {
@@ -663,17 +686,13 @@ export function Ventas() {
     try {
       setDownloadingPDF(ventaId);
       showToast('Descargando factura...', 'info');
-
-      // Obtener datos de la factura desde el endpoint específico
-      const response = await fetch(`http://localhost:3000/api/ventas/${ventaId}/factura-pdf`);
-      const data = await response.json();
-
-      if (!response.ok || !data.data) {
-        throw new Error(data.message || 'Error al obtener datos de la factura');
+      // Obtener datos de la factura desde el endpoint específico usando el cliente API (asegura baseURL correcto)
+      const resp = await ventasApi.getFacturaPDF(ventaId);
+      if (!resp || !resp.data) {
+        throw new Error('No se recibieron datos de factura desde el backend');
       }
-
       // Generar y descargar el PDF
-      await generarFacturaPDF(data.data);
+      await generarFacturaPDF(resp.data);
       showToast('Factura descargada exitosamente', 'success');
     } catch (error) {
       console.error('Error al descargar PDF:', error);
@@ -1438,22 +1457,40 @@ export function Ventas() {
                         </td>
                         <td className="cell-tight text-center">
                           <div>
-                            <CurrencyValue
-                              value={venta.Total || venta.Precio}
-                              originalCurrency={venta.Moneda || 'CRC'}
-                              showOriginal={venta.Moneda && venta.Moneda !== monedaSeleccionada}
-                              className="fw-bold"
-                              showSymbol={true}
-                            />
-                            {venta.Subtotal && (
-                              <small className="d-block text-muted">
-                                Sub: <CurrencyValue
-                                  value={venta.Subtotal}
-                                  originalCurrency={venta.Moneda || 'CRC'}
-                                  showSymbol={true}
-                                />
-                              </small>
-                            )}
+                            {(() => {
+                              // Cálculo robusto para Subtotal e IVA
+                              const cantidad = Number(venta.Cantidad ?? 1);
+                              const precioUnitario = Number(venta.Precio_Unitario ?? venta.Precio ?? 0);
+                              const subtotal = typeof venta.Subtotal === 'number' ? venta.Subtotal : precioUnitario * cantidad;
+                              const ivaPorcentaje = Number(venta.IVA_Porcentaje ?? 12);
+                              const iva = typeof venta.IVA_Monto === 'number' ? venta.IVA_Monto : subtotal * ivaPorcentaje / 100;
+                              const total = typeof venta.Total === 'number' ? venta.Total : subtotal + iva;
+                              return (
+                                <>
+                                  <CurrencyValue
+                                    value={total}
+                                    originalCurrency={venta.Moneda || 'CRC'}
+                                    showOriginal={venta.Moneda && venta.Moneda !== monedaSeleccionada}
+                                    className="fw-bold"
+                                    showSymbol={true}
+                                  />
+                                  <small className="d-block text-muted">
+                                    Sub: <CurrencyValue
+                                      value={subtotal}
+                                      originalCurrency={venta.Moneda || 'CRC'}
+                                      showSymbol={true}
+                                    />
+                                  </small>
+                                  <small className="d-block text-muted">
+                                    IVA: <CurrencyValue
+                                      value={iva}
+                                      originalCurrency={venta.Moneda || 'CRC'}
+                                      showSymbol={true}
+                                    />
+                                  </small>
+                                </>
+                              );
+                            })()}
                           </div>
                         </td>
                         <td className="cell-tight text-center">
