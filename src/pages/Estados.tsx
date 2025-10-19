@@ -117,7 +117,7 @@ function EstadoModal({ estado, isOpen, onClose, onSave }: EstadoModalProps) {
 }
 
 export function Estados() {
-  const { params, updateParams, clearParams } = useQueryParams<EstadosFilters>();
+  const { params, updateParams, clearParams, setParams } = useQueryParams<EstadosFilters>();
   
   // Set default pagination parameters if not present
   const currentParams: EstadosFilters = {
@@ -139,13 +139,6 @@ export function Estados() {
     estado?: Estado;
   }>({ isOpen: false });
 
-  // Estado local para los valores de los filtros de texto
-  const [textFilterValues, setTextFilterValues] = useState<{
-    Nombre: string;
-  }>({
-    Nombre: params.Nombre || '',
-  });
-
   const openModal = (estado?: Estado) => {
     setModalState({ isOpen: true, estado });
   };
@@ -154,31 +147,19 @@ export function Estados() {
     setModalState({ isOpen: false });
   };
 
-  const handleTextInputChange = (key: 'Nombre', value: string) => {
-    // Solo actualizar el estado local, no aplicar el filtro
-    setTextFilterValues(prev => ({
-      ...prev,
-      [key]: value
-    }));
-  };
-
-  const handleSearchClick = (key: 'Nombre') => {
-    // Aplicar el filtro solo cuando se hace clic en "Buscar"
-    const value = textFilterValues[key];
+  // Filtrado en tiempo real y borrado completo usando setParams
+  const handleNombreFilterChange = (value: string) => {
     if (value.trim() === '') {
       const newParams = { ...params };
-      delete newParams[key];
-      updateParams(newParams);
+      delete newParams.Nombre;
+      setParams(newParams);
     } else {
-      updateParams({ [key]: value.trim() });
+      setParams({ ...params, Nombre: value });
     }
   };
 
   const clearAllFilters = () => {
     clearParams();
-    setTextFilterValues({
-      Nombre: '',
-    });
   };
 
   const handlePageChange = (page: number) => {
@@ -296,24 +277,15 @@ export function Estados() {
             <div className="row">
               <div className="col-md-4">
                 <label className="form-label">Nombre del Estado</label>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={textFilterValues.Nombre}
-                    onChange={(e) => handleTextInputChange('Nombre', e.target.value)}
-                    placeholder="Buscar por nombre..."
-                    aria-label="Filtrar por nombre del estado"
-                  />
-                  <button 
-                    className="btn btn-outline-secondary" 
-                    type="button"
-                    onClick={() => handleSearchClick('Nombre')}
-                    title="Buscar"
-                  >
-                    <i className="bi bi-search"></i>
-                  </button>
-                </div>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={params.Nombre || ''}
+                  onChange={(e) => handleNombreFilterChange(e.target.value)}
+                  placeholder="Buscar por nombre..."
+                  aria-label="Filtrar por nombre del estado"
+                  autoComplete="off"
+                />
               </div>
             </div>
           </div>
@@ -333,24 +305,15 @@ export function Estados() {
           <div className="row g-3">
             <div className="col-12">
               <label className="form-label">Nombre del Estado</label>
-              <div className="input-group">
-                <input
-                  type="text"
-                  className="form-control"
-                  value={textFilterValues.Nombre}
-                  onChange={(e) => handleTextInputChange('Nombre', e.target.value)}
-                  placeholder="Buscar por nombre..."
-                  aria-label="Filtrar por nombre del estado"
-                />
-                <button 
-                  className="btn btn-outline-secondary" 
-                  type="button"
-                  onClick={() => handleSearchClick('Nombre')}
-                  title="Buscar"
-                >
-                  <i className="bi bi-search"></i>
-                </button>
-              </div>
+              <input
+                type="text"
+                className="form-control"
+                value={params.Nombre || ''}
+                onChange={(e) => handleNombreFilterChange(e.target.value)}
+                placeholder="Buscar por nombre..."
+                aria-label="Filtrar por nombre del estado"
+                autoComplete="off"
+              />
             </div>
           </div>
           <div className="d-grid gap-2 mt-4">

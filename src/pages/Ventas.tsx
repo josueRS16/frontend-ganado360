@@ -532,7 +532,7 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
 }
 
 export function Ventas() {
-  const { params, updateParams, clearParams } = useQueryParams<VentasFilters>();
+  const { params, updateParams, clearParams, setParams } = useQueryParams<VentasFilters>();
 
   // Set default pagination parameters if not present
   const currentParams: VentasFilters = {
@@ -574,11 +574,12 @@ export function Ventas() {
 
   const handleFilterChange = (key: keyof VentasFilters, value: string | number | undefined) => {
     if (value === '' || value === undefined) {
+      // Elimina la clave usando setParams para forzar el borrado completo (igual que Animales)
       const newParams = { ...params };
       delete newParams[key];
-      updateParams(newParams);
+      setParams(newParams);
     } else {
-      updateParams({ [key]: value });
+      updateParams({ ...params, [key]: value });
     }
   };
 
@@ -921,6 +922,7 @@ export function Ventas() {
                   onChange={(e) => handleFilterChange('Numero_Factura', e.target.value || undefined)}
                   placeholder="FAC-2025-00001"
                   aria-label="Buscar por número de factura"
+                  autoComplete="off"
                 />
               </div>
               <div className="col-md-3">
@@ -932,6 +934,7 @@ export function Ventas() {
                   onChange={(e) => handleFilterChange('Comprador', e.target.value || undefined)}
                   placeholder="Nombre del comprador"
                   aria-label="Buscar por comprador"
+                  autoComplete="off"
                 />
               </div>
               <div className="col-md-2">
@@ -939,7 +942,7 @@ export function Ventas() {
                 <select
                   className="form-select"
                   value={params.ID_Animal || ''}
-                  onChange={(e) => handleFilterChange('ID_Animal', e.target.value ? Number(e.target.value) : undefined)}
+                  onChange={(e) => handleFilterChange('ID_Animal', e.target.value === '' ? undefined : Number(e.target.value))}
                   aria-label="Filtrar por animal"
                 >
                   <option value="">Todos</option>
@@ -955,7 +958,7 @@ export function Ventas() {
                 <select
                   className="form-select"
                   value={params.Tipo_Venta || ''}
-                  onChange={(e) => handleFilterChange('Tipo_Venta', e.target.value || undefined)}
+                  onChange={(e) => handleFilterChange('Tipo_Venta', e.target.value === '' ? undefined : e.target.value)}
                   aria-label="Filtrar por tipo de venta"
                 >
                   <option value="">Todos</option>
@@ -1243,6 +1246,7 @@ export function Ventas() {
                 onChange={(e) => handleFilterChange('Numero_Factura', e.target.value || undefined)}
                 placeholder="FAC-2025-00001"
                 aria-label="Buscar por número de factura"
+                autoComplete="off"
               />
             </div>
             <div className="col-12">
@@ -1254,6 +1258,7 @@ export function Ventas() {
                 onChange={(e) => handleFilterChange('Comprador', e.target.value || undefined)}
                 placeholder="Nombre del comprador"
                 aria-label="Buscar por comprador"
+                autoComplete="off"
               />
             </div>
             <div className="col-12">
@@ -1261,7 +1266,7 @@ export function Ventas() {
               <select
                 className="form-select"
                 value={params.ID_Animal || ''}
-                onChange={(e) => handleFilterChange('ID_Animal', e.target.value ? Number(e.target.value) : undefined)}
+                onChange={(e) => handleFilterChange('ID_Animal', e.target.value === '' ? undefined : Number(e.target.value))}
                 aria-label="Filtrar por animal"
               >
                 <option value="">Todos los animales</option>
@@ -1277,7 +1282,7 @@ export function Ventas() {
               <select
                 className="form-select"
                 value={params.Tipo_Venta || ''}
-                onChange={(e) => handleFilterChange('Tipo_Venta', e.target.value || undefined)}
+                onChange={(e) => handleFilterChange('Tipo_Venta', e.target.value === '' ? undefined : e.target.value)}
                 aria-label="Filtrar por tipo de venta"
               >
                 <option value="">Todos los tipos</option>

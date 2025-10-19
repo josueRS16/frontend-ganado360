@@ -131,7 +131,7 @@ function CategoriaModal({ categoria, isOpen, onClose, onSave }: CategoriaModalPr
 }
 
 export function Categorias() {
-  const { params, updateParams, clearParams } = useQueryParams<CategoriasFilters>();
+  const { params, updateParams, clearParams, setParams } = useQueryParams<CategoriasFilters>();
   
   // Set default pagination parameters if not present
   const currentParams: CategoriasFilters = {
@@ -153,13 +153,6 @@ export function Categorias() {
     categoria?: Categoria;
   }>({ isOpen: false });
 
-  // Estado local para los valores de los filtros de texto
-  const [textFilterValues, setTextFilterValues] = useState<{
-    Tipo: string;
-  }>({
-    Tipo: params.Tipo || '',
-  });
-
   const openModal = (categoria?: Categoria) => {
     setModalState({ isOpen: true, categoria });
   };
@@ -168,31 +161,19 @@ export function Categorias() {
     setModalState({ isOpen: false });
   };
 
-  const handleTextInputChange = (key: 'Tipo', value: string) => {
-    // Solo actualizar el estado local, no aplicar el filtro
-    setTextFilterValues(prev => ({
-      ...prev,
-      [key]: value
-    }));
-  };
-
-  const handleSearchClick = (key: 'Tipo') => {
-    // Aplicar el filtro solo cuando se hace clic en "Buscar"
-    const value = textFilterValues[key];
+  // Filtrado en tiempo real y borrado completo usando setParams
+  const handleTipoFilterChange = (value: string) => {
     if (value.trim() === '') {
       const newParams = { ...params };
-      delete newParams[key];
-      updateParams(newParams);
+      delete newParams.Tipo;
+      setParams(newParams);
     } else {
-      updateParams({ [key]: value.trim() });
+      setParams({ ...params, Tipo: value });
     }
   };
 
   const clearAllFilters = () => {
     clearParams();
-    setTextFilterValues({
-      Tipo: '',
-    });
   };
 
   const handlePageChange = (page: number) => {
@@ -310,24 +291,15 @@ export function Categorias() {
             <div className="row">
               <div className="col-md-4">
                 <label className="form-label">Tipo de Categoría</label>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={textFilterValues.Tipo}
-                    onChange={(e) => handleTextInputChange('Tipo', e.target.value)}
-                    placeholder="Buscar por tipo..."
-                    aria-label="Filtrar por tipo de categoría"
-                  />
-                  <button 
-                    className="btn btn-outline-secondary" 
-                    type="button"
-                    onClick={() => handleSearchClick('Tipo')}
-                    title="Buscar"
-                  >
-                    <i className="bi bi-search"></i>
-                  </button>
-                </div>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={params.Tipo || ''}
+                  onChange={(e) => handleTipoFilterChange(e.target.value)}
+                  placeholder="Buscar por tipo..."
+                  aria-label="Filtrar por tipo de categoría"
+                  autoComplete="off"
+                />
               </div>
             </div>
           </div>
@@ -347,24 +319,15 @@ export function Categorias() {
           <div className="row g-3">
             <div className="col-12">
               <label className="form-label">Tipo de Categoría</label>
-              <div className="input-group">
-                <input
-                  type="text"
-                  className="form-control"
-                  value={textFilterValues.Tipo}
-                  onChange={(e) => handleTextInputChange('Tipo', e.target.value)}
-                  placeholder="Buscar por tipo..."
-                  aria-label="Filtrar por tipo de categoría"
-                />
-                <button 
-                  className="btn btn-outline-secondary" 
-                  type="button"
-                  onClick={() => handleSearchClick('Tipo')}
-                  title="Buscar"
-                >
-                  <i className="bi bi-search"></i>
-                </button>
-              </div>
+              <input
+                type="text"
+                className="form-control"
+                value={params.Tipo || ''}
+                onChange={(e) => handleTipoFilterChange(e.target.value)}
+                placeholder="Buscar por tipo..."
+                aria-label="Filtrar por tipo de categoría"
+                autoComplete="off"
+              />
             </div>
           </div>
           <div className="d-grid gap-2 mt-4">
