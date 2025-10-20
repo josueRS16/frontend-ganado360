@@ -9,8 +9,10 @@ declare global {
 
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { recordatoriosApi } from '../../api/recordatorios';
+import { PerfilUsuarioModal } from '../modals/PerfilUsuarioModal';
+import '../../styles/google-popover.css';
 
 interface NavbarProps {
   onToggleSidebar: () => void;
@@ -22,6 +24,53 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [notiCount, setNotiCount] = useState(0);
+  const [showPerfilModal, setShowPerfilModal] = useState(false);
+  const [showPopover, setShowPopover] = useState(false);
+  const popoverRef = useRef<HTMLButtonElement>(null);
+  const popoverContainerRef = useRef<HTMLDivElement>(null);
+
+  // Función para obtener las iniciales del usuario
+  const getUserInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const handleLogout = useCallback(() => {
+    logout();
+    navigate('/login');
+  }, [logout, navigate]);
+
+  // Función para abrir el modal de perfil desde el popover
+  const handleEditProfile = useCallback(() => {
+    setShowPopover(false);
+    setShowPerfilModal(true);
+  }, []);
+
+  // Función para toggle del popover
+  const togglePopover = useCallback(() => {
+    setShowPopover(prev => !prev);
+  }, []);
+
+  // Cerrar popover al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popoverContainerRef.current && !popoverContainerRef.current.contains(event.target as Node)) {
+        setShowPopover(false);
+      }
+    };
+
+    if (showPopover) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showPopover]);
 
   useEffect(() => {
     const fetchCount = async () => {
@@ -43,10 +92,6 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
     };
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
   return (
     <nav className="navbar navbar-expand-lg navbar-dark navbar-ganado">
       <div className="container-fluid px-lg-4">
@@ -104,70 +149,66 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
             <i className={`bi ${isDark ? 'bi-sun-fill' : 'bi-moon-fill'} fs-5`}></i>
           </button>
 
-          {/* Quick actions dropdown */}
-          <div className="dropdown">
+          {/* User profile popover */}
+          <div className="position-relative" ref={popoverContainerRef}>
             <button
-              className="btn btn-gold dropdown-toggle fw-semibold px-3"
+              ref={popoverRef}
+              className="popover-trigger-btn"
               type="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-              aria-label="Menú de acciones rápidas"
+              onClick={togglePopover}
+              aria-label="Menú de perfil de usuario"
             >
-              <i className="bi bi-lightning-fill me-1"></i>
-              <span className="d-none d-lg-inline">Acciones</span>
+              <div className="user-avatar-small">
+                {getUserInitials(user?.Nombre || 'U')}
+              </div>
+              <span className="user-name d-none d-lg-inline">{user?.Nombre || 'Usuario'}</span>
+              <i className="bi bi-chevron-down fs-6"></i>
             </button>
-            <ul className="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" style={{ minWidth: '240px' }}>
-              <li className="dropdown-header fw-semibold text-muted">
-                <i className="bi bi-lightning me-1"></i>
-                Acciones Rápidas
-              </li>
-              <li><hr className="dropdown-divider my-1" /></li>
-              <li>
-                <Link className="dropdown-item py-2" to="/animales">
-                  <i className="bi bi-diagram-3-fill me-2 text-primary"></i>
-                  Gestionar Animales
-                  <small className="d-block text-muted">Ver y editar ganado</small>
-                </Link>
-              </li>
-              <li>
-                <Link className="dropdown-item py-2" to="/ventas">
-                  <i className="bi bi-cash-coin me-2 text-warning"></i>
-                  Registrar Venta
-                  <small className="d-block text-muted">Nueva transacción</small>
-                </Link>
-              </li>
-              <li>
-                <Link className="dropdown-item py-2" to="/recordatorios">
-                  <i className="bi bi-calendar-check me-2 text-info"></i>
-                  Ver Recordatorios
-                  <small className="d-block text-muted">Próximas tareas</small>
-                </Link>
-              </li>
-              <li><hr className="dropdown-divider my-1" /></li>
-              <li>
-                <Link className="dropdown-item py-2" to="/usuarios">
-                  <i className="bi bi-people-fill me-2 text-secondary"></i>
-                  Gestionar Usuarios
-                  <small className="d-block text-muted">Administración</small>
-                </Link>
-              </li>
-              {user && (
-                <>
-                  <li><hr className="dropdown-divider my-1" /></li>
-                  <li>
-                    <button
-                      className="dropdown-item py-2 text-danger"
-                      onClick={handleLogout}
-                      aria-label="Cerrar sesión"
-                    >
-                      <i className="bi bi-box-arrow-right me-2"></i>
-                      Cerrar sesión
-                    </button>
-                  </li>
-                </>
-              )}
-            </ul>
+
+            {/* Popover personalizado */}
+            {showPopover && (
+              <div className="google-popover position-absolute end-0 mt-2" style={{ zIndex: 1050 }}>
+                <div className="google-popover-header">
+                  <div className="d-flex align-items-center">
+                    <div className="user-avatar">
+                      {getUserInitials(user?.Nombre || 'U')}
+                    </div>
+                    <div className="user-info">
+                      <h6>{user?.Nombre || 'Usuario'}</h6>
+                      <div className="user-email">{user?.Correo || 'correo@ejemplo.com'}</div>
+                      <span className="user-role-badge">
+                        <i className="bi bi-shield-check"></i>
+                        {user?.RolNombre || 'Usuario'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="google-popover-body">
+                  <button 
+                    className="popover-action-btn" 
+                    onClick={handleEditProfile}
+                  >
+                    <i className="bi bi-pencil-square"></i>
+                    Editar perfil
+                  </button>
+                  <hr className="popover-separator" />
+                  <button 
+                    className="popover-action-btn logout-btn" 
+                    onClick={handleLogout}
+                  >
+                    <i className="bi bi-box-arrow-right"></i>
+                    Cerrar sesión
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
+
+          {/* Modal de perfil */}
+          <PerfilUsuarioModal 
+            isOpen={showPerfilModal} 
+            onClose={() => setShowPerfilModal(false)} 
+          />
         </div>
       </div>
     </nav>

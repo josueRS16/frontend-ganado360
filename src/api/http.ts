@@ -18,9 +18,17 @@ const http = axios.create({
   },
 });
 
-// Interceptor para requests - log de auditoría
+// Interceptor para requests - incluir token automáticamente
 http.interceptors.request.use(
   (config) => {
+    // Obtener token del localStorage
+    const token = localStorage.getItem('token');
+    
+    // Incluir token en el header Authorization si existe
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    
     return config;
   },
   (error: AxiosError) => {
@@ -29,7 +37,7 @@ http.interceptors.request.use(
   }
 );
 
-// Interceptor para responses - manejo de errores
+// Interceptor para responses - manejo de errores y autenticación
 http.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;
@@ -39,9 +47,26 @@ http.interceptors.response.use(
     
     let message = 'Error inesperado en el servidor';
     
-    if (error.response?.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+    // Manejo específico de errores de autenticación y autorización
+    if (error.response?.status === 401) {
+      // Token expirado o inválido
+      message = 'Sesión expirada. Por favor, inicia sesión nuevamente.';
+      
+      // Limpiar datos de sesión
+      localStorage.removeItem('token');
+      
+      // Redirigir al login si no estamos ya ahí
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
+    } else if (error.response?.status === 403) {
+      // Sin permisos
+      message = 'No tienes permisos para realizar esta acción.';
+    } else if (error.response?.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+      // Mensaje específico del backend
       message = (error.response.data as { message: string }).message;
     } else if (error.response?.status) {
+      // Otros errores HTTP
       switch (error.response.status) {
         case 400:
           message = 'Datos inválidos en la solicitud';

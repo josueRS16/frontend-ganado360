@@ -58,6 +58,33 @@ export interface UsuarioRequest {
   RolID: number;
 }
 
+export interface UpdateUsuarioPerfilRequest {
+  Nombre: string;
+  Correo: string;
+  Contraseña?: string; // Opcional para actualización de perfil
+}
+
+// Respuesta del perfil de usuario
+export interface PerfilUsuario {
+  ID_Usuario: number;
+  Nombre: string;
+  Correo: string;
+  RolID: number;
+  RolNombre: string;
+}
+
+// Respuesta del login
+export interface LoginResponse {
+  token: string;
+  nombre: string;
+  rol: number;
+  id?: number;
+  ID_Usuario?: number;
+  rolNombre?: string;
+  RolNombre?: string;
+  correo?: string;
+}
+
 export interface UsuariosFilters {
   Nombre?: string;
   Correo?: string;

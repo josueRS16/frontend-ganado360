@@ -451,9 +451,9 @@ export function Categorias() {
                           <span className="fw-semibold">{categoria.Tipo}</span>
                         </td>
                         <td className="cell-tight text-center">
-                          <div className="btn-group" role="group" aria-label="Acciones de la categoría">
+                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label="Acciones de la categoría">
                             <button
-                              className="btn btn-sm btn-outline-warning"
+                              className="btn btn-sm btn-warning"
                               onClick={() => openModal(categoria)}
                               title="Editar"
                               aria-label="Editar categoría"
@@ -461,7 +461,7 @@ export function Categorias() {
                               <i className="bi bi-pencil"></i>
                             </button>
                             <button
-                              className="btn btn-sm btn-outline-danger"
+                              className="btn btn-sm btn-danger"
                               onClick={() => handleDelete(categoria)}
                               disabled={deleteMutation.isPending}
                               title="Eliminar"

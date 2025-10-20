@@ -437,9 +437,9 @@ export function Roles() {
                           <span className="fw-semibold">{rol.Nombre}</span>
                         </td>
                         <td className="cell-tight text-center">
-                          <div className="btn-group" role="group" aria-label="Acciones del rol">
+                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label="Acciones del rol">
                             <button
-                              className="btn btn-sm btn-outline-warning"
+                              className="btn btn-sm btn-warning"
                               onClick={() => openModal(rol)}
                               title="Editar"
                               aria-label="Editar rol"
@@ -447,7 +447,7 @@ export function Roles() {
                               <i className="bi bi-pencil"></i>
                             </button>
                             <button
-                              className="btn btn-sm btn-outline-danger"
+                              className="btn btn-sm btn-danger"
                               onClick={() => handleDelete(rol)}
                               disabled={deleteMutation.isPending}
                               title="Eliminar"

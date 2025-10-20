@@ -52,7 +52,7 @@
   justify-content: center;
   min-height: 100vh;
   width: 100vw;
-  background: url('/opcion2.jpg') no-repeat center center fixed;
+  background: url('/ganado360.jpeg') no-repeat center center fixed;
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -63,7 +63,7 @@
 .login-form {
   margin-top: 10vh;
   transform: none;
-  background: #ffffff;
+  background-color: #DFEDE2 !important;
   padding: 2.5rem 3rem;
   border-radius: 16px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);

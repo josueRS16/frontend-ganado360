@@ -671,9 +671,9 @@ export function Recordatorios() {
                           </span>
                         </td>
                         <td className="cell-tight text-center">
-                          <div className="btn-group" role="group" aria-label="Acciones del recordatorio">
+                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label="Acciones del recordatorio">
                             <button
-                              className="btn btn-sm btn-outline-warning"
+                              className="btn btn-sm btn-warning"
                               onClick={() => openModal(recordatorio)}
                               title="Editar"
                               aria-label="Editar recordatorio"
@@ -683,7 +683,7 @@ export function Recordatorios() {
                             </button>
                             {recordatorio.Estado === 'pendiente' ? (
                               <button
-                                className="btn btn-sm btn-outline-success"
+                                className="btn btn-sm btn-success"
                                 onClick={() => handleChangeEstado(recordatorio, 'hecho')}
                                 title="Marcar como realizado"
                                 aria-label="Marcar como realizado"
@@ -693,7 +693,7 @@ export function Recordatorios() {
                               </button>
                             ) : (
                               <button
-                                className="btn btn-sm btn-outline-secondary"
+                                className="btn btn-sm btn-secondary"
                                 onClick={() => handleChangeEstado(recordatorio, 'pendiente')}
                                 title="Marcar como pendiente"
                                 aria-label="Marcar como pendiente"
@@ -703,7 +703,7 @@ export function Recordatorios() {
                               </button>
                             )}
                             <button
-                              className="btn btn-sm btn-outline-danger"
+                              className="btn btn-sm btn-danger"
                               onClick={() => handleDelete(recordatorio)}
                               disabled={deleteMutation.isPending}
                               title="Eliminar"

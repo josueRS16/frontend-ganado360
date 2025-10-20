@@ -16,6 +16,7 @@ import { Ventas } from './pages/Ventas';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import PrivateRoute from './components/PrivateRoute';
+import { RoleRoute } from './components/RoleRoute';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import VerifyCode from './pages/VerifyCode';
@@ -48,16 +49,39 @@ function App() {
           {/* Password reset routes removed */}
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<Layout />}>
+              {/* Rutas accesibles para todos los usuarios autenticados */}
               <Route index element={<Dashboard />} />
               <Route path="animales" element={<Animales />} />
               <Route path="animales-detalle" element={<AnimalesDetalle />} />
-              <Route path="categorias" element={<Categorias />} />
-              <Route path="roles" element={<Roles />} />
-              <Route path="usuarios" element={<Usuarios />} />
-              <Route path="estados" element={<Estados />} />
               <Route path="recordatorios" element={<Recordatorios />} />
               <Route path="historial" element={<Historial />} />
-              <Route path="ventas" element={<Ventas />} />
+              
+              {/* Rutas solo para Administradores */}
+              <Route path="ventas" element={
+                <RoleRoute allowedRoles={['Administrador']}>
+                  <Ventas />
+                </RoleRoute>
+              } />
+              <Route path="categorias" element={
+                <RoleRoute allowedRoles={['Administrador']}>
+                  <Categorias />
+                </RoleRoute>
+              } />
+              <Route path="roles" element={
+                <RoleRoute allowedRoles={['Administrador']}>
+                  <Roles />
+                </RoleRoute>
+              } />
+              <Route path="usuarios" element={
+                <RoleRoute allowedRoles={['Administrador']}>
+                  <Usuarios />
+                </RoleRoute>
+              } />
+              <Route path="estados" element={
+                <RoleRoute allowedRoles={['Administrador']}>
+                  <Estados />
+                </RoleRoute>
+              } />
               <Route path="*" element={
                 <div className="text-center py-5">
                   <h1 className="display-1">404</h1>
