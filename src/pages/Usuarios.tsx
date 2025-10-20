@@ -615,9 +615,9 @@ export function Usuarios() {
                           <span className="">{new Date(usuario.Creado_En).toLocaleDateString()}</span>
                         </td>
                         <td className="cell-tight text-center">
-                          <div className="btn-group" role="group" aria-label="Acciones del usuario">
+                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label="Acciones del usuario">
                             <button
-                              className="btn btn-sm btn-outline-warning"
+                              className="btn btn-sm btn-warning"
                               onClick={() => openModal(usuario)}
                               title="Editar"
                               aria-label="Editar usuario"
@@ -625,7 +625,7 @@ export function Usuarios() {
                               <i className="bi bi-pencil"></i>
                             </button>
                             <button
-                              className="btn btn-sm btn-outline-danger"
+                              className="btn btn-sm btn-danger"
                               onClick={() => handleDelete(usuario)}
                               disabled={deleteMutation.isPending}
                               title="Eliminar"

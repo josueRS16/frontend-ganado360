@@ -1,6 +1,7 @@
 
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../hooks/useAuth';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -21,7 +22,11 @@ interface MenuSection {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
+  const { user } = useAuth();
   const [isDarkMode, setIsDarkMode] = useState(false);
+  
+  // Determinar si el usuario es Administrador
+  const isAdmin = user?.RolNombre?.toLowerCase() === 'administrador' || user?.RolID === 2;
 
   // Detectar modo oscuro
   useEffect(() => {
@@ -42,7 +47,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     return () => observer.disconnect();
   }, []);
 
-  const menuSections: MenuSection[] = [
+  // Definir secciones del menú basadas en el rol del usuario
+  const allMenuSections: MenuSection[] = [
     {
       title: 'Principal',
       items: [
@@ -56,10 +62,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       items: [
         { path: '/recordatorios', label: 'Recordatorios', description: 'Próximas tareas', icon: 'bi-calendar-check' },
         { path: '/historial', label: 'Historial Veterinario', description: 'Eventos veterinarios', icon: 'bi-heart-pulse' },
-        { path: '/ventas', label: 'Ventas', description: 'Registro de ventas', icon: 'bi-cash-coin' },
+        // Ventas solo para Administrador
+        ...(isAdmin ? [{ path: '/ventas', label: 'Ventas', description: 'Registro de ventas', icon: 'bi-cash-coin' }] : []),
       ]
     },
-    {
+    // Sección de Configuración solo para Administrador
+    ...(isAdmin ? [{
       title: 'Configuración',
       items: [
         { path: '/categorias', label: 'Categorías', description: 'Tipos de ganado', icon: 'bi-tags' },
@@ -67,8 +75,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         { path: '/roles', label: 'Roles', description: 'Roles de usuario', icon: 'bi-person-badge' },
         { path: '/usuarios', label: 'Usuarios', description: 'Gestión de usuarios', icon: 'bi-people' },
       ]
-    }
+    }] : [])
   ];
+
+  // Filtrar secciones vacías
+  const menuSections = allMenuSections.filter(section => section.items.length > 0);
 
   const isActive = (path: string) => {
     if (path === '/') {

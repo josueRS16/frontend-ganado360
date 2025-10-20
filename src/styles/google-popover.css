@@ -1,0 +1,257 @@
+/* Estilos para popover estilo Google */
+.google-popover {
+  background: #ffffff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  padding: 0 !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  max-width: 320px !important;
+  min-width: 280px !important;
+}
+
+/* Flecha del popover */
+.google-popover .popover-arrow {
+  display: none !important;
+}
+
+/* Header del popover */
+.google-popover-header {
+  background: #ffffff !important;
+  border: none !important;
+  border-bottom: 1px solid #e8eaed !important;
+  padding: 20px 20px 16px 20px !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+/* Body del popover */
+.google-popover-body {
+  background: #ffffff !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+/* Avatar del usuario */
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 500;
+  font-size: 16px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+/* Información del usuario */
+.user-info h6 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #202124;
+  margin: 0 0 4px 0;
+  line-height: 1.2;
+}
+
+.user-info .user-email {
+  font-size: 14px;
+  color: #5f6368;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.user-role-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #e8f0fe;
+  color: #1a73e8;
+  padding: 4px 8px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.user-role-badge i {
+  font-size: 10px;
+  margin-right: 4px;
+}
+
+/* Botones del popover */
+.popover-action-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  color: #202124;
+  font-size: 14px;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  border-radius: 0;
+}
+
+.popover-action-btn:hover {
+  background: #f8f9fa;
+  color: #202124;
+}
+
+.popover-action-btn:active {
+  background: #e8eaed;
+}
+
+.popover-action-btn i {
+  width: 20px;
+  margin-right: 12px;
+  font-size: 16px;
+  color: #5f6368;
+  flex-shrink: 0;
+}
+
+.popover-action-btn.logout-btn {
+  color: #d93025;
+  border-top: 1px solid #e8eaed;
+}
+
+.popover-action-btn.logout-btn:hover {
+  background: #fce8e6;
+  color: #d93025;
+}
+
+.popover-action-btn.logout-btn i {
+  color: #d93025;
+}
+
+/* Separador */
+.popover-separator {
+  height: 1px;
+  background: #e8eaed;
+  margin: 0;
+  border: none;
+}
+
+/* Botón trigger del popover */
+.popover-trigger-btn {
+  background: transparent !important;
+  border: none !important;
+  color: #ffffff !important;
+  padding: 8px 12px !important;
+  border-radius: 20px !important;
+  transition: background-color 0.15s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+}
+
+.popover-trigger-btn:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+.popover-trigger-btn:focus {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+}
+
+.popover-trigger-btn .user-avatar-small {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.popover-trigger-btn .user-name {
+  margin-right: 8px;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+  .popover-trigger-btn .user-name {
+    display: none;
+  }
+  
+  .google-popover {
+    min-width: 260px !important;
+  }
+}
+
+/* Modo oscuro */
+[data-bs-theme="dark"] .google-popover {
+  background: #2d2d30 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-bs-theme="dark"] .google-popover-header {
+  background: #2d2d30 !important;
+  border-bottom-color: #3e3e42 !important;
+}
+
+[data-bs-theme="dark"] .google-popover-body {
+  background: #2d2d30 !important;
+}
+
+[data-bs-theme="dark"] .user-info h6 {
+  color: #ffffff;
+}
+
+[data-bs-theme="dark"] .user-info .user-email {
+  color: #cccccc;
+}
+
+[data-bs-theme="dark"] .user-role-badge {
+  background: #1e3a8a;
+  color: #93c5fd;
+}
+
+[data-bs-theme="dark"] .popover-action-btn {
+  color: #ffffff;
+}
+
+[data-bs-theme="dark"] .popover-action-btn:hover {
+  background: #3e3e42;
+  color: #ffffff;
+}
+
+[data-bs-theme="dark"] .popover-action-btn:active {
+  background: #4e4e52;
+}
+
+[data-bs-theme="dark"] .popover-action-btn i {
+  color: #cccccc;
+}
+
+[data-bs-theme="dark"] .popover-action-btn.logout-btn {
+  color: #ff6b6b;
+  border-top-color: #3e3e42;
+}
+
+[data-bs-theme="dark"] .popover-action-btn.logout-btn:hover {
+  background: #4a1a1a;
+  color: #ff6b6b;
+}
+
+[data-bs-theme="dark"] .popover-action-btn.logout-btn i {
+  color: #ff6b6b;
+}
+
+[data-bs-theme="dark"] .popover-separator {
+  background: #3e3e42;
+}
