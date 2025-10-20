@@ -11,7 +11,7 @@ import { getCachedAnimalImage } from '../utils/imageCache';
 import { getImageDisplayUrl } from '../utils/imageUtils';
 
 export function AnimalesDetalle() {
-  const { params, updateParams, clearParams } = useQueryParams<AnimalesFilters>();
+  const { params, updateParams, clearParams, setParams } = useQueryParams<AnimalesFilters>();
   
   // Set default pagination parameters if not present
   const currentParams: AnimalesFilters = {
@@ -47,9 +47,9 @@ export function AnimalesDetalle() {
     if (value === '' || value === undefined) {
       const newParams = { ...params };
       delete newParams[key];
-      updateParams(newParams);
+      setParams(newParams);
     } else {
-      updateParams({ [key]: value });
+      updateParams({ ...params, [key]: value });
     }
   };
 
@@ -150,8 +150,15 @@ export function AnimalesDetalle() {
                 <label className="form-label">Categoría</label>
                 <select
                   className="form-select"
+                  key={params.ID_Categoria === undefined ? Math.random() : params.ID_Categoria}
                   value={params.ID_Categoria || ''}
-                  onChange={(e) => handleFilterChange('ID_Categoria', e.target.value ? Number(e.target.value) : undefined)}
+                  onChange={(e) => {
+                    if (e.target.value === '' || e.target.value === undefined) {
+                      handleFilterChange('ID_Categoria', undefined);
+                    } else {
+                      handleFilterChange('ID_Categoria', Number(e.target.value));
+                    }
+                  }}
                   aria-label="Filtrar por categoría"
                 >
                   <option value="">Todas las categorías</option>
@@ -166,8 +173,15 @@ export function AnimalesDetalle() {
                 <label className="form-label">Sexo</label>
                 <select
                   className="form-select"
+                  key={params.Sexo === undefined ? Math.random() : params.Sexo}
                   value={params.Sexo || ''}
-                  onChange={(e) => handleFilterChange('Sexo', e.target.value as "M" | "F" || undefined)}
+                  onChange={(e) => {
+                    if (e.target.value === '' || e.target.value === undefined) {
+                      handleFilterChange('Sexo', undefined);
+                    } else {
+                      handleFilterChange('Sexo', e.target.value as "M" | "F");
+                    }
+                  }}
                   aria-label="Filtrar por sexo"
                 >
                   <option value="">Todos</option>
@@ -179,8 +193,15 @@ export function AnimalesDetalle() {
                 <label className="form-label">Estado</label>
                 <select
                   className="form-select"
+                  key={params.ID_Estado === undefined ? Math.random() : params.ID_Estado}
                   value={params.ID_Estado || ''}
-                  onChange={(e) => handleFilterChange('ID_Estado', e.target.value ? Number(e.target.value) : undefined)}
+                  onChange={(e) => {
+                    if (e.target.value === '' || e.target.value === undefined) {
+                      handleFilterChange('ID_Estado', undefined);
+                    } else {
+                      handleFilterChange('ID_Estado', Number(e.target.value));
+                    }
+                  }}
                   aria-label="Filtrar por estado"
                 >
                   <option value="">Todos los estados</option>
@@ -195,10 +216,11 @@ export function AnimalesDetalle() {
                 <label className="form-label">Preñez</label>
                 <select
                   className="form-select"
+                  key={params.Esta_Preniada === undefined ? Math.random() : params.Esta_Preniada ? 'true' : 'false'}
                   value={params.Esta_Preniada === undefined ? '' : params.Esta_Preniada ? 'true' : 'false'}
                   onChange={(e) => {
                     const value = e.target.value;
-                    if (value === '') {
+                    if (value === '' || value === undefined) {
                       handleFilterChange('Esta_Preniada', undefined);
                     } else {
                       handleFilterChange('Esta_Preniada', value === 'true');
