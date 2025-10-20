@@ -566,7 +566,7 @@ export function AnimalesDetalle() {
                         <td className="cell-tight text-center">
                           <div className="btn-group" role="group" aria-label="Acciones del animal">
                             <button
-                              className="btn btn-sm btn-outline-primary"
+                              className="btn btn-sm btn-primary"
                               onClick={() => openDetallesModal(animal)}
                               title="Ver detalles"
                               aria-label="Ver detalles del animal"

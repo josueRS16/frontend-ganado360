@@ -400,9 +400,9 @@ export function Estados() {
                           <span className="fw-semibold">{estado.Nombre}</span>
                         </td>
                         <td className="cell-tight text-center">
-                          <div className="btn-group" role="group" aria-label="Acciones del estado">
+                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label="Acciones del estado">
                             <button
-                              className="btn btn-sm btn-outline-warning"
+                              className="btn btn-sm btn-warning"
                               onClick={() => openModal(estado)}
                               title="Editar"
                               aria-label="Editar estado"
@@ -410,7 +410,7 @@ export function Estados() {
                               <i className="bi bi-pencil"></i>
                             </button>
                             <button
-                              className="btn btn-sm btn-outline-danger"
+                              className="btn btn-sm btn-danger"
                               onClick={() => handleDelete(estado)}
                               disabled={deleteMutation.isPending}
                               title="Eliminar"

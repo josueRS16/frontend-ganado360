@@ -509,9 +509,9 @@ export function Animales() {
                           <span className="">{animal.EstadoNombre ?? '----'}</span>
                         </td>
                         <td className="cell-tight text-center">
-                          <div className="btn-group" role="group" aria-label="Acciones del animal">
+                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label="Acciones del animal">
                             <button
-                              className="btn btn-sm btn-outline-primary"
+                              className="btn btn-sm btn-info"
                               onClick={() => openDetallesModal(animal)}
                               title="Ver detalles"
                               aria-label="Ver detalles del animal"
@@ -519,7 +519,7 @@ export function Animales() {
                               <i className="bi bi-eye"></i>
                             </button>
                             <button
-                              className="btn btn-sm btn-outline-warning"
+                              className="btn btn-sm btn-warning"
                               onClick={() => openModal(animal)}
                               title="Editar"
                               aria-label="Editar animal"
@@ -527,7 +527,7 @@ export function Animales() {
                               <i className="bi bi-pencil"></i>
                             </button>
                              <button
-                               className="btn btn-sm btn-outline-danger"
+                               className="btn btn-sm btn-danger"
                                onClick={() => handleDarDeBaja(animal)}
                                disabled={darDeBajaMutation.isPending || !animal.ID_Estado_Animal || animal.EstadoNombre === 'Baja'}
                                title={
@@ -539,7 +539,8 @@ export function Animales() {
                                }
                                aria-label="Dar de baja animal"
                              > 
-                               <i className="bi bi-arrow-down-circle"></i>
+                             <i className="bi bi-emoji-dizzy"></i>
+                               {/* <i className="bi bi-arrow-down-circle"></i> */}
                              </button>
                           </div>
                         </td>

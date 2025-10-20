@@ -63,7 +63,29 @@ const Login: React.FC = () => {
         } else {
           localStorage.removeItem('recordarCorreo');
         }
-        login({ Nombre: res.nombre, RolID: res.rol, Correo: correo });
+        
+        // Obtener el perfil completo del usuario
+        try {
+          const profileResponse = await authApi.getProfile();
+          // Guardar todos los datos del usuario en el contexto
+          login({ 
+            ID_Usuario: profileResponse.data.ID_Usuario,
+            Nombre: profileResponse.data.Nombre, 
+            RolID: profileResponse.data.RolID, 
+            RolNombre: profileResponse.data.RolNombre,
+            Correo: profileResponse.data.Correo 
+          });
+        } catch {
+          // Fallback si falla el perfil, usar datos del login
+          login({ 
+            ID_Usuario: res.id || res.ID_Usuario,
+            Nombre: res.nombre, 
+            RolID: res.rol, 
+            RolNombre: res.rolNombre || res.RolNombre,
+            Correo: correo 
+          });
+        }
+        
         navigate('/');
       } else {
         setError('Respuesta inválida del servidor.');

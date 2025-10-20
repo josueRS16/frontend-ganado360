@@ -9,6 +9,7 @@ import { useAnimales } from '../hooks/useAnimales';
 import { useUsuarios } from '../hooks/useUsuarios';
 import { useQueryParams } from '../hooks/useQueryParams';
 import { useToast } from '../hooks/useToast';
+import { useAuth } from '../hooks/useAuth';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { Pagination } from '../components/ui/Pagination';
 import type { HistorialVeterinario, HistorialVeterinarioRequest, HistorialFilters } from '../types/api';
@@ -22,14 +23,13 @@ interface HistorialModalProps {
 
 const HistorialModal = ({ historial, isOpen, onClose, onSave }: HistorialModalProps) => {
   const { data: animalesData } = useAnimales({});
-  const { data: usuariosData } = useUsuarios();
+  const { user } = useAuth();
 
   // Solo mostrar animales en estado 'Viva'
   const animales = useMemo(() => 
     (animalesData?.data || []).filter(a => a.EstadoNombre?.toLowerCase() === 'viva'),
     [animalesData?.data]
   );
-  const usuarios = usuariosData?.data || [];
 
   // Función para limpiar el formulario
   const resetForm = () => {
@@ -40,7 +40,7 @@ const HistorialModal = ({ historial, isOpen, onClose, onSave }: HistorialModalPr
       Descripcion: '',
       Fecha_Aplicacion: today,
       Proxima_Fecha: '',
-      Hecho_Por: 1
+      Hecho_Por: user?.ID_Usuario || 1 // Usar el ID del usuario actual
     });
   };
 
@@ -74,7 +74,7 @@ const HistorialModal = ({ historial, isOpen, onClose, onSave }: HistorialModalPr
         Descripcion: '',
         Fecha_Aplicacion: today,
         Proxima_Fecha: '',
-        Hecho_Por: 1
+        Hecho_Por: user?.ID_Usuario || 1 // Usar el ID del usuario actual
       };
     }
   });
@@ -89,7 +89,7 @@ const HistorialModal = ({ historial, isOpen, onClose, onSave }: HistorialModalPr
       resetForm();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [historial?.ID_Evento, isOpen]);
+  }, [historial?.ID_Evento, isOpen, user?.ID_Usuario]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -133,21 +133,15 @@ const HistorialModal = ({ historial, isOpen, onClose, onSave }: HistorialModalPr
                 </div>
 
                 {/* USUARIO */}
-                <div className="col-md-6">
+                <div className="col-md-6" hidden>
                   <label htmlFor="usuario" className="form-label fw-semibold">Realizado por</label>
-                  <select
-                    className="form-select"
+                  <input
+                    className="form-control"
                     id="usuario"
                     value={formData.Hecho_Por}
                     onChange={e => setFormData({ ...formData, Hecho_Por: Number(e.target.value) })}
                     required
-                  >
-                    {usuarios.map(usuario => (
-                      <option key={usuario.ID_Usuario} value={usuario.ID_Usuario}>
-                        {usuario.Nombre}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
 
                 {/* TIPO EVENTO */}
@@ -702,9 +696,9 @@ export function Historial() {
                           <span className="text-body">{item.UsuarioNombre}</span>
                         </td>
                         <td className="cell-tight text-center">
-                          <div className="btn-group" role="group" aria-label="Acciones del historial">
+                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label="Acciones del historial">
                             <button
-                              className="btn btn-sm btn-outline-warning"
+                              className="btn btn-sm btn-warning"
                               onClick={() => openModal(item)}
                               title="Editar"
                               aria-label="Editar historial"
@@ -712,7 +706,7 @@ export function Historial() {
                               <i className="bi bi-pencil"></i>
                             </button>
                             <button
-                              className="btn btn-sm btn-outline-danger"
+                              className="btn btn-sm btn-danger"
                               onClick={() => handleDelete(item)}
                               disabled={deleteMutation.isPending}
                               title="Eliminar"
