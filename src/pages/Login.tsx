@@ -103,7 +103,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="login-bg">
+  <div className="login-background">
       <form className="login-form" onSubmit={handleSubmit}>
         <h2>Iniciar Sesión</h2>
         {error && <div className="error-message">{error}</div>}

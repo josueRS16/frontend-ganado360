@@ -213,7 +213,7 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
         <div className="modal-content border-0 shadow-lg" style={{ backgroundColor: 'var(--bs-body-bg)' }}>
           <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
             <h5 className="modal-title fw-semibold d-flex align-items-center">
-              <i className="bi bi-receipt-cutoff me-2"></i>
+              <i className="bi bi"></i>
               {venta ? 'Editar Venta/Factura' : 'Nueva Venta/Factura'}
             </h5>
             <button type="button" className="btn-close btn-close-white" onClick={onClose}></button>
@@ -713,7 +713,10 @@ export function Ventas() {
   // Cálculos de estadísticas (priorizar Total de factura sobre Precio)
   const totalIngresos = useMemo(() => {
     return ventas.reduce((sum, venta) => {
-      let monto = venta.Total || venta.Precio;
+      let subtotal = venta.Subtotal ?? 0;
+      let ivaMonto = venta.IVA_Monto ?? 0;
+      let monto = venta.Total || (subtotal + ivaMonto) || venta.Precio;
+
       if (typeof monto === 'string') {
         monto = parseFloat(monto);
       }
@@ -722,7 +725,6 @@ export function Ventas() {
       // Convertir a la moneda seleccionada si es necesario
       const monedaVenta = venta.Moneda || 'CRC';
       if (monedaVenta !== monedaSeleccionada) {
-        // Usar la función de conversión directa
         const valorConvertido = formatearValorConConversion(montoNumerico, monedaVenta, false);
         const valorNumerico = typeof valorConvertido === 'string' ? parseFloat(valorConvertido.replace(/[^\d.-]/g, '')) : valorConvertido;
         return sum + (isNaN(valorNumerico) ? 0 : valorNumerico);
