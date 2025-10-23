@@ -41,6 +41,14 @@ const createInitialFormData = (animal?: Animal): CreateAnimalRequest => {
   };
 };
 
+// Utility function to calculate estimated birth date
+const calculateEstimatedBirthDate = (matingDate: string | null) => {
+  if (!matingDate) return null;
+  const matingDateObj = new Date(matingDate);
+  matingDateObj.setDate(matingDateObj.getDate() + 283); // Add 283 days (average gestation period for cattle)
+  return matingDateObj.toISOString().split('T')[0]; // Return in YYYY-MM-DD format
+};
+
 export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormProps) {
   const { data: categoriasData } = useCategorias();
   const categorias = categoriasData?.data || [];
@@ -398,7 +406,11 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                               className="form-control"
                               id="fechaMonta"
                               value={formData.Fecha_Monta || ''}
-                              onChange={(e) => setFormData({ ...formData, Fecha_Monta: e.target.value || null })}
+                              onChange={(e) => {
+                                const matingDate = e.target.value || null;
+                                const estimatedBirthDate = matingDate ? calculateEstimatedBirthDate(matingDate) : null;
+                                setFormData({ ...formData, Fecha_Monta: matingDate, Fecha_Estimada_Parto: estimatedBirthDate });
+                              }}
                             />
                             <p className="small text-muted">(Opcional)</p>
                             <label htmlFor="fechaMonta">Fecha de Monta</label>
