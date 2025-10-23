@@ -273,9 +273,9 @@ export function Recordatorios() {
     } else if (width < 992) {
       return 40; // md - tablet
     } else if (width < 1200) {
-      return 50; // lg - desktop pequeño
+      return 35; // lg - desktop pequeño
     } else {
-      return 65; // xl+ - desktop grande
+      return 45; // xl+ - desktop grande
     }
   };
 
