@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAnimalesConDetalle } from '../hooks/useAnimales';
 import { useCategorias } from '../hooks/useCategorias';
 import { useEstados } from '../hooks/useEstados';
@@ -11,6 +12,7 @@ import { getCachedAnimalImage } from '../utils/imageCache';
 import { getImageDisplayUrl } from '../utils/imageUtils';
 
 export function AnimalesDetalle() {
+  const { t } = useTranslation();
   const { params, updateParams, clearParams, setParams } = useQueryParams<AnimalesFilters>();
   
   // Set default pagination parameters if not present
@@ -78,10 +80,10 @@ export function AnimalesDetalle() {
   if (error) {
     return (
       <div className="alert alert-danger" role="alert">
-        <h4 className="alert-heading">Error al cargar los animales</h4>
-        <p>{error.message || 'Ocurrió un error inesperado'}</p>
+        <h4 className="alert-heading">{t('animals.messages.errorLoading')}</h4>
+        <p>{error.message || t('animals.messages.unexpectedError')}</p>
         <button className="btn btn-outline-danger" onClick={() => window.location.reload()}>
-          Intentar de nuevo
+          {t('animals.messages.tryAgain')}
         </button>
       </div>
     );
@@ -92,9 +94,9 @@ export function AnimalesDetalle() {
       {/* Breadcrumb */}
       <Breadcrumb 
         items={[
-          { label: 'Dashboard', path: '/' },
-          { label: 'Animales', path: '/animales' },
-          { label: 'Vista Detallada', active: true }
+          { label: t('dashboard.title'), path: '/' },
+          { label: t('animals.title'), path: '/animales' },
+          { label: t('animals.detailedViewShort'), active: true }
         ]} 
       />
       
@@ -105,10 +107,10 @@ export function AnimalesDetalle() {
             <div>
               <h1 className="h2 mb-2 d-flex align-items-center page-title-dark" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-list-check me-3"></i>
-                Vista Detallada de Animales
+                {t('animals.detailedView')}
               </h1>
               <p className="mb-0 fs-6">
-                {isLoading ? 'Cargando inventario...' : pagination ? `${pagination.totalCount} animales registrados` : `${animales.length} animales registrados`}
+                {isLoading ? t('animals.messages.loading') : pagination ? `${pagination.totalCount} ${t('dashboard.messages.animalsRegistered')}` : `${animales.length} ${t('dashboard.messages.animalsRegistered')}`}
               </p>
             </div>
             <div className="d-flex flex-column flex-sm-row gap-2">
@@ -116,10 +118,10 @@ export function AnimalesDetalle() {
                 className="btn btn-outline-secondary d-lg-none" 
                 data-bs-toggle="offcanvas" 
                 data-bs-target="#filtersOffcanvas"
-                aria-label="Abrir filtros"
+                aria-label={t('animals.buttons.filters')}
               >
                 <i className="bi bi-funnel me-2"></i>
-                Filtros
+                {t('animals.buttons.filters')}
                 {hasActiveFilters && (
                   <span className="badge bg-primary ms-2">{Object.keys(params).length}</span>
                 )}
@@ -136,18 +138,18 @@ export function AnimalesDetalle() {
             <div className="d-flex justify-content-between align-items-center">
               <h6 className="mb-0 fw-semibold d-flex align-items-center section-title-dark" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-funnel-fill me-2"></i>
-                Filtros de Búsqueda
+                {t('animals.labels.filters')}
               </h6>
               {hasActiveFilters && (
                 <button className="btn btn-outline-secondary btn-sm" onClick={clearAllFilters}>
                   <i className="bi bi-x-circle me-1"></i>
-                  Limpiar Filtros
+                  {t('animals.buttons.clearFilters')}
                 </button>
               )}
             </div>
             <div className="row">
               <div className="col-md-2">
-                <label className="form-label">Categoría</label>
+                <label className="form-label">{t('animals.labels.category')}</label>
                 <select
                   className="form-select"
                   key={params.ID_Categoria === undefined ? Math.random() : params.ID_Categoria}
@@ -159,9 +161,9 @@ export function AnimalesDetalle() {
                       handleFilterChange('ID_Categoria', Number(e.target.value));
                     }
                   }}
-                  aria-label="Filtrar por categoría"
+                  aria-label={t('animals.labels.category')}
                 >
-                  <option value="">Todas las categorías</option>
+                  <option value="">{t('animals.labels.allCategories')}</option>
                   {categorias.map((categoria) => (
                     <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
                       {categoria.Tipo}
@@ -170,7 +172,7 @@ export function AnimalesDetalle() {
                 </select>
               </div>
               <div className="col-md-2">
-                <label className="form-label">Sexo</label>
+                <label className="form-label">{t('animals.labels.sex')}</label>
                 <select
                   className="form-select"
                   key={params.Sexo === undefined ? Math.random() : params.Sexo}
@@ -182,15 +184,15 @@ export function AnimalesDetalle() {
                       handleFilterChange('Sexo', e.target.value as "M" | "F");
                     }
                   }}
-                  aria-label="Filtrar por sexo"
+                  aria-label={t('animals.labels.sex')}
                 >
-                  <option value="">Todos</option>
+                  <option value="">{t('animals.labels.all')}</option>
                   <option value="M">Macho</option>
                   <option value="F">Hembra</option>
                 </select>
               </div>
               <div className="col-md-2">
-                <label className="form-label">Estado</label>
+                <label className="form-label">{t('animals.labels.state')}</label>
                 <select
                   className="form-select"
                   key={params.ID_Estado === undefined ? Math.random() : params.ID_Estado}
@@ -202,9 +204,9 @@ export function AnimalesDetalle() {
                       handleFilterChange('ID_Estado', Number(e.target.value));
                     }
                   }}
-                  aria-label="Filtrar por estado"
+                  aria-label={t('animals.labels.state')}
                 >
-                  <option value="">Todos los estados</option>
+                  <option value="">{t('animals.labels.allStates')}</option>
                   {estados.map((estado) => (
                     <option key={estado.ID_Estado} value={estado.ID_Estado}>
                       {estado.Nombre}
@@ -213,7 +215,7 @@ export function AnimalesDetalle() {
                 </select>
               </div>
               <div className="col-md-2">
-                <label className="form-label">Preñez</label>
+                <label className="form-label">{t('animals.labels.pregnancyStatus')}</label>
                 <select
                   className="form-select"
                   key={params.Esta_Preniada === undefined ? Math.random() : params.Esta_Preniada ? 'true' : 'false'}
@@ -226,64 +228,64 @@ export function AnimalesDetalle() {
                       handleFilterChange('Esta_Preniada', value === 'true');
                     }
                   }}
-                  aria-label="Filtrar por estado de preñez"
+                  aria-label={t('animals.labels.pregnancyStatus')}
                 >
-                  <option value="">Todos</option>
+                  <option value="">{t('animals.labels.all')}</option>
                   <option value="true">Preñada</option>
                   <option value="false">No preñada</option>
                 </select>
               </div>
               <div className="col-md-2">
-                <label className="form-label">Ingreso desde</label>
+                <label className="form-label">{t('animals.labels.entryFrom')}</label>
                 <input
                   type="date"
                   className="form-control"
                   value={params.fechaIngresoDesde || ''}
                   onChange={(e) => handleFilterChange('fechaIngresoDesde', e.target.value || undefined)}
-                  aria-label="Fecha de ingreso desde"
+                  aria-label={t('animals.labels.entryFrom')}
                 />
               </div>
               <div className="col-md-2">
-                <label className="form-label">Ingreso hasta</label>
+                <label className="form-label">{t('animals.labels.entryTo')}</label>
                 <input
                   type="date"
                   className="form-control"
                   value={params.fechaIngresoHasta || ''}
                   onChange={(e) => handleFilterChange('fechaIngresoHasta', e.target.value || undefined)}
-                  aria-label="Fecha de ingreso hasta"
+                  aria-label={t('animals.labels.entryTo')}
                 />
               </div>
             </div>
             <div className="row mt-3">
               <div className="col-md-2">
-                <label className="form-label">Venta desde</label>
+                <label className="form-label">{t('animals.labels.saleFrom')}</label>
                 <input
                   type="date"
                   className="form-control"
                   value={params.fechaVentaDesde || ''}
                   onChange={(e) => handleFilterChange('fechaVentaDesde', e.target.value || undefined)}
-                  aria-label="Fecha de venta desde"
+                  aria-label={t('animals.labels.saleFrom')}
                 />
               </div>
               <div className="col-md-2">
-                <label className="form-label">Venta hasta</label>
+                <label className="form-label">{t('animals.labels.saleTo')}</label>
                 <input
                   type="date"
                   className="form-control"
                   value={params.fechaVentaHasta || ''}
                   onChange={(e) => handleFilterChange('fechaVentaHasta', e.target.value || undefined)}
-                  aria-label="Fecha de venta hasta"
+                  aria-label={t('animals.labels.saleTo')}
                 />
               </div>
               <div className="col-md-2">
-                <label className="form-label">Tipo de Venta</label>
+                <label className="form-label">{t('animals.labels.saleType')}</label>
                 <select
                   className="form-select"
                   value={params.Tipo_Venta || ''}
                   onChange={(e) => handleFilterChange('Tipo_Venta', e.target.value || undefined)}
-                  aria-label="Filtrar por tipo de venta"
+                  aria-label={t('animals.labels.saleType')}
                 >
-                  <option value="">Todos los tipos</option>
+                  <option value="">{t('animals.labels.allTypes')}</option>
                   {tiposVenta.map((tipo) => (
                     <option key={tipo} value={tipo}>
                       {tipo}
@@ -301,21 +303,21 @@ export function AnimalesDetalle() {
         <div className="offcanvas-header">
           <h5 className="offcanvas-title d-flex align-items-center">
             <i className="bi bi-funnel-fill me-2"></i>
-            Filtros de Búsqueda
+            {t('animals.labels.filters')}
           </h5>
-          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar filtros"></button>
+          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label={t('animals.buttons.filters')}></button>
         </div>
         <div className="offcanvas-body">
           <div className="row g-3">
             <div className="col-12">
-              <label className="form-label">Categoría</label>
+              <label className="form-label">{t('animals.labels.category')}</label>
               <select
                 className="form-select"
                 value={params.ID_Categoria || ''}
                 onChange={(e) => handleFilterChange('ID_Categoria', e.target.value ? Number(e.target.value) : undefined)}
-                aria-label="Filtrar por categoría"
+                aria-label={t('animals.labels.category')}
               >
-                <option value="">Todas las categorías</option>
+                <option value="">{t('animals.labels.allCategories')}</option>
                 {categorias.map((categoria) => (
                   <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
                     {categoria.Tipo}
@@ -324,27 +326,27 @@ export function AnimalesDetalle() {
               </select>
             </div>
             <div className="col-12">
-              <label className="form-label">Sexo</label>
+              <label className="form-label">{t('animals.labels.sex')}</label>
               <select
                 className="form-select"
                 value={params.Sexo || ''}
                 onChange={(e) => handleFilterChange('Sexo', e.target.value as "M" | "F" || undefined)}
-                aria-label="Filtrar por sexo"
+                aria-label={t('animals.labels.sex')}
               >
-                <option value="">Todos</option>
+                <option value="">{t('animals.labels.all')}</option>
                 <option value="M">Macho</option>
                 <option value="F">Hembra</option>
               </select>
             </div>
             <div className="col-12">
-              <label className="form-label">Estado</label>
+              <label className="form-label">{t('animals.labels.state')}</label>
               <select
                 className="form-select"
                 value={params.ID_Estado || ''}
                 onChange={(e) => handleFilterChange('ID_Estado', e.target.value ? Number(e.target.value) : undefined)}
-                aria-label="Filtrar por estado"
+                aria-label={t('animals.labels.state')}
               >
-                <option value="">Todos los estados</option>
+                <option value="">{t('animals.labels.allStates')}</option>
                 {estados.map((estado) => (
                   <option key={estado.ID_Estado} value={estado.ID_Estado}>
                     {estado.Nombre}
@@ -353,7 +355,7 @@ export function AnimalesDetalle() {
               </select>
             </div>
             <div className="col-12">
-              <label className="form-label">Preñez</label>
+              <label className="form-label">{t('animals.labels.pregnancyStatus')}</label>
               <select
                 className="form-select"
                 value={params.Esta_Preniada === undefined ? '' : params.Esta_Preniada ? 'true' : 'false'}
@@ -365,62 +367,62 @@ export function AnimalesDetalle() {
                     handleFilterChange('Esta_Preniada', value === 'true');
                   }
                 }}
-                aria-label="Filtrar por estado de preñez"
+                aria-label={t('animals.labels.pregnancyStatus')}
               >
-                <option value="">Todos</option>
+                <option value="">{t('animals.labels.all')}</option>
                 <option value="true">Preñada</option>
                 <option value="false">No preñada</option>
               </select>
             </div>
             <div className="col-12">
-              <label className="form-label">Ingreso desde</label>
+              <label className="form-label">{t('animals.labels.entryFrom')}</label>
               <input
                 type="date"
                 className="form-control"
                 value={params.fechaIngresoDesde || ''}
                 onChange={(e) => handleFilterChange('fechaIngresoDesde', e.target.value || undefined)}
-                aria-label="Fecha de ingreso desde"
+                aria-label={t('animals.labels.entryFrom')}
               />
             </div>
             <div className="col-12">
-              <label className="form-label">Ingreso hasta</label>
+              <label className="form-label">{t('animals.labels.entryTo')}</label>
               <input
                 type="date"
                 className="form-control"
                 value={params.fechaIngresoHasta || ''}
                 onChange={(e) => handleFilterChange('fechaIngresoHasta', e.target.value || undefined)}
-                aria-label="Fecha de ingreso hasta"
+                aria-label={t('animals.labels.entryTo')}
               />
             </div>
             <div className="col-12">
-              <label className="form-label">Venta desde</label>
+              <label className="form-label">{t('animals.labels.saleFrom')}</label>
               <input
                 type="date"
                 className="form-control"
                 value={params.fechaVentaDesde || ''}
                 onChange={(e) => handleFilterChange('fechaVentaDesde', e.target.value || undefined)}
-                aria-label="Fecha de venta desde"
+                aria-label={t('animals.labels.saleFrom')}
               />
             </div>
             <div className="col-12">
-              <label className="form-label">Venta hasta</label>
+              <label className="form-label">{t('animals.labels.saleTo')}</label>
               <input
                 type="date"
                 className="form-control"
                 value={params.fechaVentaHasta || ''}
                 onChange={(e) => handleFilterChange('fechaVentaHasta', e.target.value || undefined)}
-                aria-label="Fecha de venta hasta"
+                aria-label={t('animals.labels.saleTo')}
               />
             </div>
             <div className="col-12">
-              <label className="form-label">Tipo de Venta</label>
+              <label className="form-label">{t('animals.labels.saleType')}</label>
               <select
                 className="form-select"
                 value={params.Tipo_Venta || ''}
                 onChange={(e) => handleFilterChange('Tipo_Venta', e.target.value || undefined)}
-                aria-label="Filtrar por tipo de venta"
+                aria-label={t('animals.labels.saleType')}
               >
-                <option value="">Todos los tipos</option>
+                <option value="">{t('animals.labels.allTypes')}</option>
                 {tiposVenta.map((tipo) => (
                   <option key={tipo} value={tipo}>
                     {tipo}
@@ -432,11 +434,11 @@ export function AnimalesDetalle() {
           <div className="d-grid gap-2 mt-4">
             <button className="btn btn-apply" data-bs-dismiss="offcanvas">
               <i className="bi bi-search me-2"></i>
-              Aplicar Filtros
+              {t('animals.buttons.applyFilters')}
             </button>
             <button className="btn btn-outline-secondary" onClick={clearAllFilters}>
               <i className="bi bi-x-circle me-2"></i>
-              Limpiar Filtros
+              {t('animals.buttons.clearFilters')}
             </button>
           </div>
         </div>
@@ -448,9 +450,9 @@ export function AnimalesDetalle() {
           <div className="card-body table-state-loading">
             <div className="d-flex flex-column align-items-center">
               <div className="spinner-border mb-3" style={{ color: 'var(--color-base-green)' }} role="status">
-                <span className="visually-hidden">Cargando inventario de animales...</span>
+                <span className="visually-hidden">{t('animals.messages.loading')}</span>
               </div>
-              <h6 className="text-muted mb-0">Cargando inventario de animales...</h6>
+              <h6 className="text-muted mb-0">{t('animals.messages.loading')}</h6>
             </div>
           </div>
         </div>
@@ -459,22 +461,22 @@ export function AnimalesDetalle() {
           <div className="card-body table-state-empty">
             <div className="d-flex flex-column align-items-center">
               <i className="bi bi-list-check display-1 text-muted mb-3"></i>
-              <h5 className="text-muted mb-2">No se encontraron animales</h5>
+              <h5 className="text-muted mb-2">{t('animals.messages.noAnimalsFound')}</h5>
               <p className="text-muted text-center mb-4">
                 {hasActiveFilters 
-                  ? 'No hay animales que coincidan con los filtros aplicados.'
-                  : 'Aún no tienes animales registrados en el sistema.'
+                  ? t('animals.messages.noMatches')
+                  : t('animals.messages.noAnimalsRegistered')
                 }
               </p>
               {hasActiveFilters ? (
                 <button className="btn btn-outline-secondary" onClick={clearAllFilters}>
                   <i className="bi bi-x-circle me-2"></i>
-                  Limpiar Filtros
+                  {t('animals.buttons.clearFilters')}
                 </button>
               ) : (
                 <a href="/animales" className="btn btn-apply">
                   <i className="bi bi-arrow-left me-2"></i>
-                  Ir a Gestión de Animales
+                  {t('animals.buttons.goToManagement')}
                 </a>
               )}
             </div>
@@ -488,13 +490,13 @@ export function AnimalesDetalle() {
                 <div className="d-flex justify-content-between align-items-center">
                   <h6 className="card-title mb-0 fw-semibold d-flex align-items-center section-title-dark" style={{ color: 'var(--color-base-green)' }}>
                     <i className="bi bi-list-ul me-2"></i>
-                    Inventario Detallado de Animales
+                    {t('animals.detailedInventory')}
                   </h6>
                   <span className="badge rounded-pill px-3 py-2" style={{ 
                     backgroundColor: 'var(--color-sage-gray)', 
                     color: 'var(--color-charcoal)' 
                   }}>
-                    {animales.length} {animales.length === 1 ? 'animal' : 'animales'}
+                    {animales.length} {animales.length === 1 ? t('animals.single') : t('animals.plural')}
                   </span>
                 </div>
               </div>
@@ -502,16 +504,16 @@ export function AnimalesDetalle() {
                 <table className="table table-ganado table-hover align-middle mb-0">
                   <thead>
                     <tr>
-                      <th scope="col" className="cell-tight text-center fw-bold">Nombre</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">Categoría</th>
-                      <th scope="col" className="cell-tight text-center fw-bold">Sexo</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">Raza</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-xl-table-cell">Peso</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">F. Nac.</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-xl-table-cell">F. Ingreso</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">Estado</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">Venta</th>
-                      <th scope="col" className="cell-tight text-center fw-bold">Acciones</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('animals.table.name')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">{t('animals.table.category')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('animals.table.sex')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">{t('animals.table.breed')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-xl-table-cell">{t('animals.table.weight')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">{t('animals.table.birthDate')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-xl-table-cell">{t('animals.table.entryDate')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">{t('animals.table.state')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">{t('animals.table.sale')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('animals.table.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -537,7 +539,7 @@ export function AnimalesDetalle() {
                             {animal.Sexo === 'F' ? 'H' : 'M'}
                           </span>
                           <div className="d-md-none small text-body">
-                            {animal.Sexo === 'F' ? 'Hembra' : 'Macho'}
+                            {animal.Sexo === 'F' ? t('animals.form.female') : t('animals.form.male')}
                           </div>
                         </td>
                         <td className="cell-tight text-center d-none d-lg-table-cell" title={animal.Raza}>{animal.Raza}</td>
@@ -564,15 +566,15 @@ export function AnimalesDetalle() {
                           )}
                         </td>
                         <td className="cell-tight text-center">
-                          <div className="btn-group" role="group" aria-label="Acciones del animal">
+                          <div className="btn-group" role="group" aria-label={t('animals.table.actions')}>
                             <button
                               className="btn btn-sm btn-primary"
                               onClick={() => openDetallesModal(animal)}
-                              title="Ver detalles"
-                              aria-label="Ver detalles del animal"
+                              title={t('animals.buttons.viewDetails')}
+                              aria-label={t('animals.buttons.viewDetails')}
                             >
                               <i className="bi bi-eye"></i>
-                              <span className="d-none d-lg-inline ms-1">Ver</span>
+                              <span className="d-none d-lg-inline ms-1">{t('common.view')}</span>
                             </button>
                           </div>
                         </td>
@@ -619,7 +621,7 @@ export function AnimalesDetalle() {
                         style={{ width: 'auto' }}
                         value={currentParams.limit || 10}
                         onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-                        aria-label="Elementos por página"
+                        aria-label={t('pagination.itemsPerPage')}
                       >
                         <option value={5}>5</option>
                         <option value={10}>10</option>
@@ -647,13 +649,13 @@ export function AnimalesDetalle() {
               <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
                 <h5 className="modal-title fw-semibold d-flex align-items-center">
                   <i className="bi bi-list-check me-2"></i>
-                  Detalles Completos del Animal
+                  {t('animals.details.title')}
                 </h5>
                 <button
                   type="button"
                   className="btn-close btn-close-white"
                   onClick={closeDetallesModal}
-                  aria-label="Cerrar modal"
+                  aria-label={t('common.close')}
                 ></button>
               </div>
               <div className="modal-body bg-light bg-dark-subtle" data-bs-theme="auto">
@@ -692,33 +694,33 @@ export function AnimalesDetalle() {
                         <div className="row g-3 mb-4">
                           <div className="col-6">
                             <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-1">SEXO</div>
+                              <div className="text-muted small mb-1">{t('animals.details.sex')}</div>
                               <div className="fw-semibold text-body">
-                                {detallesModalState.animal.Sexo === 'F' ? 'Hembra' : 'Macho'}
+                                {detallesModalState.animal.Sexo === 'F' ? t('animals.form.female') : t('animals.form.male')}
                               </div>
                             </div>
                           </div>
                           <div className="col-6">
                             <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-1">PESO</div>
+                              <div className="text-muted small mb-1">{t('animals.details.weight')}</div>
                               <div className="fw-semibold text-body">{detallesModalState.animal.Peso} kg</div>
                             </div>
                           </div>
                           <div className="col-6">
                             <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-1">RAZA</div>
+                              <div className="text-muted small mb-1">{t('animals.details.race')}</div>
                               <div className="fw-semibold text-body">{detallesModalState.animal.Raza}</div>
                             </div>
                           </div>
                           <div className="col-6">
                             <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-1">COLOR</div>
+                              <div className="text-muted small mb-1">{t('animals.details.color')}</div>
                               <div className="fw-semibold text-body">{detallesModalState.animal.Color}</div>
                             </div>
                           </div>
                           <div className="col-12">
                             <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-1">CATEGORÍA</div>
+                              <div className="text-muted small mb-1">{t('animals.details.category')}</div>
                               <div className="fw-semibold text-body">{detallesModalState.animal.CategoriaTipo}</div>
                             </div>
                           </div>
@@ -728,7 +730,7 @@ export function AnimalesDetalle() {
                         <div className="row g-3 mb-4">
                           <div className="col-6">
                             <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-1">FECHA DE NACIMIENTO</div>
+                              <div className="text-muted small mb-1">{t('animals.details.birthDate')}</div>
                               <div className="fw-semibold text-body">
                                 {new Date(detallesModalState.animal.Fecha_Nacimiento).toLocaleDateString('es-ES', {
                                   year: 'numeric',
@@ -740,7 +742,7 @@ export function AnimalesDetalle() {
                           </div>
                           <div className="col-6">
                             <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-1">FECHA DE INGRESO</div>
+                              <div className="text-muted small mb-1">{t('animals.details.entryDate')}</div>
                               <div className="fw-semibold text-body">
                                 {new Date(detallesModalState.animal.Fecha_Ingreso).toLocaleDateString('es-ES', {
                                   year: 'numeric',
@@ -755,12 +757,12 @@ export function AnimalesDetalle() {
                         {/* Estado Reproductivo */}
                         <div className="text-center mb-4">
                           <div className="p-3 border bg-light bg-dark-subtle rounded-3">
-                            <div className="text-muted small mb-1">ESTADO REPRODUCTIVO</div>
+                            <div className="text-muted small mb-1">{t('animals.details.reproductiveStatus')}</div>
                             <div className="fw-semibold text-body">
                               {detallesModalState.animal.Esta_Preniada ? (
-                                <span className="text-warning">Preñada</span>
+                                <span className="text-warning">{t('animals.details.pregnant')}</span>
                               ) : (
-                                <span className="text-muted">No preñada</span>
+                                <span className="text-muted">{t('animals.details.notPregnant')}</span>
                               )}
                             </div>
                           </div>
@@ -772,7 +774,7 @@ export function AnimalesDetalle() {
                             {detallesModalState.animal.Fecha_Monta && (
                               <div className="col-6">
                                 <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                                  <div className="text-muted small mb-1">FECHA DE MONTA</div>
+                                  <div className="text-muted small mb-1">{t('animals.details.matingDate')}</div>
                                   <div className="fw-semibold text-body">
                                     {new Date(detallesModalState.animal.Fecha_Monta).toLocaleDateString('es-ES', {
                                       year: 'numeric',
@@ -786,7 +788,7 @@ export function AnimalesDetalle() {
                             {detallesModalState.animal.Fecha_Estimada_Parto && (
                               <div className="col-6">
                                 <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                                  <div className="text-muted small mb-1">FECHA ESTIMADA DE PARTO</div>
+                                  <div className="text-muted small mb-1">{t('animals.details.estimatedBirthDate')}</div>
                                   <div className="fw-semibold text-body">
                                     {new Date(detallesModalState.animal.Fecha_Estimada_Parto).toLocaleDateString('es-ES', {
                                       year: 'numeric',
@@ -796,7 +798,7 @@ export function AnimalesDetalle() {
                                   </div>
                                 </div>
                                 <div className="text-center small text-muted mt-1">
-                                  {Math.ceil((new Date(detallesModalState.animal.Fecha_Estimada_Parto!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} días restantes
+                                  {Math.ceil((new Date(detallesModalState.animal.Fecha_Estimada_Parto!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} {t('animals.details.daysRemaining')}
                                 </div>
                               </div>
                             )}
@@ -807,14 +809,14 @@ export function AnimalesDetalle() {
                         <div className="row g-3 mb-4">
                           <div className="col-6">
                             <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-1">ESTADO ACTUAL</div>
+                              <div className="text-muted small mb-1">{t('animals.details.currentStatus')}</div>
                               <div className="fw-semibold text-body">{detallesModalState.animal.EstadoNombre}</div>
                             </div>
                           </div>
                           {detallesModalState.animal.Fecha_Fallecimiento && (
                             <div className="col-6">
                               <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                                <div className="text-muted small mb-1">FECHA DE FALLECIMIENTO</div>
+                                <div className="text-muted small mb-1">{t('animals.details.deathDate')}</div>
                                 <div className="fw-semibold text-body">
                                   {new Date(detallesModalState.animal.Fecha_Fallecimiento).toLocaleDateString('es-ES', {
                                     year: 'numeric',
@@ -832,30 +834,30 @@ export function AnimalesDetalle() {
                           <div className="row g-3 mb-4">
                             <div className="col-12">
                               <div className="text-center p-3 border bg-success bg-opacity-10 rounded-3">
-                                <div className="text-muted small mb-1">INFORMACIÓN DE VENTA</div>
+                                <div className="text-muted small mb-1">{t('animals.details.saleInfo')}</div>
                                 <div className="fw-semibold text-body">
                                   <div className="row">
                                     <div className="col-4">
-                                      <div className="small text-muted">FECHA</div>
+                                      <div className="small text-muted">{t('animals.details.date')}</div>
                                       <div>{new Date(detallesModalState.animal.Fecha_Venta).toLocaleDateString('es-ES')}</div>
                                     </div>
                                     <div className="col-4">
-                                      <div className="small text-muted">TIPO</div>
+                                      <div className="small text-muted">{t('animals.details.type')}</div>
                                       <div>{detallesModalState.animal.Tipo_Venta}</div>
                                     </div>
                                     <div className="col-4">
-                                      <div className="small text-muted">PRECIO</div>
+                                      <div className="small text-muted">{t('animals.details.price')}</div>
                                       <div>₡{detallesModalState.animal.Total?.toLocaleString()}</div>
                                     </div>
                                   </div>
                                   {detallesModalState.animal.Comprador && (
                                     <div className="mt-2">
-                                      <div className="small text-muted">COMPRADOR</div>
+                                      <div className="small text-muted">{t('animals.details.buyer')}</div>
                                       <div>{detallesModalState.animal.Comprador}</div>
                                     </div>
                                   )}
                                     <div className="mt-2">
-                                      <div className="small text-muted">REGISTRADO POR</div>
+                                      <div className="small text-muted">{t('animals.details.registeredBy')}</div>
                                       <div className="fw-semibold text-body">Usuario: {detallesModalState.animal.UsuarioNombre}</div>
                                     </div>
                                 </div>
@@ -868,15 +870,15 @@ export function AnimalesDetalle() {
                         <div className="row g-3 mb-4">
                           <div className="col-6">
                             <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-1">EDAD</div>
+                              <div className="text-muted small mb-1">{t('animals.details.age')}</div>
                               <div className="fw-semibold text-body">
-                                {Math.floor((new Date().getTime() - new Date(detallesModalState.animal.Fecha_Nacimiento).getTime()) / (1000 * 60 * 60 * 24 * 365))} año/s
+                                {Math.floor((new Date().getTime() - new Date(detallesModalState.animal.Fecha_Nacimiento).getTime()) / (1000 * 60 * 60 * 24 * 365))} {t('animals.details.years')}
                               </div>
                             </div>
                           </div>
                           <div className="col-6">
                             <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-1">DÍAS EN SISTEMA</div>
+                              <div className="text-muted small mb-1">{t('animals.details.daysInSystem')}</div>
                               <div className="fw-semibold text-body">
                                 {Math.floor((new Date().getTime() - new Date(detallesModalState.animal.Fecha_Ingreso).getTime()) / (1000 * 60 * 60 * 24))}
                               </div>
@@ -888,7 +890,7 @@ export function AnimalesDetalle() {
                         {detallesModalState.animal.Observaciones && (
                           <div className="mt-4">
                             <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-1">OBSERVACIONES</div>
+                              <div className="text-muted small mb-1">{t('animals.details.observations')}</div>
                               <div className="fw-semibold text-body">{detallesModalState.animal.Observaciones}</div>
                             </div>
                           </div>

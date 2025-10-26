@@ -9,6 +9,9 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import './styles/theme.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
+// Importar configuración de i18n
+import './i18n';
+
 // Importar utilidad de debug de autenticación (solo en desarrollo)
 if (import.meta.env.DEV) {
   import('./utils/debugAuth');

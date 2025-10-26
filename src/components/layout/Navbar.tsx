@@ -10,6 +10,7 @@ declare global {
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { recordatoriosApi } from '../../api/recordatorios';
 import { PerfilUsuarioModal } from '../modals/PerfilUsuarioModal';
 import '../../styles/google-popover.css';
@@ -24,11 +25,14 @@ interface NavbarProps {
 export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [notiCount, setNotiCount] = useState(0);
   const [showPerfilModal, setShowPerfilModal] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
+  const [showLangMenu, setShowLangMenu] = useState(false);
   const popoverRef = useRef<HTMLButtonElement>(null);
   const popoverContainerRef = useRef<HTMLDivElement>(null);
+  const langMenuRef = useRef<HTMLDivElement>(null);
 
   // Función para obtener las iniciales del usuario
   const getUserInitials = (name: string) => {
@@ -56,6 +60,17 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
     setShowPopover(prev => !prev);
   }, []);
 
+  // Función para cambiar idioma
+  const changeLanguage = useCallback((lng: string) => {
+    i18n.changeLanguage(lng);
+    setShowLangMenu(false);
+  }, [i18n]);
+
+  // Función para toggle del menú de idioma
+  const toggleLangMenu = useCallback(() => {
+    setShowLangMenu(prev => !prev);
+  }, []);
+
   // Cerrar popover al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -72,6 +87,23 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showPopover]);
+
+  // Cerrar menú de idioma al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
+        setShowLangMenu(false);
+      }
+    };
+
+    if (showLangMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showLangMenu]);
 
   useEffect(() => {
     const fetchCount = async () => {
@@ -120,8 +152,8 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
               }}
             />
             <div className="navbar-brand-text">
-              <div className="brand-title">Ganado360</div>
-              <small className="brand-subtitle">Sistema de Gestión Ganadera</small>
+              <div className="brand-title">{t('navbar.appName')}</div>
+              <small className="brand-subtitle">{t('navbar.subtitle')}</small>
             </div>
           </Link>
         </div>
@@ -143,12 +175,46 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
             )}
           </button>
 
+          {/* Language selector */}
+          <div className="position-relative" ref={langMenuRef}>
+            <button
+              className="navbar-action-btn"
+              onClick={toggleLangMenu}
+              aria-label={t('navbar.language')}
+              title={t('navbar.language')}
+            >
+              <i className="bi bi-translate"></i>
+            </button>
+
+            {/* Language menu */}
+            {showLangMenu && (
+              <div className="google-popover position-absolute end-0 mt-2" style={{ zIndex: 1050, minWidth: '150px' }}>
+                <div className="google-popover-body">
+                  <button 
+                    className={`popover-action-btn ${i18n.language === 'es' ? 'active' : ''}`}
+                    onClick={() => changeLanguage('es')}
+                  >
+                    <i className="bi bi-check2"></i>
+                    Español
+                  </button>
+                  <button 
+                    className={`popover-action-btn ${i18n.language === 'en' ? 'active' : ''}`}
+                    onClick={() => changeLanguage('en')}
+                  >
+                    <i className="bi bi-check2"></i>
+                    English
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Theme toggle */}
           <button
             className="navbar-action-btn"
             onClick={onToggleTheme}
-            aria-label={isDark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
-            title={isDark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+            aria-label={t(isDark ? 'navbar.theme.light' : 'navbar.theme.dark')}
+            title={t(isDark ? 'navbar.theme.light' : 'navbar.theme.dark')}
           >
             <i className={`bi ${isDark ? 'bi-sun-fill' : 'bi-moon-fill'}`}></i>
           </button>
@@ -160,7 +226,7 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
               className="popover-trigger-btn"
               type="button"
               onClick={togglePopover}
-              aria-label="Menú de perfil de usuario"
+              aria-label={t('navbar.profile.menu')}
             >
               <div className="user-avatar-small">
                 {getUserInitials(user?.Nombre || 'U')}
@@ -193,7 +259,7 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
                     onClick={handleEditProfile}
                   >
                     <i className="bi bi-pencil-square"></i>
-                    Editar perfil
+                    {t('navbar.profile.edit')}
                   </button>
                   <hr className="popover-separator" />
                   <button 
@@ -201,7 +267,7 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
                     onClick={handleLogout}
                   >
                     <i className="bi bi-box-arrow-right"></i>
-                    Cerrar sesión
+                    {t('navbar.profile.logout')}
                   </button>
                 </div>
               </div>
