@@ -1,0 +1,862 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "apply": "Apply",
+    "applyFilters": "Apply Filters",
+    "reset": "Reset",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "actions": "Actions",
+    "select": "Select",
+    "all": "All",
+    "none": "None",
+    "create": "Create",
+    "update": "Update",
+    "view": "View",
+    "required": "Required",
+    "unexpectedError": "An unexpected error occurred",
+    "tryAgain": "Try again",
+    "noMatches": "No results match the applied filters."
+  },
+  "navbar": {
+    "appName": "Ganado360",
+    "subtitle": "Livestock Management System",
+    "notifications": "Notifications",
+    "reminders": "Reminders",
+    "theme": {
+      "light": "Switch to light theme",
+      "dark": "Switch to dark theme"
+    },
+    "profile": {
+      "menu": "User profile menu",
+      "edit": "Edit profile",
+      "logout": "Logout"
+    },
+    "language": "Language"
+  },
+  "sidebar": {
+    "sections": {
+      "main": "Main",
+      "management": "Management",
+      "settings": "Settings"
+    },
+    "menu": {
+      "dashboard": {
+        "label": "Dashboard",
+        "description": "General overview"
+      },
+      "animals": {
+        "label": "Animals",
+        "description": "Livestock management"
+      },
+      "animalsDetail": {
+        "label": "Detailed View",
+        "description": "Complete information"
+      },
+      "reminders": {
+        "label": "Reminders",
+        "description": "Upcoming tasks"
+      },
+      "history": {
+        "label": "Veterinary History",
+        "description": "Veterinary events"
+      },
+      "sales": {
+        "label": "Sales",
+        "description": "Sales records"
+      },
+      "categories": {
+        "label": "Categories",
+        "description": "Livestock types"
+      },
+      "states": {
+        "label": "States",
+        "description": "Livestock states"
+      },
+      "roles": {
+        "label": "Roles",
+        "description": "User roles"
+      },
+      "users": {
+        "label": "Users",
+        "description": "User management"
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "breadcrumb": {
+      "home": "Home"
+    },
+    "kpis": {
+      "totalAnimals": "Total Animals",
+      "activeAnimals": "Active Animals",
+      "pendingReminders": "Pending Reminders",
+      "totalSales": "Total Sales",
+      "animals": "animals",
+      "active": "active",
+      "reminders": "pending",
+      "sales": "sales"
+    },
+    "charts": {
+      "distribution": "Distribution by Category",
+      "status": "Animal Status",
+      "recentActivity": "Recent Activity"
+    },
+    "sections": {
+      "categoryDistribution": "Distribution by Category",
+      "quickActions": "Quick Control Panel",
+      "analysis": "Livestock inventory analysis",
+      "directAccess": "Direct access to main functions"
+    },
+    "buttons": {
+      "manage": "Manage",
+      "manageAnimals": "Manage Animals",
+      "viewReminders": "View Reminders",
+      "createCategory": "Create First Category"
+    },
+    "messages": {
+      "noCategories": "No categories registered",
+      "configureCategories": "Configure categories to organize your livestock",
+      "animalsRegistered": "animals registered"
+    },
+    "links": {
+      "livestockManagement": "View, edit and enter livestock information",
+      "upcomingTasks": "Upcoming vaccines and scheduled treatments",
+      "medicalEvents": "Complete record of medical events",
+      "transactions": "Transaction registration and tracking"
+    }
+  },
+  "animals": {
+    "title": "Animal Management",
+    "newAnimal": "New Animal",
+    "editAnimal": "Edit Animal",
+    "deleteAnimal": "Delete Animal",
+    "viewDetails": "View Details",
+    "viewEstimatedBirthDate": "View estimated birth date",
+    "assignStatus": "Assign Status",
+    "deactivate": "Deactivate",
+    "uploadImage": "Upload Image",
+    "add": "Add",
+    "management": "Livestock Management",
+    "inventory": "Animal Inventory",
+    "detailedView": "Detailed Animal View",
+    "detailedViewShort": "Detailed View",
+    "detailedInventory": "Detailed Animal Inventory",
+    "single": "animal",
+    "plural": "animals",
+    "buttons": {
+      "add": "Add",
+      "filters": "Filters",
+      "clearFilters": "Clear Filters",
+      "applyFilters": "Apply Filters",
+      "registerFirst": "Register First Animal",
+      "closeFilters": "Close filters",
+      "view": "View",
+      "goToManagement": "Go to Animal Management",
+      "edit": "Edit",
+      "deactivate": "Deactivate",
+      "noState": "No state assigned",
+      "alreadyDeactivated": "Already deactivated",
+      "show": "Show:",
+      "perPage": "per page",
+      "results": "results"
+    },
+    "labels": {
+      "filters": "Search Filters",
+      "category": "Category",
+      "gender": "Gender",
+      "entryDateFrom": "Entry from",
+      "entryDateTo": "Entry to",
+      "allCategories": "All categories",
+      "allStates": "All states",
+      "allTypes": "All types",
+      "all": "All",
+      "entryFrom": "Entry from",
+      "entryTo": "Entry to",
+      "saleFrom": "Sale from",
+      "saleTo": "Sale to",
+      "saleType": "Sale Type",
+      "sale": "Sale",
+      "birthDate": "Birth Date",
+      "entryDate": "Entry Date",
+      "category": "Category",
+      "sex": "Sex",
+      "state": "State",
+      "pregnancyStatus": "Pregnancy",
+      "loading": "Loading animal inventory..."
+    },
+    "counts": {
+      "animal": "animal",
+      "animals": "animals"
+    },
+    "details": {
+      "title": "Animal Details",
+      "sex": "SEX",
+      "weight": "WEIGHT",
+      "race": "RACE",
+      "color": "COLOR",
+      "category": "CATEGORY",
+      "birthDate": "BIRTH DATE",
+      "entryDate": "ENTRY DATE",
+      "reproductive": "REPRODUCTIVE STATUS",
+      "mountingDate": "MOUNTING DATE",
+      "estimatedBirthDate": "ESTIMATED BIRTH DATE",
+      "daysRemaining": "days remaining",
+      "age": "AGE",
+      "years": "year/s",
+      "daysInFarm": "DAYS ON FARM",
+      "state": "STATE",
+      "editAnimal": "Edit",
+      "reproductiveStatus": "REPRODUCTIVE STATUS",
+      "pregnant": "Pregnant",
+      "notPregnant": "Not pregnant",
+      "matingDate": "MATING DATE",
+      "currentStatus": "CURRENT STATUS",
+      "deathDate": "DEATH DATE",
+      "saleInfo": "SALE INFORMATION",
+      "date": "DATE",
+      "type": "TYPE",
+      "price": "PRICE",
+      "buyer": "BUYER",
+      "registeredBy": "REGISTERED BY",
+      "age": "AGE",
+      "years": "year/s",
+      "daysInSystem": "DAYS IN SYSTEM",
+      "observations": "OBSERVATIONS",
+      "notSpecified": "Not specified"
+    },
+    "deactivate": {
+      "title": "Deactivate Animal",
+      "attention": "Attention!",
+      "permanentAction": "This action will permanently deactivate the animal.",
+      "animalToDeactivate": "Animal to deactivate:",
+      "name": "Name:",
+      "deathDate": "Death Date",
+      "required": "*",
+      "dateHelp": "Date cannot be later than today",
+      "confirmDate": "Death date:",
+      "submitting": "Deactivating...",
+      "confirm": "Confirm Deactivation",
+      "errorNoAnimal": "Error: No animal selected",
+      "errorNoState": "Cannot deactivate: animal has no assigned state",
+      "errorNoDate": "Please enter the death date",
+      "successMessage": "deactivated successfully",
+      "errorMessage": "Error deactivating animal"
+    },
+    "filters": {
+      "title": "Filters",
+      "identifier": "Identifier",
+      "category": "Category",
+      "state": "State",
+      "gender": "Gender",
+      "ageFrom": "Age from",
+      "ageTo": "Age to"
+    },
+    "table": {
+      "identifier": "Identifier",
+      "category": "Category",
+      "gender": "Gender",
+      "age": "Age",
+      "state": "State",
+      "weight": "Weight",
+      "actions": "Actions",
+      "image": "Image",
+      "observations": "Observations",
+      "name": "Name",
+      "race": "Race",
+      "sex": "Sex",
+      "breed": "Breed",
+      "birthDate": "Birth Date",
+      "entryDate": "Entry Date",
+      "reproductive": "Reprod.",
+      "pregnant": "Pregnant",
+      "notPregnant": "Not pregnant",
+      "sale": "Sale"
+    },
+    "form": {
+      "basicInfo": "Basic Information",
+      "physicalInfo": "Physical Information",
+      "healthInfo": "Health Information",
+      "identifier": "Identifier",
+      "category": "Category",
+      "race": "Race",
+      "gender": "Gender",
+      "birthDate": "Birth Date",
+      "entryDate": "Entry Date",
+      "weight": "Weight (kg)",
+      "color": "Color",
+      "observations": "Observations",
+      "male": "Male",
+      "female": "Female",
+      "animalName": "Animal Name",
+      "selectSex": "Select",
+      "selectCategory": "Select",
+      "selectRace": "Select race",
+      "raceHelp": "Select the most appropriate bovine race",
+      "importantDates": "Important Dates",
+      "reproductiveStatus": "Reproductive Status",
+      "notPregnant": "Not pregnant",
+      "pregnant": "Pregnant",
+      "selectSexFirst": "Select sex",
+      "maleCannotPregnant": "Males cannot be pregnant",
+      "selectSexAnimal": "Please select the animal's sex first",
+      "estimatedBirthDate": "Estimated Birth Date",
+      "mountingDate": "Mounting Date",
+      "optional": "(Optional)",
+      "animalImage": "Animal Image",
+      "saving": "Saving...",
+      "update": "Update",
+      "create": "Create",
+      "cancel": "Cancel",
+      "close": "Close modal"
+    },
+    "messages": {
+      "deleteConfirm": "Are you sure you want to delete this animal?",
+      "deleteSuccess": "Animal deleted successfully",
+      "deleteError": "Error deleting animal",
+      "createSuccess": "Animal created successfully",
+      "updateSuccess": "Animal updated successfully",
+      "noData": "No animals registered",
+      "noStateAssigned": "Cannot deactivate: animal has no assigned state",
+      "alreadyDeactivated": "Animal is already deactivated",
+      "loading": "Loading inventory...",
+      "notFound": "No animals found",
+      "noMatches": "No animals match the applied filters.",
+      "registerFirst": "Register the first animal to begin.",
+      "noAnimalsYet": "You don't have any animals registered in the system yet.",
+      "errorLoading": "Error loading animals",
+      "unexpectedError": "An unexpected error occurred",
+      "tryAgain": "Try again"
+    }
+  },
+  "reminders": {
+    "title": "Reminders",
+    "newReminder": "New Reminder",
+    "editReminder": "Edit Reminder",
+    "deleteReminder": "Delete Reminder",
+    "complete": "Complete",
+    "filters": {
+      "title": "Filters",
+      "animal": "Animal",
+      "type": "Type",
+      "state": "State",
+      "dateFrom": "Date from",
+      "dateTo": "Date to",
+      "all": "All",
+      "pending": "Pending",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "table": {
+      "animal": "Animal",
+      "type": "Type",
+      "title": "Title",
+      "description": "Description",
+      "scheduledDate": "Scheduled Date",
+      "date": "Date",
+      "state": "State",
+      "actions": "Actions"
+    },
+    "form": {
+      "animal": "Animal",
+      "type": "Event Type",
+      "description": "Description",
+      "scheduledDate": "Scheduled Date",
+      "reminderDate": "Reminder Date",
+      "notes": "Additional Notes",
+      "state": "State",
+      "pending": "Pending",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "typePlaceholder": "E.g.: Triple Vaccine, Deworming...",
+      "descriptionPlaceholder": "Detailed description of the reminder..."
+    },
+    "messages": {
+      "deleteConfirm": "Are you sure you want to delete this reminder?",
+      "completeConfirm": "Mark as completed?",
+      "deleteSuccess": "Reminder deleted successfully",
+      "completeSuccess": "Reminder completed successfully",
+      "createSuccess": "Reminder created successfully",
+      "updateSuccess": "Reminder updated successfully",
+      "onlyAlive": "Only alive animals",
+      "loading": "Loading reminders...",
+      "noData": "No reminders found",
+      "noMatches": "No reminders match the applied filters.",
+      "noRegistered": "You don't have any reminders registered in the system yet.",
+      "errorLoading": "Error loading reminders",
+      "saveError": "Error saving reminder",
+      "deleteError": "Error deleting reminder",
+      "stateChangeError": "Error changing state",
+      "registered": "reminders registered",
+      "singleReminder": "reminder",
+      "pluralReminders": "reminders"
+    },
+    "buttons": {
+      "markCompleted": "Mark as completed",
+      "markPending": "Mark as pending"
+    },
+    "modal": {
+      "fullDescription": "Full Description",
+      "fullDescriptionLabel": "FULL DESCRIPTION",
+      "date": "DATE",
+      "state": "STATE"
+    }
+  },
+  "history": {
+    "title": "Veterinary History",
+    "newEvent": "New Event",
+    "editEvent": "Edit Event",
+    "deleteEvent": "Delete Event",
+    "filters": {
+      "title": "Filters",
+      "animal": "Animal",
+      "allAnimals": "All animals",
+      "eventType": "Event Type",
+      "eventTypePlaceholder": "E.g.: Vaccination, Treatment...",
+      "dateFrom": "Date from",
+      "dateTo": "Date to",
+      "performedBy": "Performed by",
+      "allUsers": "All users"
+    },
+    "table": {
+      "animal": "Animal",
+      "eventType": "Event Type",
+      "description": "Description",
+      "applicationDate": "Application Date",
+      "nextDate": "Next Date",
+      "performedBy": "Performed by",
+      "actions": "Actions",
+      "by": "By",
+      "next": "Next"
+    },
+    "form": {
+      "animal": "Animal",
+      "eventType": "Event Type",
+      "eventTypePlaceholder": "E.g.: Vaccination, Deworming, Treatment...",
+      "description": "Description",
+      "descriptionPlaceholder": "Event details, dosage, observations...",
+      "applicationDate": "Application Date",
+      "nextDate": "Next Date",
+      "performedBy": "Performed by"
+    },
+    "messages": {
+      "deleteConfirm": "Are you sure you want to delete this event?",
+      "deleteSuccess": "Event deleted successfully",
+      "deleteError": "Error deleting history",
+      "createSuccess": "Event created successfully",
+      "updateSuccess": "Event updated successfully",
+      "saveError": "Error saving history",
+      "errorLoading": "Error loading veterinary history",
+      "registered": "events registered",
+      "noData": "No history events registered",
+      "noEventsRegistered": "You don't have any history events registered in the system yet.",
+      "singleEvent": "event",
+      "pluralEvents": "events"
+    }
+  },
+  "sales": {
+    "title": "Sales",
+    "management": "Sales Management",
+    "newSale": "New Sale/Invoice",
+    "editSale": "Edit Sale/Invoice",
+    "deleteSale": "Delete Sale",
+    "viewInvoice": "View Invoice",
+    "filters": {
+      "title": "Search Filters",
+      "animal": "Animal",
+      "allAnimals": "All",
+      "buyer": "Buyer",
+      "dateFrom": "Date from",
+      "dateTo": "Date to",
+      "saleType": "Sale Type",
+      "allTypes": "All",
+      "invoiceNumber": "Invoice Number"
+    },
+    "table": {
+      "animal": "Animal",
+      "buyer": "Buyer",
+      "saleDate": "Sale Date",
+      "amount": "Amount",
+      "paymentMethod": "Payment Method",
+      "type": "Type",
+      "actions": "Actions",
+      "invoice": "Invoice",
+      "date": "Date",
+      "total": "Total",
+      "salesHistory": "Sales History",
+      "noNumber": "No Number"
+    },
+    "form": {
+      "animal": "Animal",
+      "buyer": "Buyer",
+      "saleDate": "Sale Date",
+      "amount": "Amount",
+      "paymentMethod": "Payment Method",
+      "notes": "Notes",
+      "cash": "Cash",
+      "transfer": "Transfer",
+      "check": "Check",
+      "editInfo": "For editing: current animal + alive animals are shown",
+      "newInfo": "Only alive animals available for sale",
+      "animalInfo": "Animal Information",
+      "billingInfo": "Billing Information",
+      "priceDetails": "Price Details",
+      "additionalInfo": "Additional Information",
+      "seller": "Seller",
+      "sellerPlaceholder": "Seller/ranch name...",
+      "buyerPlaceholder": "Buyer name...",
+      "saleType": "Sale Type",
+      "selectType": "Select type...",
+      "selectAnimal": "Select animal...",
+      "unitPrice": "Unit Price",
+      "currency": "Currency",
+      "quantity": "Quantity",
+      "quantityNote": "Always 1 for now",
+      "invoiceSummary": "Invoice Summary",
+      "colones": "₡ Colones",
+      "dollars": "$ Dollars",
+      "subtotal": "Subtotal",
+      "total": "TOTAL",
+      "registeredBy": "Registered by",
+      "observations": "Observations",
+      "observationsPlaceholder": "Additional observations about the sale...",
+      "characters": "characters",
+      "updateInvoiceInfo": "The invoice will be updated",
+      "generateInvoiceInfo": "An invoice number will be generated automatically",
+      "updateSale": "Update Sale",
+      "createSale": "Create Sale and Generate Invoice",
+      "paymentMethods": {
+        "cash": "Cash",
+        "sinpe": "Sinpe Mobile",
+        "transfer": "Transfer",
+        "check": "Check",
+        "card": "Card"
+      }
+    },
+    "stats": {
+      "totalIncome": "TOTAL INCOME",
+      "averagePerSale": "AVERAGE PER SALE",
+      "totalSales": "TOTAL SALES"
+    },
+    "charts": {
+      "monthlyAnalysis": "Monthly Analysis",
+      "distributionByType": "Distribution by Type",
+      "quantity": "Quantity",
+      "income": "Income",
+      "sales": "sales",
+      "detailsByType": "Details by Type",
+      "percentage": "Percentage"
+    },
+    "buttons": {
+      "new": "New",
+      "viewDetails": "View Details",
+      "downloadPDF": "Download Invoice PDF"
+    },
+    "messages": {
+      "deleteConfirm": "Are you sure you want to delete this sale?",
+      "deleteSuccess": "Sale deleted successfully",
+      "deleteError": "Error deleting sale",
+      "createSuccess": "Sale created successfully",
+      "updateSuccess": "Sale updated successfully",
+      "registered": "sales registered",
+      "onlyAliveAnimals": "You can only sell animals that are in \"alive\" state. Please select a valid animal.",
+      "downloadingInvoice": "Downloading invoice...",
+      "downloadSuccess": "Invoice downloaded successfully",
+      "downloadError": "Error downloading invoice",
+      "loadError": "Error loading sales",
+      "singleSale": "sale",
+      "pluralSales": "sales"
+    },
+    "modal": {
+      "title": "Sale/Invoice Details",
+      "invoiceNumber": "INVOICE No.",
+      "issueDate": "Issue Date",
+      "soldAnimal": "Sold Animal",
+      "sex": "Sex",
+      "weight": "Weight",
+      "breed": "Breed",
+      "category": "Category",
+      "color": "Color",
+      "partiesInfo": "Parties Information",
+      "seller": "SELLER",
+      "buyer": "BUYER",
+      "notSpecified": "Not specified",
+      "saleDetails": "Sale Details",
+      "saleType": "Sale Type",
+      "paymentMethod": "Payment Method",
+      "quantity": "Quantity",
+      "units": "unit(s)",
+      "registeredBy": "Registered By",
+      "financialSummary": "Financial Summary",
+      "price": "Price",
+      "subtotal": "Subtotal",
+      "total": "TOTAL",
+      "observations": "Observations"
+    }
+  },
+  "categories": {
+    "title": "Categories",
+    "newCategory": "New Category",
+    "editCategory": "Edit Category",
+    "deleteCategory": "Delete Category",
+    "filters": {
+      "title": "Search Filters",
+      "type": "Category Type",
+      "typePlaceholder": "Search by type..."
+    },
+    "table": {
+      "name": "Name",
+      "type": "Type",
+      "description": "Description",
+      "actions": "Actions",
+      "list": "Category List"
+    },
+    "form": {
+      "name": "Name",
+      "type": "Category Type",
+      "description": "Description",
+      "categoryInfo": "Category Information",
+      "typeHelp": "E.g: Bovine, Porcine, Ovine, Caprine, etc."
+    },
+    "buttons": {
+      "registerFirst": "Register First Category"
+    },
+    "messages": {
+      "deleteConfirm": "Are you sure you want to delete this category?",
+      "deleteSuccess": "Category deleted successfully",
+      "deleteError": "Error deleting category",
+      "createSuccess": "Category created successfully",
+      "updateSuccess": "Category updated successfully",
+      "saveError": "Error saving category",
+      "loadError": "Error loading categories",
+      "registered": "categories registered",
+      "loading": "Loading categories...",
+      "noData": "No categories found",
+      "noRegistered": "You don't have any categories registered in the system yet.",
+      "single": "category",
+      "plural": "categories"
+    }
+  },
+  "states": {
+    "title": "States",
+    "newState": "New State",
+    "editState": "Edit State",
+    "deleteState": "Delete State",
+    "filters": {
+      "title": "Search Filters",
+      "name": "State Name",
+      "namePlaceholder": "Search by name..."
+    },
+    "table": {
+      "name": "Name",
+      "description": "Description",
+      "actions": "Actions",
+      "list": "State List"
+    },
+    "form": {
+      "name": "State Name",
+      "namePlaceholder": "State name",
+      "description": "Description",
+      "stateInfo": "State Information",
+      "nameHelp": "E.g: Active, Inactive, Sold, In Treatment, etc."
+    },
+    "buttons": {
+      "registerFirst": "Register First State"
+    },
+    "messages": {
+      "deleteConfirm": "Are you sure you want to delete the state \"{{name}}\"?",
+      "deleteSuccess": "State deleted successfully",
+      "deleteError": "Error deleting state",
+      "createSuccess": "State created successfully",
+      "updateSuccess": "State updated successfully",
+      "saveError": "Error saving state",
+      "loadError": "Error loading states",
+      "registered": "states registered",
+      "loading": "Loading states...",
+      "noData": "No states found",
+      "noRegistered": "You don't have any states registered in the system yet.",
+      "single": "state",
+      "plural": "states"
+    }
+  },
+  "roles": {
+    "title": "Roles",
+    "newRole": "New Role",
+    "editRole": "Edit Role",
+    "deleteRole": "Delete Role",
+    "filters": {
+      "title": "Search Filters",
+      "name": "Role Name",
+      "namePlaceholder": "Search by name..."
+    },
+    "table": {
+      "name": "Name",
+      "description": "Description",
+      "actions": "Actions",
+      "list": "Role List"
+    },
+    "form": {
+      "name": "Role Name",
+      "namePlaceholder": "Role name",
+      "description": "Description",
+      "roleInfo": "Role Information",
+      "nameHelp": "E.g: Administrator, Veterinarian, Operator, Supervisor, etc."
+    },
+    "buttons": {
+      "registerFirst": "Register First Role"
+    },
+    "messages": {
+      "deleteConfirm": "Are you sure you want to delete the role \"{{name}}\"?",
+      "deleteSuccess": "Role deleted successfully",
+      "deleteError": "Error deleting role",
+      "createSuccess": "Role created successfully",
+      "updateSuccess": "Role updated successfully",
+      "saveError": "Error saving role",
+      "loadError": "Error loading roles",
+      "registered": "roles registered",
+      "loading": "Loading roles...",
+      "noData": "No roles found",
+      "noRegistered": "You don't have any roles registered in the system yet.",
+      "single": "role",
+      "plural": "roles"
+    }
+  },
+  "users": {
+    "title": "Users",
+    "newUser": "New User",
+    "editUser": "Edit User",
+    "deleteUser": "Delete User",
+    "filters": {
+      "title": "Search Filters",
+      "name": "Name",
+      "namePlaceholder": "Search by name...",
+      "email": "Email",
+      "emailPlaceholder": "Search by email...",
+      "role": "Role",
+      "allRoles": "All roles"
+    },
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "createdAt": "Created At",
+      "actions": "Actions",
+      "list": "User List"
+    },
+    "form": {
+      "name": "Full Name",
+      "namePlaceholder": "Full name",
+      "email": "Email",
+      "emailPlaceholder": "email@example.com",
+      "password": "Password",
+      "role": "User Role",
+      "selectRole": "Select role",
+      "userInfo": "User Information",
+      "passwordHelp": "leave empty to keep unchanged"
+    },
+    "buttons": {
+      "registerFirst": "Register First User"
+    },
+    "messages": {
+      "deleteConfirm": "Are you sure you want to delete the user \"{{name}}\"?",
+      "deleteSuccess": "User deleted successfully",
+      "deleteError": "Error deleting user",
+      "createSuccess": "User created successfully",
+      "updateSuccess": "User updated successfully",
+      "saveError": "Error saving user",
+      "loadError": "Error loading users",
+      "invalidEmail": "Please enter a valid email address",
+      "registered": "users registered",
+      "loading": "Loading users...",
+      "noData": "No users found",
+      "noRegistered": "You don't have any users registered in the system yet.",
+      "single": "user",
+      "plural": "users"
+    }
+  },
+  "profile": {
+    "title": "My Profile",
+    "editProfile": "Edit Profile",
+    "personalInfo": "Personal Information",
+    "security": "Security",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "messages": {
+      "updateSuccess": "Profile updated successfully",
+      "updateError": "Error updating profile",
+      "passwordMismatch": "Passwords do not match"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Login",
+      "email": "Email",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot your password?",
+      "submit": "Login",
+      "noAccount": "Don't have an account?",
+      "register": "Register here"
+    },
+    "register": {
+      "title": "Register",
+      "name": "Full Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Register",
+      "hasAccount": "Already have an account?",
+      "login": "Login here"
+    },
+    "messages": {
+      "loginSuccess": "Login successful",
+      "loginError": "Login error",
+      "registerSuccess": "Registration successful",
+      "registerError": "Registration error",
+      "sessionExpired": "Session expired. Please login again",
+      "unauthorized": "You don't have permissions to perform this action"
+    }
+  },
+  "pagination": {
+    "showing": "Show",
+    "showingRange": "Showing {{start}} to {{end}} of {{total}} results",
+    "to": "to",
+    "of": "of",
+    "results": "results",
+    "previous": "Previous",
+    "next": "Next",
+    "itemsPerPage": "Items per page",
+    "perPage": "per page",
+    "navigation": "Pagination",
+    "page": "Page {{page}}"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Enter a valid email",
+    "minLength": "Minimum {{count}} characters",
+    "maxLength": "Maximum {{count}} characters",
+    "number": "Must be a number",
+    "positive": "Must be a positive number"
+  }
+}
+

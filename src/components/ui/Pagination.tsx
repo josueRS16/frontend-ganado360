@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
@@ -28,6 +30,7 @@ export function Pagination({
   nextPage,
   prevPage
 }: PaginationProps) {
+  const { t } = useTranslation();
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
@@ -66,7 +69,7 @@ export function Pagination({
       {showItemsPerPage && onItemsPerPageChange && (
         <div className="d-flex align-items-center">
           <label htmlFor="itemsPerPage" className="form-label me-2 mb-0 small">
-            Mostrar:
+            {t('pagination.showing')}:
           </label>
           <select
             id="itemsPerPage"
@@ -74,7 +77,7 @@ export function Pagination({
             style={{ width: 'auto' }}
             value={itemsPerPage}
             onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
-            aria-label="Elementos por página"
+            aria-label={t('pagination.itemsPerPage')}
           >
             {itemsPerPageOptions.map(option => (
               <option key={option} value={option}>
@@ -82,18 +85,18 @@ export function Pagination({
               </option>
             ))}
           </select>
-          <span className="ms-2 text-muted small">por página</span>
+          <span className="ms-2 text-muted small">{t('pagination.perPage')}</span>
         </div>
       )}
 
       {/* Pagination info */}
       <div className="text-muted small" aria-live="polite">
-        Mostrando {startItem} a {endItem} de {totalItems} resultados
+        {t('pagination.showingRange', { start: startItem, end: endItem, total: totalItems })}
       </div>
 
       {/* Pagination controls */}
       {totalPages > 1 && (
-        <nav aria-label="Paginación">
+        <nav aria-label={t('pagination.navigation')}>
           <ul className="pagination pagination-sm mb-0">
             {/* Previous button */}
             <li className={`page-item ${hasPrevPage !== undefined ? (!hasPrevPage ? 'disabled' : '') : (currentPage === 1 ? 'disabled' : '')}`}>
@@ -101,7 +104,7 @@ export function Pagination({
                 className="page-link"
                 onClick={() => onPageChange(prevPage || currentPage - 1)}
                 disabled={hasPrevPage !== undefined ? !hasPrevPage : currentPage === 1}
-                aria-label="Página anterior"
+                aria-label={t('pagination.previous')}
               >
                 <i className="bi bi-chevron-left" aria-hidden="true"></i>
               </button>
@@ -116,7 +119,7 @@ export function Pagination({
                   <button
                     className="page-link"
                     onClick={() => onPageChange(page as number)}
-                    aria-label={`Página ${page}`}
+                    aria-label={t('pagination.page', { page })}
                     aria-current={page === currentPage ? 'page' : undefined}
                   >
                     {page}
@@ -131,7 +134,7 @@ export function Pagination({
                 className="page-link"
                 onClick={() => onPageChange(nextPage || currentPage + 1)}
                 disabled={hasNextPage !== undefined ? !hasNextPage : currentPage === totalPages}
-                aria-label="Página siguiente"
+                aria-label={t('pagination.next')}
               >
                 <i className="bi bi-chevron-right" aria-hidden="true"></i>
               </button>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDarDeBajaAnimal } from '../../hooks/useEstadoAnimal';
 import { useToast } from '../../hooks/useToast';
 import type { Animal } from '../../types/api';
@@ -11,6 +12,7 @@ interface DarDeBajaModalProps {
 }
 
 export function DarDeBajaModal({ animal, isOpen, onClose, onSuccess }: DarDeBajaModalProps) {
+  const { t } = useTranslation();
   const [fechaFallecimiento, setFechaFallecimiento] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -35,17 +37,17 @@ export function DarDeBajaModal({ animal, isOpen, onClose, onSuccess }: DarDeBaja
     e.preventDefault();
     
     if (!animal) {
-      showToast('Error: No se ha seleccionado un animal', 'error');
+      showToast(t('animals.deactivate.errorNoAnimal'), 'error');
       return;
     }
 
     if (!animal.ID_Estado_Animal) {
-      showToast('No se puede dar de baja: el animal no tiene un estado asignado', 'error');
+      showToast(t('animals.deactivate.errorNoState'), 'error');
       return;
     }
 
     if (!fechaFallecimiento) {
-      showToast('Debe ingresar la fecha de fallecimiento', 'error');
+      showToast(t('animals.deactivate.errorNoDate'), 'error');
       return;
     }
 
@@ -59,14 +61,14 @@ export function DarDeBajaModal({ animal, isOpen, onClose, onSuccess }: DarDeBaja
       });
       
       showToast(
-        `Animal "${animal.Nombre}" dado de baja exitosamente`, 
+        `${animal.Nombre} ${t('animals.deactivate.successMessage')}`, 
         'success'
       );
       
       onSuccess?.();
       onClose();
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Error al dar de baja el animal';
+      const errorMessage = error instanceof Error ? error.message : t('animals.deactivate.errorMessage');
       showToast(errorMessage, 'error');
     } finally {
       setIsSubmitting(false);
@@ -87,14 +89,14 @@ export function DarDeBajaModal({ animal, isOpen, onClose, onSuccess }: DarDeBaja
           <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
             <h5 className="modal-title fw-semibold d-flex align-items-center">
               <i className="bi bi-arrow-down-circle me-2"></i>
-              Dar de Baja Animal
+              {t('animals.deactivate.title')}
             </h5>
             <button
               type="button"
               className="btn-close btn-close-white"
               onClick={handleClose}
               disabled={isSubmitting}
-              aria-label="Cerrar modal"
+              aria-label={t('animals.form.close')}
             ></button>
           </div>
 
@@ -105,9 +107,9 @@ export function DarDeBajaModal({ animal, isOpen, onClose, onSuccess }: DarDeBaja
                 <div className="text-center">
                   <i className="bi bi-exclamation-triangle-fill me-2"></i>
                   <div>
-                    <h6 className="mb-1 fw-semibold">¡Atención!</h6>
+                    <h6 className="mb-1 fw-semibold">{t('animals.deactivate.attention')}</h6>
                     <p className="mb-0">
-                      Esta acción dará de baja al animal de forma permanente.
+                      {t('animals.deactivate.permanentAction')}
                     </p>
                   </div>
                 </div>
@@ -117,9 +119,9 @@ export function DarDeBajaModal({ animal, isOpen, onClose, onSuccess }: DarDeBaja
                 <div className="text-center">
                   <i className="bi bi-info-circle-fill me-2" style={{ color: 'var(--color-base-green)' }}></i>
                   <div>
-                    <h6 className="mb-1 fw-semibold">Animal a dar de baja:</h6>
+                    <h6 className="mb-1 fw-semibold">{t('animals.deactivate.animalToDeactivate')}</h6>
                     <p className="mb-0" style={{ color: 'var(--color-charcoal)' }}>
-                      <strong className='text-body'>Nombre: {animal?.Nombre}</strong> - <p className='text-body'>Categoría: {animal?.CategoriaTipo}</p>
+                      <strong className='text-body'>{t('animals.deactivate.name')} {animal?.Nombre}</strong> - <p className='text-body'>{t('animals.form.category')}: {animal?.CategoriaTipo}</p>
                     </p>
                   </div>
                 </div>
@@ -128,7 +130,7 @@ export function DarDeBajaModal({ animal, isOpen, onClose, onSuccess }: DarDeBaja
               {/* Fecha de Fallecimiento */}
               <div className="mb-4">
                 <label className="form-label fw-semibold">
-                  Fecha de Fallecimiento <span className="text-danger">*</span>
+                  {t('animals.deactivate.deathDate')} <span className="text-danger">{t('animals.deactivate.required')}</span>
                 </label>
                 <input
                   type="date"
@@ -141,7 +143,7 @@ export function DarDeBajaModal({ animal, isOpen, onClose, onSuccess }: DarDeBaja
                 />
                 <div className="form-text">
                   <i className="bi bi-info-circle me-1"></i>
-                  La fecha no puede ser posterior al día de hoy
+                  {t('animals.deactivate.dateHelp')}
                 </div>
               </div>
 
@@ -151,7 +153,7 @@ export function DarDeBajaModal({ animal, isOpen, onClose, onSuccess }: DarDeBaja
                   <div className="text-center">
                     <i className="bi bi-calendar-x me-2"></i>
                     <div>
-                      <strong className='text-body'>Fecha de fallecimiento:</strong> <p className='text-body'>{new Date(fechaFallecimiento).toLocaleDateString('es-ES', {
+                      <strong className='text-body'>{t('animals.deactivate.confirmDate')}</strong> <p className='text-body'>{new Date(fechaFallecimiento).toLocaleDateString('es-ES', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
@@ -172,7 +174,7 @@ export function DarDeBajaModal({ animal, isOpen, onClose, onSuccess }: DarDeBaja
                   disabled={isSubmitting}
                 >
                   <i className="bi bi-x-circle me-2"></i>
-                  Cancelar
+                  {t('animals.form.cancel')}
                 </button>
                 <button
                   type="submit"
@@ -182,12 +184,12 @@ export function DarDeBajaModal({ animal, isOpen, onClose, onSuccess }: DarDeBaja
                   {isSubmitting ? (
                     <>
                       <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Dando de baja...
+                      {t('animals.deactivate.submitting')}
                     </>
                   ) : (
                     <>
                       <i className="bi bi-arrow-down-circle me-2"></i>
-                      Confirmar Baja
+                      {t('animals.deactivate.confirm')}
                     </>
                   )}
                 </button>

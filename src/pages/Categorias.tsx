@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useCategorias, useCreateCategoria, useUpdateCategoria, useDeleteCategoria } from '../hooks/useCategorias';
 import { useQueryParams } from '../hooks/useQueryParams';
 import { useToast } from '../hooks/useToast';
@@ -19,6 +20,7 @@ const createInitialFormData = (categoria?: Categoria): CategoriaRequest => ({
 });
 
 function CategoriaModal({ categoria, isOpen, onClose, onSave }: CategoriaModalProps) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<CategoriaRequest>(createInitialFormData(categoria));
 
   // Update form data when categoria prop changes
@@ -61,13 +63,13 @@ function CategoriaModal({ categoria, isOpen, onClose, onSave }: CategoriaModalPr
           <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
             <h5 className="modal-title fw-semibold d-flex align-items-center">
               <i className={`bi ${categoria ? 'bi-pencil-square' : 'bi-plus-circle'} me-2`}></i>
-              {categoria ? 'Editar Categoría' : 'Nueva Categoría'}
+              {categoria ? t('categories.editCategory') : t('categories.newCategory')}
             </h5>
             <button 
               type="button" 
               className="btn-close btn-close-white" 
               onClick={handleClose}
-              aria-label="Cerrar modal"
+              aria-label={t('common.close')}
             ></button>
           </div>
           <form onSubmit={handleSubmit}>
@@ -77,7 +79,7 @@ function CategoriaModal({ categoria, isOpen, onClose, onSave }: CategoriaModalPr
                 <div className="card-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
                   <h6 className="card-title mb-0 d-flex align-items-center">
                     <i className="bi bi-tags-fill me-2"></i>
-                    Información de la Categoría
+                    {t('categories.form.categoryInfo')}
                   </h6>
                 </div>
                 <div className="card-body">
@@ -93,11 +95,11 @@ function CategoriaModal({ categoria, isOpen, onClose, onSave }: CategoriaModalPr
                           onChange={(e) => setFormData({ Tipo: e.target.value })}
                           required
                         />
-                        <label htmlFor="tipo">Tipo de Categoría</label>
+                        <label htmlFor="tipo">{t('categories.form.type')}</label>
                       </div>
                       <div className="form-text">
                         <i className="bi bi-info-circle me-1"></i>
-                        Ej: Bovino, Porcino, Ovino, Caprino, etc.
+                        {t('categories.form.typeHelp')}
                       </div>
                     </div>
                   </div>
@@ -111,7 +113,7 @@ function CategoriaModal({ categoria, isOpen, onClose, onSave }: CategoriaModalPr
                   className="btn btn-apply"
                 >
                   <i className={`bi ${categoria ? 'bi-check-circle' : 'bi-plus-circle'} me-2`}></i>
-                  {categoria ? 'Actualizar' : 'Crear'}
+                  {categoria ? t('common.update') : t('common.create')}
                 </button>
                 <button 
                   type="button" 
@@ -119,7 +121,7 @@ function CategoriaModal({ categoria, isOpen, onClose, onSave }: CategoriaModalPr
                   onClick={handleClose}
                 >
                   <i className="bi bi-x-circle me-2"></i>
-                  Cancelar
+                  {t('common.cancel')}
                 </button>
               </div>
             </div>
@@ -131,6 +133,7 @@ function CategoriaModal({ categoria, isOpen, onClose, onSave }: CategoriaModalPr
 }
 
 export function Categorias() {
+  const { t } = useTranslation();
   const { params, updateParams, clearParams, setParams } = useQueryParams<CategoriasFilters>();
   
   // Set default pagination parameters if not present
@@ -193,25 +196,25 @@ export function Categorias() {
           id: modalState.categoria.ID_Categoria,
           data: formData as UpdateCategoriaRequest
         });
-        showToast('Categoría actualizada exitosamente', 'success');
+        showToast(t('categories.messages.updateSuccess'), 'success');
       } else {
         await createMutation.mutateAsync(formData as CategoriaRequest);
-        showToast('Categoría creada exitosamente', 'success');
+        showToast(t('categories.messages.createSuccess'), 'success');
       }
       closeModal();
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Error al guardar la categoría';
+      const errorMessage = error instanceof Error ? error.message : t('categories.messages.saveError');
       showToast(errorMessage, 'error');
     }
   };
 
   const handleDelete = async (categoria: Categoria) => {
-    if (window.confirm(`¿Estás seguro de eliminar la categoría "${categoria.Tipo}"?`)) {
+    if (window.confirm(t('categories.messages.deleteConfirm'))) {
       try {
         await deleteMutation.mutateAsync(categoria.ID_Categoria);
-        showToast('Categoría eliminada exitosamente', 'success');
+        showToast(t('categories.messages.deleteSuccess'), 'success');
       } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'Error al eliminar la categoría';
+        const errorMessage = error instanceof Error ? error.message : t('categories.messages.deleteError');
         showToast(errorMessage, 'error');
       }
     }
@@ -220,8 +223,8 @@ export function Categorias() {
   if (error) {
     return (
       <div className="alert alert-danger" role="alert">
-        <h4 className="alert-heading">Error al cargar las categorías</h4>
-        <p>{error.message || 'Ocurrió un error inesperado'}</p>
+        <h4 className="alert-heading">{t('categories.messages.loadError')}</h4>
+        <p>{error.message || t('common.unexpectedError')}</p>
       </div>
     );
   }
@@ -231,9 +234,9 @@ export function Categorias() {
       {/* Breadcrumb */}
       <Breadcrumb 
         items={[
-          { label: 'Dashboard', path: '/' },
-          { label: 'Configuración', path: '#' },
-          { label: 'Categorías', active: true }
+          { label: t('dashboard.title'), path: '/' },
+          { label: t('sidebar.sections.settings'), path: '#' },
+          { label: t('categories.title'), active: true }
         ]} 
       />
       
@@ -244,10 +247,10 @@ export function Categorias() {
             <div>
               <h1 className="h2 mb-2 d-flex align-items-center page-title-dark" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-tags-fill me-3"></i>
-                Gestión de Categorías
+                {t('categories.title')}
               </h1>
               <p className="mb-0 fs-6">
-                {isLoading ? 'Cargando categorías...' : pagination ? `${pagination.totalCount} categorías registradas` : `${categorias.length} categorías registradas`}
+                {isLoading ? t('common.loading') : pagination ? `${pagination.totalCount} ${t('categories.messages.registered')}` : `${categorias.length} ${t('categories.messages.registered')}`}
               </p>
             </div>
             <div className="d-flex flex-column flex-sm-row gap-2">
@@ -255,17 +258,17 @@ export function Categorias() {
                 className="btn btn-outline-secondary d-lg-none" 
                 data-bs-toggle="offcanvas" 
                 data-bs-target="#filtersOffcanvas"
-                aria-label="Abrir filtros"
+                aria-label={t('animals.buttons.filters')}
               >
                 <i className="bi bi-funnel me-2"></i>
-                Filtros
+                {t('animals.buttons.filters')}
                 {hasActiveFilters && (
                   <span className="badge bg-primary ms-2">{Object.keys(params).length}</span>
                 )}
               </button>
               <button className="btn btn-apply" onClick={() => openModal()}>
                 <i className="bi bi-plus-circle-fill me-2"></i>
-                <span className="fw-bold">Añadir</span>
+                <span className="fw-bold">{t('common.add')}</span>
               </button>
             </div>
           </div>
@@ -279,7 +282,7 @@ export function Categorias() {
             <div className="d-flex justify-content-between align-items-center">
               <h6 className="mb-0 fw-semibold d-flex align-items-center section-title-dark" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-funnel-fill me-2"></i>
-                Filtros de Búsqueda
+                {t('categories.filters.title')}
               </h6>
               {hasActiveFilters && (
                 <button className="btn btn-outline-secondary btn-sm" onClick={clearAllFilters}>
@@ -290,14 +293,14 @@ export function Categorias() {
             </div>
             <div className="row">
               <div className="col-md-4">
-                <label className="form-label">Tipo de Categoría</label>
+                <label className="form-label">{t('categories.filters.type')}</label>
                 <input
                   type="text"
                   className="form-control"
                   value={params.Tipo || ''}
                   onChange={(e) => handleTipoFilterChange(e.target.value)}
-                  placeholder="Buscar por tipo..."
-                  aria-label="Filtrar por tipo de categoría"
+                  placeholder={t('categories.filters.typePlaceholder')}
+                  aria-label={t('categories.filters.type')}
                   autoComplete="off"
                 />
               </div>
@@ -313,7 +316,7 @@ export function Categorias() {
             <i className="bi bi-funnel-fill me-2"></i>
             Filtros de Búsqueda
           </h5>
-          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar filtros"></button>
+          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label={t('animals.buttons.closeFilters')}></button>
         </div>
         <div className="offcanvas-body">
           <div className="row g-3">
@@ -333,7 +336,7 @@ export function Categorias() {
           <div className="d-grid gap-2 mt-4">
             <button className="btn btn-apply" data-bs-dismiss="offcanvas">
               <i className="bi bi-search me-2"></i>
-              Aplicar Filtros
+              {t('common.applyFilters')}
             </button>
             <button className="btn btn-outline-secondary" onClick={clearAllFilters}>
               <i className="bi bi-x-circle me-2"></i>
@@ -349,9 +352,9 @@ export function Categorias() {
           <div className="card-body table-state-loading">
             <div className="d-flex flex-column align-items-center">
               <div className="spinner-border mb-3" style={{ color: 'var(--color-base-green)' }} role="status">
-                <span className="visually-hidden">Cargando categorías...</span>
+                <span className="visually-hidden">{t('categories.messages.loading')}</span>
               </div>
-              <h6 className="text-muted mb-0">Cargando categorías...</h6>
+              <h6 className="text-muted mb-0">{t('categories.messages.loading')}</h6>
             </div>
           </div>
         </div>
@@ -360,11 +363,11 @@ export function Categorias() {
           <div className="card-body table-state-empty">
             <div className="d-flex flex-column align-items-center">
               <i className="bi bi-tags display-1 text-muted mb-3"></i>
-              <h5 className="text-muted mb-2">No se encontraron categorías</h5>
+              <h5 className="text-muted mb-2">{t('categories.messages.noData')}</h5>
               <p className="text-muted text-center mb-4">
                 {hasActiveFilters 
-                  ? 'No hay categorías que coincidan con los filtros aplicados.'
-                  : 'Aún no tienes categorías registradas en el sistema.'
+                  ? t('common.noMatches')
+                  : t('categories.messages.noRegistered')
                 }
               </p>
               {hasActiveFilters ? (
@@ -375,7 +378,7 @@ export function Categorias() {
               ) : (
                 <button className="btn btn-apply" onClick={() => openModal()}>
                   <i className="bi bi-plus-circle me-2"></i>
-                  Registrar Primera Categoría
+                  {t('categories.buttons.registerFirst')}
                 </button>
               )}
             </div>
@@ -389,13 +392,13 @@ export function Categorias() {
                 <div className="d-flex justify-content-between align-items-center">
                   <h6 className="card-title mb-0 fw-semibold d-flex align-items-center section-title-dark" style={{ color: 'var(--color-base-green)' }}>
                     <i className="bi bi-list-ul me-2"></i>
-                    Lista de Categorías
+                    {t('categories.table.list')}
                   </h6>
                   <span className="badge rounded-pill px-3 py-2" style={{ 
                     backgroundColor: 'var(--color-sage-gray)', 
                     color: 'var(--color-charcoal)' 
                   }}>
-                    {categorias.length} {categorias.length === 1 ? 'categoría' : 'categorías'}
+                    {categorias.length} {categorias.length === 1 ? t('categories.messages.single') : t('categories.messages.plural')}
                   </span>
                 </div>
               </div>
@@ -403,8 +406,8 @@ export function Categorias() {
                 <table className="table table-ganado table-hover align-middle mb-0">
                   <thead>
                     <tr>
-                      <th scope="col" className="cell-tight text-center fw-bold">Tipo</th>
-                      <th scope="col" className="cell-tight text-center fw-bold">Acciones</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('categories.table.type')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('categories.table.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -414,12 +417,12 @@ export function Categorias() {
                           <span className="fw-semibold">{categoria.Tipo}</span>
                         </td>
                         <td className="cell-tight text-center">
-                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label="Acciones de la categoría">
+                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label={t('categories.table.actions')}>
                             <button
                               className="btn btn-sm btn-warning"
                               onClick={() => openModal(categoria)}
-                              title="Editar"
-                              aria-label="Editar categoría"
+                              title={t('common.edit')}
+                              aria-label={t('common.edit')}
                             >
                               <i className="bi bi-pencil"></i>
                             </button>
@@ -427,8 +430,8 @@ export function Categorias() {
                               className="btn btn-sm btn-danger"
                               onClick={() => handleDelete(categoria)}
                               disabled={deleteMutation.isPending}
-                              title="Eliminar"
-                              aria-label="Eliminar categoría"
+                              title={t('common.delete')}
+                              aria-label={t('common.delete')}
                             >
                               <i className="bi bi-trash"></i>
                             </button>
@@ -469,7 +472,7 @@ export function Categorias() {
                   <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
                     <div className="d-flex align-items-center">
                       <label htmlFor="itemsPerPage" className="form-label me-2 mb-0 small">
-                        Mostrar:
+                        {t('pagination.showing')}:
                       </label>
                       <select
                         id="itemsPerPage"
@@ -477,17 +480,17 @@ export function Categorias() {
                         style={{ width: 'auto' }}
                         value={currentParams.limit || 10}
                         onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-                        aria-label="Elementos por página"
+                        aria-label={t('pagination.itemsPerPage')}
                       >
                         <option value={5}>5</option>
                         <option value={10}>10</option>
                         <option value={20}>20</option>
                         <option value={50}>50</option>
                       </select>
-                      <span className="ms-2 text-muted small">por página</span>
+                      <span className="ms-2 text-muted small">{t('pagination.perPage')}</span>
                     </div>
                     <div className="text-muted small" aria-live="polite">
-                      {isLoading ? 'Cargando...' : `${categorias.length} resultados`}
+                      {isLoading ? t('common.loading') : `${categorias.length} ${t('pagination.results')}`}
                     </div>
                   </div>
                 )}

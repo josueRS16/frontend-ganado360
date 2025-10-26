@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useUsuarios, useCreateUsuario, useUpdateUsuario, useDeleteUsuario } from '../hooks/useUsuarios';
 import { useRoles } from '../hooks/useRoles';
 import { useQueryParams } from '../hooks/useQueryParams';
@@ -25,6 +26,7 @@ const createInitialFormData = (usuario?: Usuario): UsuarioRequest => {
 };
 
 function UsuarioModal({ usuario, isOpen, onClose, onSave }: UsuarioModalProps) {
+  const { t } = useTranslation();
   const { data: rolesData } = useRoles();
   const roles = rolesData?.data || [];
 
@@ -57,13 +59,13 @@ function UsuarioModal({ usuario, isOpen, onClose, onSave }: UsuarioModalProps) {
           <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
             <h5 className="modal-title fw-semibold d-flex align-items-center">
               <i className={`bi ${usuario ? 'bi-pencil-square' : 'bi-person-plus'} me-2`}></i>
-              {usuario ? 'Editar Usuario' : 'Nuevo Usuario'}
+              {usuario ? t('users.editUser') : t('users.newUser')}
             </h5>
             <button 
               type="button" 
               className="btn-close btn-close-white" 
               onClick={handleClose}
-              aria-label="Cerrar modal"
+              aria-label={t('common.close')}
             ></button>
           </div>
           <form onSubmit={handleSubmit}>
@@ -73,7 +75,7 @@ function UsuarioModal({ usuario, isOpen, onClose, onSave }: UsuarioModalProps) {
                 <div className="card-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
                   <h6 className="card-title mb-0 d-flex align-items-center">
                     <i className="bi bi-person-fill me-2"></i>
-                    Información del Usuario
+                    {t('users.form.userInfo')}
                   </h6>
                 </div>
                 <div className="card-body">
@@ -84,12 +86,12 @@ function UsuarioModal({ usuario, isOpen, onClose, onSave }: UsuarioModalProps) {
                           type="text"
                           className="form-control"
                           id="nombre"
-                          placeholder="Nombre completo"
+                          placeholder={t('users.form.namePlaceholder')}
                           value={formData.Nombre}
                           onChange={(e) => setFormData({ ...formData, Nombre: e.target.value })}
                           required
                         />
-                        <label htmlFor="nombre">Nombre Completo</label>
+                        <label htmlFor="nombre">{t('users.form.name')}</label>
                       </div>
                     </div>
                     <div className="col-md-6">
@@ -98,12 +100,12 @@ function UsuarioModal({ usuario, isOpen, onClose, onSave }: UsuarioModalProps) {
                           type="email"
                           className="form-control"
                           id="correo"
-                          placeholder="correo@ejemplo.com"
+                          placeholder={t('users.form.emailPlaceholder')}
                           value={formData.Correo}
                           onChange={(e) => setFormData({ ...formData, Correo: e.target.value })}
                           required
                         />
-                        <label htmlFor="correo">Correo Electrónico</label>
+                        <label htmlFor="correo">{t('users.form.email')}</label>
                       </div>
                     </div>
                     <div className="col-md-6">
@@ -112,13 +114,13 @@ function UsuarioModal({ usuario, isOpen, onClose, onSave }: UsuarioModalProps) {
                           type="password"
                           className="form-control"
                           id="contraseña"
-                          placeholder="Contraseña"
+                          placeholder={t('users.form.password')}
                           value={formData.Contraseña}
                           onChange={(e) => setFormData({ ...formData, Contraseña: e.target.value })}
                           required={!usuario}
                         />
                         <label htmlFor="contraseña">
-                          Contraseña {usuario && <small className="text-muted">(dejar vacío para no cambiar)</small>}
+                          {t('users.form.password')} {usuario && <small className="text-muted">({t('users.form.passwordHelp')})</small>}
                         </label>
                       </div>
                     </div>
@@ -131,14 +133,14 @@ function UsuarioModal({ usuario, isOpen, onClose, onSave }: UsuarioModalProps) {
                           onChange={(e) => setFormData({ ...formData, RolID: Number(e.target.value) })}
                           required
                         >
-                          <option value="">Seleccionar rol</option>
+                          <option value="">{t('users.form.selectRole')}</option>
                           {roles.map(rol => (
                             <option key={rol.RolID} value={rol.RolID}>
                               {rol.Nombre}
                             </option>
                           ))}
                         </select>
-                        <label htmlFor="rol">Rol del Usuario</label>
+                        <label htmlFor="rol">{t('users.form.role')}</label>
                       </div>
                     </div>
                   </div>
@@ -152,7 +154,7 @@ function UsuarioModal({ usuario, isOpen, onClose, onSave }: UsuarioModalProps) {
                   className="btn btn-apply"
                 >
                   <i className={`bi ${usuario ? 'bi-check-circle' : 'bi-person-plus'} me-2`}></i>
-                  {usuario ? 'Actualizar' : 'Crear'}
+                  {usuario ? t('common.update') : t('common.create')}
                 </button>
                 <button 
                   type="button" 
@@ -160,7 +162,7 @@ function UsuarioModal({ usuario, isOpen, onClose, onSave }: UsuarioModalProps) {
                   onClick={handleClose}
                 >
                   <i className="bi bi-x-circle me-2"></i>
-                  Cancelar
+                  {t('common.cancel')}
                 </button>
               </div>
             </div>
@@ -172,6 +174,7 @@ function UsuarioModal({ usuario, isOpen, onClose, onSave }: UsuarioModalProps) {
 }
 
 export function Usuarios() {
+  const { t } = useTranslation();
   const { params, updateParams, clearParams } = useQueryParams<UsuariosFilters>();
   
   // Set default pagination parameters if not present
@@ -235,7 +238,7 @@ export function Usuarios() {
       if (key === 'Correo') {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(value.trim())) {
-          showToast('Por favor ingresa un correo electrónico válido', 'error');
+          showToast(t('users.messages.invalidEmail'), 'error');
           return;
         }
       }
@@ -274,14 +277,14 @@ export function Usuarios() {
           id: modalState.usuario.ID_Usuario,
           data: formData
         });
-        showToast('Usuario actualizado exitosamente', 'success');
+        showToast(t('users.messages.updateSuccess'), 'success');
       } else {
         await createMutation.mutateAsync(formData);
-        showToast('Usuario creado exitosamente', 'success');
+        showToast(t('users.messages.createSuccess'), 'success');
       }
       closeModal();
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Error al guardar el usuario';
+      const errorMessage = error instanceof Error ? error.message : t('users.messages.saveError');
       showToast(errorMessage, 'error');
     }
   };
@@ -291,12 +294,12 @@ export function Usuarios() {
   };
 
   const handleDelete = async (usuario: Usuario) => {
-    if (window.confirm(`¿Estás seguro de eliminar el usuario "${usuario.Nombre}"?`)) {
+    if (window.confirm(t('users.messages.deleteConfirm', { name: usuario.Nombre }))) {
       try {
         await deleteMutation.mutateAsync(usuario.ID_Usuario);
-        showToast('Usuario eliminado exitosamente', 'success');
+        showToast(t('users.messages.deleteSuccess'), 'success');
       } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'Error al eliminar el usuario';
+        const errorMessage = error instanceof Error ? error.message : t('users.messages.deleteError');
         showToast(errorMessage, 'error');
       }
     }
@@ -307,10 +310,10 @@ export function Usuarios() {
   if (error) {
     return (
       <div className="alert alert-danger" role="alert">
-        <h4 className="alert-heading">Error al cargar los usuarios</h4>
-        <p>{error.message || 'Ocurrió un error inesperado'}</p>
+        <h4 className="alert-heading">{t('users.messages.loadError')}</h4>
+        <p>{error.message || t('common.unexpectedError')}</p>
         <button className="btn btn-outline-danger" onClick={() => window.location.reload()}>
-          Intentar de nuevo
+          {t('common.tryAgain')}
         </button>
       </div>
     );
@@ -321,9 +324,9 @@ export function Usuarios() {
       {/* Breadcrumb */}
       <Breadcrumb 
         items={[
-          { label: 'Dashboard', path: '/' },
-          { label: 'Configuración', path: '#' },
-          { label: 'Usuarios', active: true }
+          { label: t('dashboard.title'), path: '/' },
+          { label: t('sidebar.sections.settings'), path: '#' },
+          { label: t('users.title'), active: true }
         ]} 
       />
       
@@ -334,10 +337,10 @@ export function Usuarios() {
             <div>
               <h1 className="h2 mb-2 d-flex align-items-center page-title-dark" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-people-fill me-3"></i>
-                Gestión de Usuarios
+                {t('users.title')}
               </h1>
               <p className="mb-0 fs-6">
-                {isLoading ? 'Cargando usuarios...' : pagination ? `${pagination.totalCount} usuarios registrados` : `${usuarios.length} usuarios registrados`}
+                {isLoading ? t('common.loading') : pagination ? `${pagination.totalCount} ${t('users.messages.registered')}` : `${usuarios.length} ${t('users.messages.registered')}`}
               </p>
             </div>
             <div className="d-flex flex-column flex-sm-row gap-2">
@@ -345,17 +348,17 @@ export function Usuarios() {
                 className="btn btn-outline-secondary d-lg-none" 
                 data-bs-toggle="offcanvas" 
                 data-bs-target="#filtersOffcanvas"
-                aria-label="Abrir filtros"
+                aria-label={t('animals.buttons.filters')}
               >
                 <i className="bi bi-funnel me-2"></i>
-                Filtros
+                {t('animals.buttons.filters')}
                 {hasActiveFilters && (
                   <span className="badge bg-primary ms-2">{Object.keys(params).length}</span>
                 )}
               </button>
               <button className="btn btn-apply" onClick={() => openModal()}>
                 <i className="bi bi-person-plus-fill me-2"></i>
-                <span className="fw-bold">Añadir</span>
+                <span className="fw-bold">{t('common.add')}</span>
               </button>
             </div>
           </div>
@@ -369,67 +372,67 @@ export function Usuarios() {
             <div className="d-flex justify-content-between align-items-center">
               <h6 className="mb-0 fw-semibold d-flex align-items-center section-title-dark" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-funnel-fill me-2"></i>
-                Filtros de Búsqueda
+                {t('users.filters.title')}
               </h6>
               {hasActiveFilters && (
                 <button className="btn btn-outline-secondary btn-sm" onClick={clearAllFilters}>
                   <i className="bi bi-x-circle me-1"></i>
-                  Limpiar Filtros
+                  {t('animals.buttons.clearFilters')}
                 </button>
               )}
             </div>
             <div className="row">
               <div className="col-md-4">
-                <label className="form-label">Nombre</label>
+                <label className="form-label">{t('users.filters.name')}</label>
                 <div className="input-group">
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Buscar por nombre..."
+                    placeholder={t('users.filters.namePlaceholder')}
                     value={textFilterValues.Nombre}
                     onChange={(e) => handleTextInputChange('Nombre', e.target.value)}
-                    aria-label="Filtrar por nombre"
+                    aria-label={t('users.filters.name')}
                   />
                   <button 
                     className="btn btn-outline-secondary" 
                     type="button"
                     onClick={() => handleSearchClick('Nombre')}
-                    title="Buscar"
+                    title={t('common.search')}
                   >
                     <i className="bi bi-search"></i>
                   </button>
                 </div>
               </div>
               <div className="col-md-4">
-                <label className="form-label">Correo</label>
+                <label className="form-label">{t('users.filters.email')}</label>
                 <div className="input-group">
                   <input
                     type="email"
                     className="form-control"
-                    placeholder="Buscar por correo..."
+                    placeholder={t('users.filters.emailPlaceholder')}
                     value={textFilterValues.Correo}
                     onChange={(e) => handleTextInputChange('Correo', e.target.value)}
-                    aria-label="Filtrar por correo"
+                    aria-label={t('users.filters.email')}
                   />
                   <button 
                     className="btn btn-outline-secondary" 
                     type="button"
                     onClick={() => handleSearchClick('Correo')}
-                    title="Buscar"
+                    title={t('common.search')}
                   >
                     <i className="bi bi-search"></i>
                   </button>
                 </div>
               </div>
               <div className="col-md-4">
-                <label className="form-label">Rol</label>
+                <label className="form-label">{t('users.filters.role')}</label>
                 <select
                   className="form-select"
                   value={params.RolNombre || ''}
                   onChange={(e) => handleFilterChange('RolNombre', e.target.value || undefined)}
-                  aria-label="Filtrar por rol"
+                  aria-label={t('users.filters.role')}
                 >
-                  <option value="">Todos los roles</option>
+                  <option value="">{t('users.filters.allRoles')}</option>
                   {roles.map((rol) => (
                     <option key={rol.RolID} value={rol.Nombre}>
                       {rol.Nombre}
@@ -447,63 +450,63 @@ export function Usuarios() {
         <div className="offcanvas-header">
           <h5 className="offcanvas-title d-flex align-items-center">
             <i className="bi bi-funnel-fill me-2"></i>
-            Filtros de Búsqueda
+            {t('users.filters.title')}
           </h5>
-          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar filtros"></button>
+          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label={t('animals.buttons.closeFilters')}></button>
         </div>
         <div className="offcanvas-body">
           <div className="row g-3">
             <div className="col-12">
-              <label className="form-label">Nombre</label>
+              <label className="form-label">{t('users.filters.name')}</label>
               <div className="input-group">
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Buscar por nombre..."
+                  placeholder={t('users.filters.namePlaceholder')}
                   value={textFilterValues.Nombre}
                   onChange={(e) => handleTextInputChange('Nombre', e.target.value)}
-                  aria-label="Filtrar por nombre"
+                  aria-label={t('users.filters.name')}
                 />
                 <button 
                   className="btn btn-outline-secondary" 
                   type="button"
                   onClick={() => handleSearchClick('Nombre')}
-                  title="Buscar"
+                  title={t('common.search')}
                 >
                   <i className="bi bi-search"></i>
                 </button>
               </div>
             </div>
             <div className="col-12">
-              <label className="form-label">Correo</label>
+              <label className="form-label">{t('users.filters.email')}</label>
               <div className="input-group">
                 <input
                   type="email"
                   className="form-control"
-                  placeholder="Buscar por correo..."
+                  placeholder={t('users.filters.emailPlaceholder')}
                   value={textFilterValues.Correo}
                   onChange={(e) => handleTextInputChange('Correo', e.target.value)}
-                  aria-label="Filtrar por correo"
+                  aria-label={t('users.filters.email')}
                 />
                 <button 
                   className="btn btn-outline-secondary" 
                   type="button"
                   onClick={() => handleSearchClick('Correo')}
-                  title="Buscar"
+                  title={t('common.search')}
                 >
                   <i className="bi bi-search"></i>
                 </button>
               </div>
             </div>
             <div className="col-12">
-              <label className="form-label">Rol</label>
+              <label className="form-label">{t('users.filters.role')}</label>
               <select
                 className="form-select"
                 value={params.RolNombre || ''}
                 onChange={(e) => handleFilterChange('RolNombre', e.target.value || undefined)}
-                aria-label="Filtrar por rol"
+                aria-label={t('users.filters.role')}
               >
-                <option value="">Todos los roles</option>
+                <option value="">{t('users.filters.allRoles')}</option>
                 {roles.map((rol) => (
                   <option key={rol.RolID} value={rol.Nombre}>
                     {rol.Nombre}
@@ -515,11 +518,11 @@ export function Usuarios() {
           <div className="d-grid gap-2 mt-4">
             <button className="btn btn-apply" data-bs-dismiss="offcanvas">
               <i className="bi bi-search me-2"></i>
-              Aplicar Filtros
+              {t('common.applyFilters')}
             </button>
             <button className="btn btn-outline-secondary" onClick={clearAllFilters}>
               <i className="bi bi-x-circle me-2"></i>
-              Limpiar Filtros
+              {t('animals.buttons.clearFilters')}
             </button>
           </div>
         </div>
@@ -531,9 +534,9 @@ export function Usuarios() {
           <div className="card-body table-state-loading">
             <div className="d-flex flex-column align-items-center">
               <div className="spinner-border mb-3" style={{ color: 'var(--color-base-green)' }} role="status">
-                <span className="visually-hidden">Cargando usuarios...</span>
+                <span className="visually-hidden">{t('users.messages.loading')}</span>
               </div>
-              <h6 className="text-muted mb-0">Cargando usuarios...</h6>
+              <h6 className="text-muted mb-0">{t('users.messages.loading')}</h6>
             </div>
           </div>
         </div>
@@ -542,22 +545,22 @@ export function Usuarios() {
           <div className="card-body table-state-empty">
             <div className="d-flex flex-column align-items-center">
               <i className="bi bi-people display-1 text-muted mb-3"></i>
-              <h5 className="text-muted mb-2">No se encontraron usuarios</h5>
+              <h5 className="text-muted mb-2">{t('users.messages.noData')}</h5>
               <p className="text-muted text-center mb-4">
                 {hasActiveFilters 
-                  ? 'No hay usuarios que coincidan con los filtros aplicados.'
-                  : 'Aún no tienes usuarios registrados en el sistema.'
+                  ? t('common.noMatches')
+                  : t('users.messages.noRegistered')
                 }
               </p>
               {hasActiveFilters ? (
                 <button className="btn btn-outline-secondary" onClick={clearAllFilters}>
                   <i className="bi bi-x-circle me-2"></i>
-                  Limpiar Filtros
+                  {t('animals.buttons.clearFilters')}
                 </button>
               ) : (
                 <button className="btn btn-apply" onClick={() => openModal()}>
                   <i className="bi bi-person-plus me-2"></i>
-                  Registrar Primer Usuario
+                  {t('users.buttons.registerFirst')}
                 </button>
               )}
             </div>
@@ -571,13 +574,13 @@ export function Usuarios() {
                 <div className="d-flex justify-content-between align-items-center">
                   <h6 className="card-title mb-0 fw-semibold d-flex align-items-center section-title-dark" style={{ color: 'var(--color-base-green)' }}>
                     <i className="bi bi-list-ul me-2"></i>
-                    Lista de Usuarios
+                    {t('users.table.list')}
                   </h6>
                   <span className="badge rounded-pill px-3 py-2" style={{ 
                     backgroundColor: 'var(--color-sage-gray)', 
                     color: 'var(--color-charcoal)' 
                   }}>
-                    {usuarios.length} {usuarios.length === 1 ? 'usuario' : 'usuarios'}
+                    {usuarios.length} {usuarios.length === 1 ? t('users.messages.single') : t('users.messages.plural')}
                   </span>
                 </div>
               </div>
@@ -585,11 +588,11 @@ export function Usuarios() {
                 <table className="table table-ganado table-hover align-middle mb-0">
                   <thead>
                     <tr>
-                      <th scope="col" className="cell-tight text-center fw-bold">Nombre</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">Correo</th>
-                      <th scope="col" className="cell-tight text-center fw-bold">Rol</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">Fecha Creación</th>
-                      <th scope="col" className="cell-tight text-center fw-bold">Acciones</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('users.table.name')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">{t('users.table.email')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('users.table.role')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">{t('users.table.createdAt')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('users.table.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -615,12 +618,12 @@ export function Usuarios() {
                           <span className="">{new Date(usuario.Creado_En).toLocaleDateString()}</span>
                         </td>
                         <td className="cell-tight text-center">
-                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label="Acciones del usuario">
+                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label={t('users.table.actions')}>
                             <button
                               className="btn btn-sm btn-warning"
                               onClick={() => openModal(usuario)}
-                              title="Editar"
-                              aria-label="Editar usuario"
+                              title={t('common.edit')}
+                              aria-label={t('common.edit')}
                             >
                               <i className="bi bi-pencil"></i>
                             </button>
@@ -628,8 +631,8 @@ export function Usuarios() {
                               className="btn btn-sm btn-danger"
                               onClick={() => handleDelete(usuario)}
                               disabled={deleteMutation.isPending}
-                              title="Eliminar"
-                              aria-label="Eliminar usuario"
+                              title={t('common.delete')}
+                              aria-label={t('common.delete')}
                             >
                               <i className="bi bi-trash"></i>
                             </button>
@@ -670,7 +673,7 @@ export function Usuarios() {
                   <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
                     <div className="d-flex align-items-center">
                       <label htmlFor="itemsPerPage" className="form-label me-2 mb-0 small">
-                        Mostrar:
+                        {t('pagination.showing')}:
                       </label>
                       <select
                         id="itemsPerPage"
@@ -678,17 +681,17 @@ export function Usuarios() {
                         style={{ width: 'auto' }}
                         value={currentParams.limit || 10}
                         onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-                        aria-label="Elementos por página"
+                        aria-label={t('pagination.itemsPerPage')}
                       >
                         <option value={5}>5</option>
                         <option value={10}>10</option>
                         <option value={20}>20</option>
                         <option value={50}>50</option>
                       </select>
-                      <span className="ms-2 text-muted small">por página</span>
+                      <span className="ms-2 text-muted small">{t('pagination.perPage')}</span>
                     </div>
                     <div className="text-muted small" aria-live="polite">
-                      {isLoading ? 'Cargando...' : `${usuarios.length} resultados`}
+                      {isLoading ? t('common.loading') : `${usuarios.length} ${t('pagination.results')}`}
                     </div>
                   </div>
                 )}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAnimales } from '../hooks/useAnimales';
 import { useCategorias } from '../hooks/useCategorias';
 import { useQueryParams } from '../hooks/useQueryParams';
@@ -13,6 +14,7 @@ import { getCachedAnimalImage } from '../utils/imageCache';
 import { getImageDisplayUrl } from '../utils/imageUtils';
 
 export function Animales() {
+  const { t } = useTranslation();
   const { params, updateParams, clearParams, setParams } = useQueryParams<AnimalesFilters>();
   
   // Set default pagination parameters if not present
@@ -118,13 +120,13 @@ export function Animales() {
 
   const handleDarDeBaja = (animal: Animal) => {
     if (!animal.ID_Estado_Animal) {
-      showToast('No se puede dar de baja: el animal no tiene un estado asignado', 'error');
+      showToast(t('animals.messages.noStateAssigned'), 'error');
       return;
     }
 
     // Verificar que el animal no esté ya dado de baja
     if (animal.EstadoNombre === 'Baja') {
-      showToast('El animal ya está dado de baja', 'warning');
+      showToast(t('animals.messages.alreadyDeactivated'), 'warning');
       return;
     }
 
@@ -136,10 +138,10 @@ export function Animales() {
   if (error) {
     return (
       <div className="alert alert-danger" role="alert">
-        <h4 className="alert-heading">Error al cargar los animales</h4>
-        <p>{error.message || 'Ocurrió un error inesperado'}</p>
+        <h4 className="alert-heading">{t('animals.messages.errorLoading')}</h4>
+        <p>{error.message || t('animals.messages.unexpectedError')}</p>
         <button className="btn btn-outline-danger" onClick={() => window.location.reload()}>
-          Intentar de nuevo
+          {t('animals.messages.tryAgain')}
         </button>
       </div>
     );
@@ -150,8 +152,8 @@ export function Animales() {
       {/* Breadcrumb */}
       <Breadcrumb 
         items={[
-          { label: 'Dashboard', path: '/' },
-          { label: 'Animales', active: true }
+          { label: t('dashboard.title'), path: '/' },
+          { label: t('animals.title'), active: true }
         ]} 
       />
       
@@ -162,10 +164,10 @@ export function Animales() {
             <div>
               <h1 className="h2 mb-2 d-flex align-items-center page-title-dark" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-diagram-3-fill me-3"></i>
-                Gestión de Ganado
+                {t('animals.management')}
               </h1>
               <p className=" mb-0 fs-6">
-                {isLoading ? 'Cargando inventario...' : pagination ? `${pagination.totalCount} animales registrados` : `${animales.length} animales registrados`}
+                {isLoading ? t('animals.messages.loading') : pagination ? `${pagination.totalCount} ${t('dashboard.messages.animalsRegistered')}` : `${animales.length} ${t('dashboard.messages.animalsRegistered')}`}
               </p>
             </div>
             <div className="d-flex flex-column flex-sm-row gap-2">
@@ -173,17 +175,17 @@ export function Animales() {
                 className="btn btn-outline-secondary d-lg-none" 
                 data-bs-toggle="offcanvas" 
                 data-bs-target="#filtersOffcanvas"
-                aria-label="Abrir filtros"
+                aria-label={t('animals.buttons.filters')}
               >
                 <i className="bi bi-funnel me-2"></i>
-                Filtros
+                {t('animals.buttons.filters')}
                 {hasActiveFilters && (
                   <span className="badge bg-primary ms-2">{Object.keys(params).length}</span>
                 )}
               </button>
               <button className="btn btn-apply" onClick={() => openModal()}>
                 <i className="bi bi-plus-circle-fill me-2"></i>
-                <span className="fw-bold">Añadir</span>
+                <span className="fw-bold">{t('animals.buttons.add')}</span>
               </button>
             </div>
           </div>
@@ -197,18 +199,18 @@ export function Animales() {
             <div className="d-flex justify-content-between align-items-center">
               <h6 className="mb-0 fw-semibold d-flex align-items-center section-title-dark" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-funnel-fill me-2"></i>
-                Filtros de Búsqueda
+                {t('animals.labels.filters')}
               </h6>
               {hasActiveFilters && (
                 <button className="btn btn-outline-secondary btn-sm" onClick={clearAllFilters}>
                   <i className="bi bi-x-circle me-1"></i>
-                  Limpiar Filtros
+                  {t('animals.buttons.clearFilters')}
                 </button>
               )}
             </div>
             <div className="row">
               <div className="col-md-3">
-                <label className="form-label">Categoría</label>
+                <label className="form-label">{t('animals.labels.category')}</label>
                 <div style={{ position: 'relative' }}>
                   <select
                     className="form-select"
@@ -221,9 +223,9 @@ export function Animales() {
                         handleFilterChange('ID_Categoria', Number(e.target.value));
                       }
                     }}
-                    aria-label="Filtrar por categoría"
+                    aria-label={t('animals.labels.category')}
                   >
-                    <option value="">Todas las categorías</option>
+                    <option value="">{t('animals.labels.allCategories')}</option>
                     {categorias.map((categoria) => (
                       <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
                         {categoria.Tipo}
@@ -233,7 +235,7 @@ export function Animales() {
                 </div>
               </div>
               <div className="col-md-2">
-                <label className="form-label">Sexo</label>
+                <label className="form-label">{t('animals.labels.gender')}</label>
                 <div style={{ position: 'relative' }}>
                   <select
                     className="form-select"
@@ -246,32 +248,32 @@ export function Animales() {
                         handleFilterChange('Sexo', e.target.value as "M" | "F");
                       }
                     }}
-                    aria-label="Filtrar por sexo"
+                    aria-label={t('animals.labels.gender')}
                   >
-                    <option value="">Todos</option>
-                    <option value="M">Macho</option>
-                    <option value="F">Hembra</option>
+                    <option value="">{t('animals.labels.all')}</option>
+                    <option value="M">{t('animals.form.male')}</option>
+                    <option value="F">{t('animals.form.female')}</option>
                   </select>
                 </div>
               </div>
               <div className="col-md-3">
-                <label className="form-label">Ingreso desde</label>
+                <label className="form-label">{t('animals.labels.entryDateFrom')}</label>
                 <input
                   type="date"
                   className="form-control"
                   value={params.fechaIngresoDesde || ''}
                   onChange={(e) => handleFilterChange('fechaIngresoDesde', e.target.value || undefined)}
-                  aria-label="Fecha de ingreso desde"
+                  aria-label={t('animals.labels.entryDateFrom')}
                 />
               </div>
               <div className="col-md-3">
-                <label className="form-label">Ingreso hasta</label>
+                <label className="form-label">{t('animals.labels.entryDateTo')}</label>
                 <input
                   type="date"
                   className="form-control"
                   value={params.fechaIngresoHasta || ''}
                   onChange={(e) => handleFilterChange('fechaIngresoHasta', e.target.value || undefined)}
-                  aria-label="Fecha de ingreso hasta"
+                  aria-label={t('animals.labels.entryDateTo')}
                 />
               </div>
              {/*  <div className="col-md-1 d-grid">
@@ -289,14 +291,14 @@ export function Animales() {
         <div className="offcanvas-header">
           <h5 className="offcanvas-title d-flex align-items-center">
             <i className="bi bi-funnel-fill me-2"></i>
-            Filtros de Búsqueda
+            {t('animals.labels.filters')}
           </h5>
-          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar filtros"></button>
+          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label={t('animals.buttons.closeFilters')}></button>
         </div>
         <div className="offcanvas-body">
           <div className="row g-3">
             <div className="col-12">
-              <label className="form-label">Categoría</label>
+              <label className="form-label">{t('animals.labels.category')}</label>
               <div style={{ position: 'relative' }}>
                 <select
                   className="form-select"
@@ -309,9 +311,9 @@ export function Animales() {
                       handleFilterChange('ID_Categoria', Number(e.target.value));
                     }
                   }}
-                  aria-label="Filtrar por categoría"
+                  aria-label={t('animals.labels.category')}
                 >
-                  <option value="">Todas las categorías</option>
+                  <option value="">{t('animals.labels.allCategories')}</option>
                   {categorias.map((categoria) => (
                     <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
                       {categoria.Tipo}
@@ -321,7 +323,7 @@ export function Animales() {
               </div>
             </div>
             <div className="col-12">
-              <label className="form-label">Sexo</label>
+              <label className="form-label">{t('animals.labels.gender')}</label>
               <div style={{ position: 'relative' }}>
                 <select
                   className="form-select"
@@ -334,43 +336,43 @@ export function Animales() {
                       handleFilterChange('Sexo', e.target.value as "M" | "F");
                     }
                   }}
-                  aria-label="Filtrar por sexo"
+                  aria-label={t('animals.labels.gender')}
                 >
-                  <option value="">Todos</option>
-                  <option value="M">Macho</option>
-                  <option value="F">Hembra</option>
+                  <option value="">{t('animals.labels.all')}</option>
+                  <option value="M">{t('animals.form.male')}</option>
+                  <option value="F">{t('animals.form.female')}</option>
                 </select>
               </div>
             </div>
             <div className="col-12">
-              <label className="form-label">Ingreso desde</label>
+              <label className="form-label">{t('animals.labels.entryDateFrom')}</label>
               <input
                 type="date"
                 className="form-control"
                 value={params.fechaIngresoDesde || ''}
                 onChange={(e) => handleFilterChange('fechaIngresoDesde', e.target.value || undefined)}
-                aria-label="Fecha de ingreso desde"
+                aria-label={t('animals.labels.entryDateFrom')}
               />
             </div>
             <div className="col-12">
-              <label className="form-label">Ingreso hasta</label>
+              <label className="form-label">{t('animals.labels.entryDateTo')}</label>
               <input
                 type="date"
                 className="form-control"
                 value={params.fechaIngresoHasta || ''}
                 onChange={(e) => handleFilterChange('fechaIngresoHasta', e.target.value || undefined)}
-                aria-label="Fecha de ingreso hasta"
+                aria-label={t('animals.labels.entryDateTo')}
               />
             </div>
           </div>
           <div className="d-grid gap-2 mt-4">
             <button className="btn btn-apply" data-bs-dismiss="offcanvas">
               <i className="bi bi-search me-2"></i>
-              Aplicar Filtros
+              {t('animals.buttons.applyFilters')}
             </button>
             <button className="btn btn-outline-secondary" onClick={clearAllFilters}>
               <i className="bi bi-x-circle me-2"></i>
-              Limpiar Filtros
+              {t('animals.buttons.clearFilters')}
             </button>
           </div>
         </div>
@@ -382,9 +384,9 @@ export function Animales() {
           <div className="card-body table-state-loading">
             <div className="d-flex flex-column align-items-center">
               <div className="spinner-border mb-3" style={{ color: 'var(--color-base-green)' }} role="status">
-                <span className="visually-hidden">Cargando inventario de animales...</span>
+                <span className="visually-hidden">{t('animals.labels.loading')}</span>
               </div>
-              <h6 className="text-muted mb-0">Cargando inventario de animales...</h6>
+              <h6 className="text-muted mb-0">{t('animals.labels.loading')}</h6>
             </div>
           </div>
         </div>
@@ -393,22 +395,22 @@ export function Animales() {
           <div className="card-body table-state-empty">
             <div className="d-flex flex-column align-items-center">
               <i className="bi bi-diagram-3 display-1 text-muted mb-3"></i>
-              <h5 className="text-muted mb-2">No se encontraron animales</h5>
+              <h5 className="text-muted mb-2">{t('animals.messages.notFound')}</h5>
               <p className="text-muted text-center mb-4">
                 {hasActiveFilters 
-                  ? 'No hay animales que coincidan con los filtros aplicados.'
-                  : 'Aún no tienes animales registrados en el sistema.'
+                  ? t('animals.messages.noMatches')
+                  : t('animals.messages.noAnimalsYet')
                 }
               </p>
               {hasActiveFilters ? (
                 <button className="btn btn-outline-secondary" onClick={clearAllFilters}>
                   <i className="bi bi-x-circle me-2"></i>
-                  Limpiar Filtros
+                  {t('animals.buttons.clearFilters')}
                 </button>
               ) : (
                 <button className="btn btn-apply" onClick={() => openModal()}>
                   <i className="bi bi-plus-circle me-2"></i>
-                  Registrar Primer Animal
+                  {t('animals.buttons.registerFirst')}
                 </button>
               )}
             </div>
@@ -422,13 +424,13 @@ export function Animales() {
                 <div className="d-flex justify-content-between align-items-center">
                   <h6 className="card-title mb-0 fw-semibold d-flex align-items-center section-title-dark" style={{ color: 'var(--color-base-green)' }}>
                     <i className="bi bi-list-ul me-2"></i>
-                    Inventario de Animales
+                    {t('animals.inventory')}
                   </h6>
                   <span className="badge rounded-pill px-3 py-2" style={{ 
                     backgroundColor: 'var(--color-sage-gray)', 
                     color: 'var(--color-charcoal)' 
                   }}>
-                    {animales.length} {animales.length === 1 ? 'animal' : 'animales'}
+                    {animales.length} {animales.length === 1 ? t('animals.counts.animal') : t('animals.counts.animals')}
                   </span>
                 </div>
               </div>
@@ -436,16 +438,16 @@ export function Animales() {
                 <table className="table table-ganado table-hover align-middle mb-0">
                   <thead>
                     <tr>
-                      <th scope="col" className="cell-tight text-center fw-bold">Nombre</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">Categoría</th>
-                      <th scope="col" className="cell-tight text-center fw-bold">Sexo</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">Raza</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-xl-table-cell">Peso</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">F. Nac.</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-xl-table-cell">F. Ingreso</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">Reprod.</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">Estado</th>
-                      <th scope="col" className="cell-tight text-center fw-bold">Acciones</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('animals.table.name')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">{t('animals.table.category')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('animals.table.gender')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">{t('animals.table.race')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-xl-table-cell">{t('animals.table.weight')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">{t('animals.table.birthDate')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-xl-table-cell">{t('animals.table.entryDate')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">{t('animals.table.reproductive')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">{t('animals.table.state')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('animals.table.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -459,9 +461,9 @@ export function Animales() {
                             <div className='text-body'>{animal.Raza} • {animal.Peso} kg</div>
                             <div className='text-body'>
                               {animal.Esta_Preniada === 1 ? (
-                                <span className="text-body">Preñada</span>
+                                <span className="text-body">{t('animals.table.pregnant')}</span>
                               ) : (
-                                <span className="text-body">No preñada</span>
+                                <span className="text-body">{t('animals.table.notPregnant')}</span>
                               )}
                               {animal.EstadoNombre && ` • ${animal.EstadoNombre}`}
                             </div>
@@ -475,7 +477,7 @@ export function Animales() {
                             {animal.Sexo === 'F' ? 'H' : 'M'}
                           </span>
                           <div className="d-md-none small text-body">
-                            {animal.Sexo === 'F' ? 'Hembra' : 'Macho'}
+                            {animal.Sexo === 'F' ? t('animals.form.female') : t('animals.form.male')}
                           </div>
                         </td>
                         <td className="cell-tight text-center d-none d-lg-table-cell" title={animal.Raza}>{animal.Raza}</td>
@@ -493,7 +495,7 @@ export function Animales() {
                             <button 
                               className="btn btn-link p-0 text-decoration-none"
                               onClick={() => openPartoModal(animal)}
-                              aria-label="Ver fecha estimada de parto"
+                              aria-label={t('animals.buttons.viewEstimatedBirthDate')}
                             >
                               <span className="text-warning">
                                 Preñada
@@ -509,20 +511,20 @@ export function Animales() {
                           <span className="">{animal.EstadoNombre ?? '----'}</span>
                         </td>
                         <td className="cell-tight text-center">
-                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label="Acciones del animal">
+                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label={t('animals.table.actions')}>
                             <button
                               className="btn btn-sm btn-info"
                               onClick={() => openDetallesModal(animal)}
-                              title="Ver detalles"
-                              aria-label="Ver detalles del animal"
+                              title={t('animals.buttons.view')}
+                              aria-label={t('animals.buttons.view')}
                             >
                               <i className="bi bi-eye"></i>
                             </button>
                             <button
                               className="btn btn-sm btn-warning"
                               onClick={() => openModal(animal)}
-                              title="Editar"
-                              aria-label="Editar animal"
+                              title={t('animals.buttons.edit')}
+                              aria-label={t('animals.buttons.edit')}
                             >
                               <i className="bi bi-pencil"></i>
                             </button>
@@ -532,12 +534,12 @@ export function Animales() {
                                disabled={darDeBajaMutation.isPending || !animal.ID_Estado_Animal || animal.EstadoNombre === 'Baja'}
                                title={
                                  !animal.ID_Estado_Animal 
-                                   ? "Sin estado asignado" 
+                                   ? t('animals.buttons.noState')
                                    : animal.EstadoNombre === 'Baja' 
-                                     ? "Ya está dado de baja" 
-                                     : "Dar de baja"
+                                     ? t('animals.buttons.alreadyDeactivated')
+                                     : t('animals.buttons.deactivate')
                                }
-                               aria-label="Dar de baja animal"
+                               aria-label={t('animals.buttons.deactivate')}
                              > 
                              <i className="bi bi-emoji-dizzy"></i>
                                {/* <i className="bi bi-arrow-down-circle"></i> */}
@@ -579,7 +581,7 @@ export function Animales() {
                   <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
                     <div className="d-flex align-items-center">
                       <label htmlFor="itemsPerPage" className="form-label me-2 mb-0 small">
-                        Mostrar:
+                        {t('animals.buttons.show')}
                       </label>
                       <select
                         id="itemsPerPage"
@@ -587,17 +589,17 @@ export function Animales() {
                         style={{ width: 'auto' }}
                         value={currentParams.limit || 10}
                         onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-                        aria-label="Elementos por página"
+                        aria-label={t('pagination.itemsPerPage')}
                       >
                         <option value={5}>5</option>
                         <option value={10}>10</option>
                         <option value={20}>20</option>
                         <option value={50}>50</option>
                       </select>
-                      <span className="ms-2 text-muted small">por página</span>
+                      <span className="ms-2 text-muted small">{t('animals.buttons.perPage')}</span>
                     </div>
                     <div className="text-muted small" aria-live="polite">
-                      {isLoading ? 'Cargando...' : `${animales.length} resultados`}
+                      {isLoading ? t('common.loading') : `${animales.length} ${t('animals.buttons.results')}`}
                     </div>
                   </div>
                 )}
@@ -633,7 +635,7 @@ export function Animales() {
                   type="button"
                   className="btn-close btn-close-white"
                   onClick={closePartoModal}
-                  aria-label="Cerrar modal"
+                  aria-label={t('common.close')}
                 ></button>
               </div>
               <div className="modal-body p-4">
@@ -651,7 +653,7 @@ export function Animales() {
                             month: 'long',
                             day: 'numeric'
                           })
-                        : 'No especificada'
+                        : t('animals.details.notSpecified')
                       }
                     </h4>
                   </div>
@@ -692,13 +694,13 @@ export function Animales() {
               <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
                 <h5 className="modal-title fw-semibold d-flex align-items-center">
                   <i className="bi bi-diagram-3-fill me-2"></i>
-                  Detalles del Animal
+                  {t('animals.details.title')}
                 </h5>
                 <button
                   type="button"
                   className="btn-close btn-close-white"
                   onClick={closeDetallesModal}
-                  aria-label="Cerrar modal"
+                  aria-label={t('animals.form.close')}
                 ></button>
               </div>
               <div className="modal-body bg-light bg-dark-subtle" data-bs-theme="auto">
@@ -740,33 +742,33 @@ export function Animales() {
                           <div className="row g-3 mb-4">
                             <div className="col-6">
                               <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
-                                <div className="text-muted small mb-1">SEXO</div>
+                                <div className="text-muted small mb-1">{t('animals.details.sex')}</div>
                                 <div className="fw-semibold text-body">
-                                  {detallesModalState.animal.Sexo === 'F' ? 'Hembra' : 'Macho'}
+                                  {detallesModalState.animal.Sexo === 'F' ? t('animals.form.female') : t('animals.form.male')}
                                 </div>
                               </div>
                             </div>
                             <div className="col-6">
                               <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
-                                <div className="text-muted small mb-1">PESO</div>
+                                <div className="text-muted small mb-1">{t('animals.details.weight')}</div>
                                 <div className="fw-semibold text-body">{detallesModalState.animal.Peso} kg</div>
                               </div>
                             </div>
                             <div className="col-6">
                               <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
-                                <div className="text-muted small mb-1">RAZA</div>
+                                <div className="text-muted small mb-1">{t('animals.details.race')}</div>
                                 <div className="fw-semibold text-body">{detallesModalState.animal.Raza}</div>
                               </div>
                             </div>
                             <div className="col-6">
                               <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
-                                <div className="text-muted small mb-1">COLOR</div>
+                                <div className="text-muted small mb-1">{t('animals.details.color')}</div>
                                 <div className="fw-semibold text-body">{detallesModalState.animal.Color}</div>
                               </div>
                             </div>
                             <div className="col-12">
                               <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
-                                <div className="text-muted small mb-1">CATEGORÍA</div>
+                                <div className="text-muted small mb-1">{t('animals.details.category')}</div>
                                 <div className="fw-semibold text-body">{detallesModalState.animal.CategoriaTipo}</div>
                               </div>
                             </div>
@@ -776,7 +778,7 @@ export function Animales() {
                           <div className="row g-3 mb-4">
                             <div className="col-6">
                               <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                                <div className="text-muted small mb-1">FECHA DE NACIMIENTO</div>
+                                <div className="text-muted small mb-1">{t('animals.details.birthDate')}</div>
                                 <div className="fw-semibold text-body">
                                   {new Date(detallesModalState.animal.Fecha_Nacimiento).toLocaleDateString('es-ES', {
                                     year: 'numeric',
@@ -788,7 +790,7 @@ export function Animales() {
                             </div>
                             <div className="col-6">
                               <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                                <div className="text-muted small mb-1">FECHA DE INGRESO</div>
+                                <div className="text-muted small mb-1">{t('animals.details.entryDate')}</div>
                                 <div className="fw-semibold text-body">
                                   {new Date(detallesModalState.animal.Fecha_Ingreso).toLocaleDateString('es-ES', {
                                     year: 'numeric',
@@ -803,12 +805,12 @@ export function Animales() {
                           {/* Estado Reproductivo */}
                           <div className="text-center mb-4">
                             <div className="p-3 border bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-1">ESTADO REPRODUCTIVO</div>
+                              <div className="text-muted small mb-1">{t('animals.details.reproductive')}</div>
                               <div className="fw-semibold text-body">
                                 {detallesModalState.animal.Esta_Preniada === 1 ? (
-                                  <span className="">Preñada</span>
+                                  <span className="">{t('animals.table.pregnant')}</span>
                                 ) : (
-                                  <span className="">No preñada</span>
+                                  <span className="">{t('animals.table.notPregnant')}</span>
                                 )}
                               </div>
                             </div>
@@ -820,7 +822,7 @@ export function Animales() {
                               {detallesModalState.animal.Fecha_Monta && (
                                 <div className="col-6">
                                   <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                                    <div className="text-muted small mb-1">FECHA DE MONTA</div>
+                                    <div className="text-muted small mb-1">{t('animals.details.mountingDate')}</div>
                                     <div className="fw-semibold text-body">
                                       {new Date(detallesModalState.animal.Fecha_Monta).toLocaleDateString('es-ES', {
                                         year: 'numeric',
@@ -834,7 +836,7 @@ export function Animales() {
                               {detallesModalState.animal.Fecha_Estimada_Parto && (
                                 <div className="col-6">
                                   <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                                    <div className="text-muted small mb-1">FECHA ESTIMADA DE PARTO</div>
+                                    <div className="text-muted small mb-1">{t('animals.details.estimatedBirthDate')}</div>
                                     <div className="fw-semibold text-body">
                                       {new Date(detallesModalState.animal.Fecha_Estimada_Parto).toLocaleDateString('es-ES', {
                                         year: 'numeric',
@@ -844,7 +846,7 @@ export function Animales() {
                                     </div>
                                   </div>
                                   <div className="text-center small text-muted mt-1">
-                                      {Math.ceil((new Date(detallesModalState.animal.Fecha_Estimada_Parto!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} días restantes
+                                      {Math.ceil((new Date(detallesModalState.animal.Fecha_Estimada_Parto!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} {t('animals.details.daysRemaining')}
                                     </div>
                                 </div>
                               )}
@@ -855,15 +857,15 @@ export function Animales() {
                           <div className="row g-3">
                             <div className="col-4">
                               <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                                <div className="text-muted small mb-1">EDAD</div>
+                                <div className="text-muted small mb-1">{t('animals.details.age')}</div>
                                 <div className="fw-semibold text-body">
-                                  {Math.floor((new Date().getTime() - new Date(detallesModalState.animal.Fecha_Nacimiento).getTime()) / (1000 * 60 * 60 * 24 * 365))} año/s
+                                  {Math.floor((new Date().getTime() - new Date(detallesModalState.animal.Fecha_Nacimiento).getTime()) / (1000 * 60 * 60 * 24 * 365))} {t('animals.details.years')}
                                 </div>
                               </div>
                             </div>
                             <div className="col-4">
                               <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                                <div className="text-muted small mb-1">DÍAS EN SISTEMA</div>
+                                <div className="text-muted small mb-1">{t('animals.details.daysInFarm')}</div>
                                 <div className="fw-semibold text-body">
                                   {Math.floor((new Date().getTime() - new Date(detallesModalState.animal.Fecha_Ingreso).getTime()) / (1000 * 60 * 60 * 24))}
                                 </div>
@@ -871,7 +873,7 @@ export function Animales() {
                             </div>
                             <div className="col-4">
                               <div className="text-center p-3 border bg-light bg-dark-subtle rounded-3">
-                                <div className="text-muted small mb-1">ESTADO</div>
+                                <div className="text-muted small mb-1">{t('animals.details.state')}</div>
                                 <div className="fw-semibold text-body">{detallesModalState.animal.EstadoNombre}</div>
                               </div>
                             </div>
@@ -893,7 +895,7 @@ export function Animales() {
                     }}
                   >
                     <i className="bi bi-pencil me-2"></i>
-                    Editar
+                    {t('animals.details.editAnimal')}
                   </button>
                   <button
                     type="button"

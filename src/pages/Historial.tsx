@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   useHistorial,
   useCreateHistorial,
@@ -22,10 +23,11 @@ interface HistorialModalProps {
 }
 
 const HistorialModal = ({ historial, isOpen, onClose, onSave }: HistorialModalProps) => {
+  const { t } = useTranslation();
   const { data: animalesData } = useAnimales({});
   const { user } = useAuth();
 
-  // Solo mostrar animales en estado 'Viva'
+  // Solo mostrar animales en estado 'viva'
   const animales = useMemo(() => 
     (animalesData?.data || []).filter(a => a.EstadoNombre?.toLowerCase() === 'viva'),
     [animalesData?.data]
@@ -116,7 +118,7 @@ const HistorialModal = ({ historial, isOpen, onClose, onSave }: HistorialModalPr
               <div className="row g-3">
                 {/* ANIMAL */}
                 <div className="col-md-6">
-                  <label htmlFor="animal" className="form-label fw-semibold">Animal</label>
+                  <label htmlFor="animal" className="form-label fw-semibold">{t('history.form.animal')}</label>
                   <select
                     className="form-select"
                     id="animal"
@@ -146,21 +148,21 @@ const HistorialModal = ({ historial, isOpen, onClose, onSave }: HistorialModalPr
 
                 {/* TIPO EVENTO */}
                 <div className="col-md-6">
-                  <label htmlFor="tipo" className="form-label fw-semibold">Tipo de Evento</label>
+                  <label htmlFor="tipo" className="form-label fw-semibold">{t('history.form.eventType')}</label>
                   <input
                     type="text"
                     className="form-control"
                     id="tipo"
                     value={formData.Tipo_Evento}
                     onChange={e => setFormData({ ...formData, Tipo_Evento: e.target.value })}
-                    placeholder="Ej: Vacunación, Desparasitación, Tratamiento..."
+                    placeholder={t('history.form.eventTypePlaceholder')}
                     required
                   />
                 </div>
 
                 {/* FECHA */}
                 <div className="col-md-6">
-                  <label htmlFor="fecha" className="form-label fw-semibold">Fecha de Aplicación</label>
+                  <label htmlFor="fecha" className="form-label fw-semibold">{t('history.form.applicationDate')}</label>
                   <input
                     type="date"
                     className="form-control"
@@ -173,7 +175,7 @@ const HistorialModal = ({ historial, isOpen, onClose, onSave }: HistorialModalPr
 
                 {/* PROXIMA FECHA */}
                 <div className="col-md-6">
-                  <label htmlFor="proxima" className="form-label fw-semibold">Próxima Fecha</label>
+                  <label htmlFor="proxima" className="form-label fw-semibold">{t('history.form.nextDate')}</label>
                   <input
                     type="date"
                     className="form-control"
@@ -202,11 +204,11 @@ const HistorialModal = ({ historial, isOpen, onClose, onSave }: HistorialModalPr
               <div className="d-flex justify-content-end gap-2 w-100">
                 <button type="button" className="btn btn-secondary" onClick={onClose}>
                   <i className="bi bi-x-circle me-2"></i>
-                  Cancelar
+                  {t('common.cancel')}
                 </button>
                 <button type="submit" className="btn btn-apply">
                   <i className="bi bi-check-circle me-2"></i>
-                  {historial ? 'Actualizar' : 'Crear'}
+                  {historial ? t('common.update') : t('common.create')}
                 </button>
               </div>
             </div>
@@ -218,6 +220,7 @@ const HistorialModal = ({ historial, isOpen, onClose, onSave }: HistorialModalPr
 };
 
 export function Historial() {
+  const { t } = useTranslation();
   const { params, updateParams, clearParams } = useQueryParams<HistorialFilters>();
   
   // Set default pagination parameters if not present
@@ -269,7 +272,7 @@ export function Historial() {
   };
 
   const handleSearchClick = (key: 'Tipo_Evento') => {
-    // Aplicar el filtro solo cuando se hace clic en "Buscar"
+    // Aplicar el filtro solo cuando se hace clic en buscar
     const value = textFilterValues[key];
     if (value.trim() === '') {
       const newParams = { ...params };
@@ -302,7 +305,7 @@ export function Historial() {
     if (window.confirm('¿Seguro que deseas eliminar este evento del historial veterinario?')) {
       try {
         await deleteMutation.mutateAsync(item.ID_Evento);
-        showToast('Historial eliminado exitosamente', 'success');
+        showToast(t('history.messages.deleteSuccess'), 'success');
         // Actualizar contador de notificaciones
         const tryUpdateNotificationCount = (retries = 5) => {
           if (window.updateNotificationCount) {
@@ -313,7 +316,7 @@ export function Historial() {
         };
         tryUpdateNotificationCount();
       } catch {
-        showToast('Error al eliminar el historial', 'error');
+        showToast(t('history.messages.deleteError'), 'error');
       }
     }
   };
@@ -322,10 +325,10 @@ export function Historial() {
     try {
       if (modalState.historial) {
         await updateMutation.mutateAsync({ id: modalState.historial.ID_Evento, data: formData });
-        showToast('Historial actualizado exitosamente', 'success');
+        showToast(t('history.messages.updateSuccess'), 'success');
       } else {
         await createMutation.mutateAsync(formData);
-        showToast('Historial creado exitosamente', 'success');
+        showToast(t('history.messages.createSuccess'), 'success');
       }
       closeModal();
       // Actualizar contador de notificaciones
@@ -338,7 +341,7 @@ export function Historial() {
       };
       tryUpdateNotificationCount();
     } catch {
-      showToast('Error al guardar el historial', 'error');
+      showToast(t('history.messages.saveError'), 'error');
     }
   };
 
@@ -347,10 +350,10 @@ export function Historial() {
   if (error) {
     return (
       <div className="alert alert-danger" role="alert">
-        <h4 className="alert-heading">Error al cargar el historial veterinario</h4>
-        <p>{error.message || 'Ocurrió un error inesperado'}</p>
+        <h4 className="alert-heading">{t('history.messages.errorLoading')}</h4>
+        <p>{error.message || t('common.unexpectedError')}</p>
         <button className="btn btn-outline-danger" onClick={() => window.location.reload()}>
-          Intentar de nuevo
+          {t('common.tryAgain')}
         </button>
       </div>
     );
@@ -361,9 +364,9 @@ export function Historial() {
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
-          { label: 'Dashboard', path: '/' },
-          { label: 'Gestión', path: '#' },
-          { label: 'Historial Veterinario', active: true }
+          { label: t('dashboard.title'), path: '/' },
+          { label: t('sidebar.sections.management'), path: '#' },
+          { label: t('history.title'), active: true }
         ]}
       />
 
@@ -374,10 +377,10 @@ export function Historial() {
         <div>
               <h1 className="h2 mb-2 d-flex align-items-center page-title-dark" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-heart-pulse me-3"></i>
-                Historial Veterinario
+                {t('history.title')}
               </h1>
               <p className=" mb-0 fs-6">
-                {isLoading ? 'Cargando historial...' : pagination ? `${pagination.totalCount} eventos registrados` : `${historial.length} eventos registrados`}
+                {isLoading ? t('common.loading') : pagination ? `${pagination.totalCount} ${t('history.messages.registered')}` : `${historial.length} ${t('history.messages.registered')}`}
               </p>
             </div>
             <div className="d-flex flex-column flex-sm-row gap-2">
@@ -385,17 +388,17 @@ export function Historial() {
                 className="btn btn-outline-secondary d-lg-none" 
                 data-bs-toggle="offcanvas" 
                 data-bs-target="#filtersOffcanvas"
-                aria-label="Abrir filtros"
+                aria-label={t('animals.buttons.filters')}
               >
                 <i className="bi bi-funnel me-2"></i>
-                Filtros
+                {t('animals.buttons.filters')}
                 {hasActiveFilters && (
                   <span className="badge bg-primary ms-2">{Object.keys(params).length}</span>
                 )}
               </button>
               <button className="btn btn-apply" onClick={() => openModal()}>
                 <i className="bi bi-plus-circle-fill me-2"></i>
-                <span className="fw-bold">Añadir</span>
+                <span className="fw-bold">{t('common.add')}</span>
               </button>
             </div>
           </div>
@@ -409,25 +412,25 @@ export function Historial() {
             <div className="d-flex justify-content-between align-items-center">
               <h6 className="mb-0 fw-semibold d-flex align-items-center section-title-dark" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-funnel-fill me-2"></i>
-                Filtros de Búsqueda
+                {t('history.filters.title')}
               </h6>
               {hasActiveFilters && (
                 <button className="btn btn-outline-secondary btn-sm" onClick={clearAllFilters}>
                   <i className="bi bi-x-circle me-1"></i>
-                  Limpiar Filtros
+                  {t('animals.buttons.clearFilters')}
                 </button>
               )}
             </div>
             <div className="row">
               <div className="col-md-3">
-                <label className="form-label">Animal</label>
+                <label className="form-label">{t('history.filters.animal')}</label>
                 <select
                   className="form-select"
                   value={params.ID_Animal || ''}
                   onChange={(e) => handleFilterChange('ID_Animal', e.target.value ? Number(e.target.value) : undefined)}
-                  aria-label="Filtrar por animal"
+                  aria-label={t('history.filters.animal')}
                 >
-                  <option value="">Todos los animales</option>
+                  <option value="">{t('history.filters.allAnimals')}</option>
                   {animales.map((animal) => (
                     <option key={animal.ID_Animal} value={animal.ID_Animal}>
                       {animal.Nombre} - {animal.CategoriaTipo}
@@ -436,55 +439,55 @@ export function Historial() {
                 </select>
               </div>
               <div className="col-md-3">
-                <label className="form-label">Tipo de Evento</label>
+                <label className="form-label">{t('history.filters.eventType')}</label>
                 <div className="input-group">
                   <input
                     type="text"
                     className="form-control"
                     value={textFilterValues.Tipo_Evento}
                     onChange={(e) => handleTextInputChange('Tipo_Evento', e.target.value)}
-                    placeholder="Ej: Vacunación, Tratamiento..."
-                    aria-label="Filtrar por tipo de evento"
+                    placeholder={t('history.filters.eventTypePlaceholder')}
+                    aria-label={t('history.filters.eventType')}
                   />
                   <button 
                     className="btn btn-outline-secondary" 
                     type="button"
                     onClick={() => handleSearchClick('Tipo_Evento')}
-                    title="Buscar"
+                    title={t('common.search')}
                   >
                     <i className="bi bi-search"></i>
                   </button>
                 </div>
               </div>
               <div className="col-md-2">
-                <label className="form-label">Fecha desde</label>
+                <label className="form-label">{t('history.filters.dateFrom')}</label>
                 <input
                   type="date"
                   className="form-control"
                   value={params.fechaDesde || ''}
                   onChange={(e) => handleFilterChange('fechaDesde', e.target.value || undefined)}
-                  aria-label="Fecha desde"
+                  aria-label={t('history.filters.dateFrom')}
                 />
               </div>
               <div className="col-md-2">
-                <label className="form-label">Fecha hasta</label>
+                <label className="form-label">{t('history.filters.dateTo')}</label>
                 <input
                   type="date"
                   className="form-control"
                   value={params.fechaHasta || ''}
                   onChange={(e) => handleFilterChange('fechaHasta', e.target.value || undefined)}
-                  aria-label="Fecha hasta"
+                  aria-label={t('history.filters.dateTo')}
                 />
               </div>
               <div className="col-md-2">
-                <label className="form-label">Realizado por</label>
+                <label className="form-label">{t('history.filters.performedBy')}</label>
                 <select
                   className="form-select"
                   value={params.Hecho_Por || ''}
                   onChange={(e) => handleFilterChange('Hecho_Por', e.target.value ? Number(e.target.value) : undefined)}
-                  aria-label="Filtrar por usuario"
+                  aria-label={t('history.filters.performedBy')}
                 >
-                  <option value="">Todos los usuarios</option>
+                  <option value="">{t('history.filters.allUsers')}</option>
                   {usuarios.map((usuario) => (
                     <option key={usuario.ID_Usuario} value={usuario.ID_Usuario}>
                       {usuario.Nombre}
@@ -502,9 +505,9 @@ export function Historial() {
         <div className="offcanvas-header">
           <h5 className="offcanvas-title d-flex align-items-center">
             <i className="bi bi-funnel-fill me-2"></i>
-            Filtros de Búsqueda
+            {t('history.filters.title')}
           </h5>
-          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar filtros"></button>
+          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label={t('animals.buttons.closeFilters')}></button>
         </div>
         <div className="offcanvas-body">
           <div className="row g-3">
@@ -514,9 +517,9 @@ export function Historial() {
                 className="form-select"
                 value={params.ID_Animal || ''}
                 onChange={(e) => handleFilterChange('ID_Animal', e.target.value ? Number(e.target.value) : undefined)}
-                aria-label="Filtrar por animal"
+                aria-label={t('history.filters.animal')}
               >
-                <option value="">Todos los animales</option>
+                <option value="">{t('history.filters.allAnimals')}</option>
                 {animales.map((animal) => (
                   <option key={animal.ID_Animal} value={animal.ID_Animal}>
                     {animal.Nombre} - {animal.CategoriaTipo}
@@ -566,14 +569,14 @@ export function Historial() {
               />
             </div>
             <div className="col-12">
-              <label className="form-label">Realizado por</label>
+              <label className="form-label">{t('history.filters.performedBy')}</label>
               <select
                 className="form-select"
                 value={params.Hecho_Por || ''}
                 onChange={(e) => handleFilterChange('Hecho_Por', e.target.value ? Number(e.target.value) : undefined)}
-                aria-label="Filtrar por usuario"
+                aria-label={t('history.filters.performedBy')}
               >
-                <option value="">Todos los usuarios</option>
+                <option value="">{t('history.filters.allUsers')}</option>
                 {usuarios.map((usuario) => (
                   <option key={usuario.ID_Usuario} value={usuario.ID_Usuario}>
                     {usuario.Nombre}
@@ -585,7 +588,7 @@ export function Historial() {
           <div className="d-grid gap-2 mt-4">
             <button className="btn btn-apply" data-bs-dismiss="offcanvas">
               <i className="bi bi-search me-2"></i>
-              Aplicar Filtros
+              {t('common.applyFilters')}
             </button>
             <button className="btn btn-outline-secondary" onClick={clearAllFilters}>
               <i className="bi bi-x-circle me-2"></i>
@@ -622,7 +625,7 @@ export function Historial() {
               {hasActiveFilters ? (
                 <button className="btn btn-outline-secondary" onClick={clearAllFilters}>
                   <i className="bi bi-x-circle me-2"></i>
-                  Limpiar Filtros
+                  {t('animals.buttons.clearFilters')}
                 </button>
               ) : (
                 <button className="btn btn-apply" onClick={() => openModal()}>
@@ -655,13 +658,13 @@ export function Historial() {
                 <table className="table table-ganado table-hover align-middle mb-0">
                   <thead>
                     <tr>
-                      <th scope="col" className="cell-tight text-center fw-bold">Animal</th>
-                      <th scope="col" className="cell-tight text-center fw-bold">Tipo de Evento</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">Descripción</th>
-                      <th scope="col" className="cell-tight text-center fw-bold">Fecha Aplicación</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-xl-table-cell">Próxima Fecha</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">Realizado por</th>
-                      <th scope="col" className="cell-tight text-center fw-bold">Acciones</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('history.table.animal')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('history.table.eventType')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">{t('history.table.description')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('history.table.applicationDate')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-xl-table-cell">{t('history.table.nextDate')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">{t('history.table.performedBy')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('history.table.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -672,9 +675,9 @@ export function Historial() {
                           {/* Información adicional para móviles */}
                           <div className="d-lg-none small text-muted mt-1">
                             <div className="text-body">{item.Descripcion}</div>
-                            <div className="text-body">Por: {item.UsuarioNombre}</div>
+                            <div className="text-body">{t('history.table.by')}: {item.UsuarioNombre}</div>
                             {item.Proxima_Fecha && (
-                              <div className="text-body">Próxima: {new Date(item.Proxima_Fecha).toLocaleDateString()}</div>
+                              <div className="text-body">{t('history.table.next')}: {new Date(item.Proxima_Fecha).toLocaleDateString()}</div>
                             )}
                           </div>
                         </td>
@@ -696,12 +699,12 @@ export function Historial() {
                           <span className="text-body">{item.UsuarioNombre}</span>
                         </td>
                         <td className="cell-tight text-center">
-                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label="Acciones del historial">
+                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label={t('history.table.actions')}>
                             <button
                               className="btn btn-sm btn-warning"
                               onClick={() => openModal(item)}
-                              title="Editar"
-                              aria-label="Editar historial"
+                              title={t('common.edit')}
+                              aria-label={t('common.edit')}
                             >
                               <i className="bi bi-pencil"></i>
                             </button>
@@ -709,8 +712,8 @@ export function Historial() {
                               className="btn btn-sm btn-danger"
                               onClick={() => handleDelete(item)}
                               disabled={deleteMutation.isPending}
-                              title="Eliminar"
-                              aria-label="Eliminar historial"
+                              title={t('common.delete')}
+                              aria-label={t('common.delete')}
                             >
                               <i className="bi bi-trash"></i>
                             </button>
@@ -759,7 +762,7 @@ export function Historial() {
                         style={{ width: 'auto' }}
                         value={currentParams.limit || 10}
                         onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-                        aria-label="Elementos por página"
+                        aria-label={t('pagination.itemsPerPage')}
             >
               <option value={5}>5</option>
               <option value={10}>10</option>
