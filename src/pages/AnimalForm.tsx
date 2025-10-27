@@ -122,7 +122,17 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    // Agregar confirmación antes de actualizar o crear
+    const userConfirmed = window.confirm(
+      animal
+        ? '¿Estás seguro de que deseas actualizar los datos de este animal?'
+        : '¿Estás seguro de que deseas crear un nuevo animal?'
+    );
+    if (!userConfirmed) {
+      return; // Salir si el usuario cancela
+    }
+
     try {
       if (animal) {
         await handleUpdateAnimal();
