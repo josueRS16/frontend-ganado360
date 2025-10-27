@@ -191,6 +191,14 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
                   <small className="d-block text-muted">{t('administracion')}</small>
                 </Link>
               </li>
+              <li>
+                <Link to="/informativa" aria-label={t('acerca_de_nosotros')} title={t('acerca_de_nosotros')} className="dropdown-item py-2">
+                  <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span role="img" aria-label="vaca">🐄</span>
+                    <span>{t('acerca_de_nosotros')}</span>
+                  </span>
+                </Link>
+              </li>
               {user && (
                 <>
                   <li><hr className="dropdown-divider my-1" /></li>

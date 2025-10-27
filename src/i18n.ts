@@ -32,7 +32,9 @@ i18n
           categorias: 'Categorías',
           editar: 'Editar',
           eliminar: 'Eliminar',
-          guardar: 'Guardar'
+          guardar: 'Guardar',
+          informativa_titulo: 'Informativa',
+          acerca_de_nosotros: 'Acerca de nosotros'
         }
       },
       en: {
@@ -52,7 +54,9 @@ i18n
           administracion: 'Administration',
           cerrar_sesion: 'Logout',
           cambiar_a_ingles: 'Switch to English',
-          cambiar_a_espanol: 'Switch to Spanish'
+          cambiar_a_espanol: 'Switch to Spanish',
+          informativa_titulo: 'Informative',
+          acerca_de_nosotros: 'About us'
         }
       }
     },

@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { useAnimales } from '../hooks/useAnimales';
 import { useCategorias } from '../hooks/useCategorias';
@@ -311,6 +310,16 @@ export function Dashboard() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Informativa Link */}
+      <div className="row mb-4">
+        <div className="col-12 text-center">
+          <Link to="/informativa" className="btn btn-outline-info">
+            <i className="bi bi-info-circle me-2"></i>
+            Sección Informativa
+          </Link>
         </div>
       </div>
     </div>

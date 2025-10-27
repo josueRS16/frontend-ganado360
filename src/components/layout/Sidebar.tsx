@@ -49,7 +49,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { to: '/ventas', label: t('ventas'), icon: 'bi-cash-coin' },
     { to: '/recordatorios', label: t('recordatorios'), icon: 'bi-calendar-check' },
     { to: '/categorias', label: t('categorias'), icon: 'bi-tags' },
-    { to: '/usuarios', label: t('usuarios'), icon: 'bi-people-fill' }
+    { to: '/usuarios', label: t('usuarios'), icon: 'bi-people-fill' },
+    { to: '/informativa', label: (
+      <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <span role="img" aria-label="vaca">🐄</span>
+        <span>{t('acerca_de_nosotros')}</span>
+      </span>
+    ) }
   ], [t]);
 
   const isActive = (path: string) => {

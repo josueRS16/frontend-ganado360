@@ -1,0 +1,127 @@
+.informativa-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem 1.5rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.informativa-header {
+  text-align: center;
+  margin-bottom: 1.2rem;
+}
+
+.informativa-header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  color: #2b54a6;
+}
+
+.informativa-header .ganado360 {
+  font-size: 1.3rem;
+  color: #218838;
+  margin-bottom: 1.2rem;
+}
+
+.logo-space {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.logo-space img {
+  height: 100px;
+}
+
+.info-card {
+  border: 2px solid #2b54a6;
+  border-radius: 10px;
+  background: #f8faff;
+  padding: 1.2rem 1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 8px rgba(43,84,166,0.07);
+}
+
+.info-card h2 {
+  color: #2b54a6;
+  font-size: 1.2rem;
+  margin-bottom: 0.7rem;
+}
+
+.informativa-section {
+  margin-bottom: 2rem;
+}
+
+.informativa-section h2 {
+  font-size: 1.4rem;
+  color: #2b54a6;
+  margin-bottom: 0.7rem;
+  font-weight: 600;
+}
+
+.informativa-section ul {
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.informativa-section li {
+  margin-bottom: 0.5rem;
+  font-size: 1.05rem;
+}
+
+.huella-section {
+  background: #f6faff;
+  border-radius: 8px;
+  padding: 1.2rem 1rem;
+  margin-top: 2rem;
+  border: 2px solid #218838;
+}
+
+.huella-img-btn {
+  display: block;
+  margin: 1rem auto 1.5rem auto;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.huella-indicadores {
+  display: flex;
+  gap: 1.2rem;
+  margin: 1rem 0 1.5rem 0;
+  flex-wrap: wrap;
+}
+
+.huella-nivel {
+  padding: 0.6rem 1.1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  min-width: 180px;
+}
+
+.huella-bajo {
+  background: #e6f9e6;
+  color: #218838;
+  border: 1px solid #b7e4c7;
+}
+
+.huella-medio {
+  background: #fffbe6;
+  color: #b8860b;
+  border: 1px solid #ffe066;
+}
+
+.huella-alto {
+  background: #ffe6e6;
+  color: #c82333;
+  border: 1px solid #f5c6cb;
+}
