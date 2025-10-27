@@ -40,7 +40,9 @@ function CategoriaModal({ categoria, isOpen, onClose, onSave }: CategoriaModalPr
 
   const handleUpdateCategoria = async () => {
     if (!categoria) throw new Error('No se puede actualizar: categoría no especificada');
-    onSave(formData, true);
+    if (window.confirm(t('categories.messages.updateConfirm'))) {
+      onSave(formData, true);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {

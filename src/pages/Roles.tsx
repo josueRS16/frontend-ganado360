@@ -35,6 +35,17 @@ function RolModal({ rol, isOpen, onClose, onSave }: RolModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Agregar confirmación antes de guardar o editar
+    const userConfirmed = window.confirm(
+      rol
+        ? `¿Estás seguro de que deseas actualizar el rol "${rol.Nombre}"?`
+        : '¿Estás seguro de que deseas registrar un nuevo rol?'
+    );
+    if (!userConfirmed) {
+      return; // Salir si el usuario cancela
+    }
+
     if (formData.Nombre.trim()) {
       onSave(formData);
     }

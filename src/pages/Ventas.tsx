@@ -179,6 +179,17 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Agregar confirmación antes de guardar o editar
+    const userConfirmed = window.confirm(
+      venta
+        ? `¿Estás seguro de que deseas actualizar la venta de "${venta.AnimalNombre}"?${venta.Numero_Factura ? `\nFactura: ${venta.Numero_Factura}` : ''}`
+        : '¿Estás seguro de que deseas registrar una nueva venta?'
+    );
+    if (!userConfirmed) {
+      return; // Salir si el usuario cancela
+    }
+
     const precioUnitario = Number(formData.Precio_Unitario) || 0;
     const idAnimal = Number(formData.ID_Animal) || 0;
     
