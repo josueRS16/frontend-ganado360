@@ -95,6 +95,17 @@ const HistorialModal = ({ historial, isOpen, onClose, onSave }: HistorialModalPr
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Agregar confirmación antes de guardar o editar
+    const userConfirmed = window.confirm(
+      historial
+        ? '¿Estás seguro de que deseas actualizar este historial veterinario?'
+        : '¿Estás seguro de que deseas crear un nuevo historial veterinario?'
+    );
+    if (!userConfirmed) {
+      return; // Salir si el usuario cancela
+    }
+
     if (formData.Tipo_Evento.trim() && formData.Descripcion.trim() && formData.ID_Animal > 0) {
       onSave(formData);
     }

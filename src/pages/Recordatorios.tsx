@@ -73,6 +73,17 @@ function RecordatorioModal({ recordatorio, isOpen, onClose, onSave }: Recordator
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Agregar confirmación antes de guardar o editar
+    const userConfirmed = window.confirm(
+      recordatorio
+        ? '¿Estás seguro de que deseas actualizar este recordatorio?'
+        : '¿Estás seguro de que deseas crear un nuevo recordatorio?'
+    );
+    if (!userConfirmed) {
+      return; // Salir si el usuario cancela
+    }
+
     if (formData.Titulo.trim() && formData.Descripcion.trim() && formData.ID_Animal > 0) {
       onSave(formData);
     }
