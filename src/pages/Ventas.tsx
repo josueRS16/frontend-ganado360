@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useVentas, useCreateVenta, useUpdateVenta, useDeleteVenta } from '../hooks/useVentas';
 import { useAnimales } from '../hooks/useAnimales';
 import { useUsuarios } from '../hooks/useUsuarios';
@@ -25,6 +26,7 @@ interface VentaModalProps {
 
 
 function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
+  const { t } = useTranslation();
   const { data: animalesData } = useAnimales();
   const { data: usuariosData } = useUsuarios();
   const { data: tiposVentaData } = useTiposVenta();
@@ -53,7 +55,13 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
   }, [animalesData?.data, venta]);
   const usuarios = usuariosData?.data || [];
   const tiposVenta = tiposVentaData?.data || [];
-  const metodosPago = ['Efectivo', 'Sinpe Móvil', 'Transferencia', 'Cheque', 'Tarjeta'];
+  const metodosPago = [
+    t('sales.form.paymentMethods.cash'),
+    t('sales.form.paymentMethods.sinpe'),
+    t('sales.form.paymentMethods.transfer'),
+    t('sales.form.paymentMethods.check'),
+    t('sales.form.paymentMethods.card')
+  ];
 
   const today = new Date().toISOString().slice(0, 10);
   const [formData, setFormData] = useState<VentaRequest>({
@@ -207,102 +215,103 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
 
   if (!isOpen) return null;
 
-  return (
-    <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="modal-dialog modal-lg modal-dialog-centered">
-        <div className="modal-content border-0 shadow-lg" style={{ backgroundColor: 'var(--bs-body-bg)' }}>
-          <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
-            <h5 className="modal-title fw-semibold d-flex align-items-center">
-              <i className="bi bi"></i>
-              {venta ? 'Editar Venta/Factura' : 'Nueva Venta/Factura'}
-            </h5>
-            <button type="button" className="btn-close btn-close-white" onClick={onClose}></button>
-          </div>
-          <form onSubmit={handleSubmit}>
-            <div className="modal-body p-4">
-              <p className="text-muted small mb-4">
-                <i className="bi bi-info-circle me-1"></i>
-                {venta ? 'Para edición: se muestra el animal actual + animales vivos' : 'Solo animales vivos disponibles para venta'}
-              </p>
+ return (
+  <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    <div className="modal-dialog modal-lg modal-dialog-centered">
+      <div className="modal-content border-0 shadow-lg" style={{ backgroundColor: 'var(--bs-body-bg)' }}>
+        <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
+          <h5 className="modal-title fw-semibold d-flex align-items-center">
+            <i className="bi bi-receipt-cutoff me-2"></i>
+            {venta ? t('sales.editSale') : t('sales.newSale')}
+          </h5>
+          <button type="button" className="btn-close btn-close-white" onClick={onClose}></button>
+        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="modal-body p-4">
+            <p className="text-muted small mb-4">
+              <i className="bi bi-info-circle me-1"></i>
+              {venta ? t('sales.form.editInfo') : t('sales.form.newInfo')}
+            </p>
 
-              {/* SECCIÓN 1: INFORMACIÓN DEL ANIMAL Y FECHA */}
-              <div className="card mb-3 border-0 shadow-sm">
-                <div className="card-header bg-transparent">
-                  <h6 className="mb-0 fw-semibold" style={{ color: 'var(--color-base-green)' }}>
-                    <i className="bi bi-tag me-2"></i>
-                    Información del Animal
-                  </h6>
-                </div>
-                <div className="card-body">
-                  <div className="row g-3">
-                    <div className="col-md-8">
-                      <label htmlFor="animal" className="form-label fw-semibold">Animal *</label>
-                      <select
-                        className="form-select"
-                        id="animal"
-                        value={formData.ID_Animal}
-                        onChange={(e) => setFormData({ ...formData, ID_Animal: Number(e.target.value) })}
-                        required
-                      >
-                        <option value="0">Seleccionar animal...</option>
-                        {animales.map(animal => (
-                          <option key={animal.ID_Animal} value={animal.ID_Animal}>
-                            {animal.Nombre} - {animal.CategoriaTipo} ({animal.Raza})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="col-md-4">
-                      <label htmlFor="fecha" className="form-label fw-semibold">Fecha de Venta *</label>
-                      <input
-                        type="date"
-                        className="form-control"
-                        id="fecha"
-                        value={formData.Fecha_Venta}
-                        onChange={(e) => setFormData({ ...formData, Fecha_Venta: e.target.value })}
-                        required
-                      />
-                    </div>
+            {/* SECCIÓN 1: INFORMACIÓN DEL ANIMAL Y FECHA */}
+            <div className="card mb-3 border-0 shadow-sm">
+              <div className="card-header bg-transparent">
+                <h6 className="mb-0 fw-semibold" style={{ color: 'var(--color-base-green)' }}>
+                  <i className="bi bi-tag me-2"></i>
+                  {t('sales.form.animalInfo')}
+                </h6>
+              </div>
+              <div className="card-body">
+                <div className="row g-3">
+                  <div className="col-md-8">
+                    <label htmlFor="animal" className="form-label fw-semibold">{t('sales.form.animal')} *</label>
+                    <select
+                      className="form-select"
+                      id="animal"
+                      value={formData.ID_Animal}
+                      onChange={(e) => setFormData({ ...formData, ID_Animal: Number(e.target.value) })}
+                      required
+                    >
+                      <option value="0">{t('sales.form.selectAnimal')}</option>
+                      {animales.map(animal => (
+                        <option key={animal.ID_Animal} value={animal.ID_Animal}>
+                          {animal.Nombre} - {animal.CategoriaTipo} ({animal.Raza})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-md-4">
+                    <label htmlFor="fecha" className="form-label fw-semibold">{t('sales.form.saleDate')} *</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="fecha"
+                      value={formData.Fecha_Venta}
+                      onChange={(e) => setFormData({ ...formData, Fecha_Venta: e.target.value })}
+                      required
+                    />
                   </div>
                 </div>
               </div>
+            </div>
+
 
               {/* SECCIÓN 2: INFORMACIÓN DE FACTURACIÓN */}
               <div className="card mb-3 border-0 shadow-sm">
                 <div className="card-header bg-transparent">
                   <h6 className="mb-0 fw-semibold" style={{ color: 'var(--color-base-green)' }}>
                     <i className="bi bi-people me-2"></i>
-                    Información de Facturación
+                    {t('sales.form.billingInfo')}
                   </h6>
                 </div>
                 <div className="card-body">
                   <div className="row g-3">
                     <div className="col-md-6">
-                      <label htmlFor="vendedor" className="form-label fw-semibold">Vendedor *</label>
+                      <label htmlFor="vendedor" className="form-label fw-semibold">{t('sales.form.seller')} *</label>
                       <input
                         type="text"
                         className="form-control"
                         id="vendedor"
                         value={formData.Vendedor}
                         onChange={(e) => setFormData({ ...formData, Vendedor: e.target.value })}
-                        placeholder="Nombre del vendedor/rancho..."
+                        placeholder={t('sales.form.sellerPlaceholder')}
                         required
                       />
                     </div>
                     <div className="col-md-6">
-                      <label htmlFor="comprador" className="form-label fw-semibold">Comprador *</label>
+                      <label htmlFor="comprador" className="form-label fw-semibold">{t('sales.form.buyer')} *</label>
                       <input
                         type="text"
                         className="form-control"
                         id="comprador"
                         value={formData.Comprador}
                         onChange={(e) => setFormData({ ...formData, Comprador: e.target.value })}
-                        placeholder="Nombre del comprador..."
+                        placeholder={t('sales.form.buyerPlaceholder')}
                         required
                       />
                     </div>
                     <div className="col-md-6">
-                      <label htmlFor="tipo" className="form-label fw-semibold">Tipo de Venta *</label>
+                      <label htmlFor="tipo" className="form-label fw-semibold">{t('sales.form.saleType')} *</label>
                       <select
                         className="form-select"
                         id="tipo"
@@ -310,7 +319,7 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
                         onChange={(e) => setFormData({ ...formData, Tipo_Venta: e.target.value })}
                         required
                       >
-                        <option value="">Seleccionar tipo...</option>
+                        <option value="">{t('sales.form.selectType')}</option>
                         {tiposVenta.map(tipo => (
                           <option key={tipo} value={tipo}>
                             {tipo}
@@ -319,7 +328,7 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
                       </select>
                     </div>
                     <div className="col-md-6">
-                      <label htmlFor="metodo-pago" className="form-label fw-semibold">Método de Pago</label>
+                      <label htmlFor="metodo-pago" className="form-label fw-semibold">{t('sales.form.paymentMethod')}</label>
                       <select
                         className="form-select"
                         id="metodo-pago"
@@ -342,13 +351,13 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
                 <div className="card-header bg-transparent">
                   <h6 className="mb-0 fw-semibold" style={{ color: 'var(--color-base-green)' }}>
                     <i className="bi bi-currency-dollar me-2"></i>
-                    Detalles de Precio
+                    {t('sales.form.priceDetails')}
                   </h6>
                 </div>
                 <div className="card-body">
                   <div className="row g-3">
                     <div className="col-md-4">
-                      <label htmlFor="precio-unitario" className="form-label fw-semibold">Precio Unitario *</label>
+                      <label htmlFor="precio-unitario" className="form-label fw-semibold">{t('sales.form.unitPrice')} *</label>
                       <div className="input-group">
                         <span className="input-group-text fw-bold">
                           {formData.Moneda === 'CRC' ? '₡' : '$'}
@@ -367,7 +376,7 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
                       </div>
                     </div>
                     <div className="col-md-4">
-                      <label className="form-label fw-semibold">Moneda</label>
+                      <label className="form-label fw-semibold">{t('sales.form.currency')}</label>
                       <CurrencySelector
                         value={formData.Moneda || 'CRC'}
                         onChange={(nuevaMoneda: Moneda) => {
@@ -398,7 +407,7 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
                       />
                     </div>
                     <div className="col-md-2">
-                      <label htmlFor="cantidad" className="form-label fw-semibold">Cantidad</label>
+                      <label htmlFor="cantidad" className="form-label fw-semibold">{t('sales.form.quantity')}</label>
                       <input
                         type="number"
                         className="form-control"
@@ -408,7 +417,7 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
                         min="1"
                         disabled
                       />
-                      <small className="text-muted">Siempre 1 por ahora</small>
+                      <small className="text-muted">{t('sales.form.quantityNote')}</small>
                     </div>
                     <div className="col-md-2">
                       <label htmlFor="iva-porcentaje" className="form-label fw-semibold">IVA %</label>
@@ -431,10 +440,10 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
                   {/* RESUMEN DE FACTURA */}
                   <div className="mt-4 p-3 rounded" style={{ backgroundColor: 'var(--bs-secondary-bg)' }}>
                     <div className="d-flex justify-content-between align-items-center mb-3">
-                      <h6 className="mb-0 fw-bold">Resumen de Factura</h6>
+                      <h6 className="mb-0 fw-bold">{t('sales.form.invoiceSummary')}</h6>
                       <div className="d-flex align-items-center gap-2">
                         <span className="badge" style={{ backgroundColor: 'var(--color-base-green)', color: 'white' }}>
-                          {formData.Moneda === 'CRC' ? '₡ Colones' : '$ Dólares'}
+                          {formData.Moneda === 'CRC' ? t('sales.form.colones') : t('sales.form.dollars')}
                         </span>
                         {formData.Moneda !== 'CRC' && (
                           <small className="text-muted">
@@ -444,7 +453,7 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
                       </div>
                     </div>
                     <div className="d-flex justify-content-between mb-2">
-                      <span>Subtotal:</span>
+                      <span>{t('sales.form.subtotal')}:</span>
                       <span className="fw-semibold">{formatMoney(subtotal)}</span>
                     </div>
                     <div className="d-flex justify-content-between mb-2">
@@ -453,7 +462,7 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
                     </div>
                     <hr />
                     <div className="d-flex justify-content-between">
-                      <span className="fs-5 fw-bold" style={{ color: 'var(--color-base-green)' }}>TOTAL:</span>
+                      <span className="fs-5 fw-bold" style={{ color: 'var(--color-base-green)' }}>{t('sales.form.total')}:</span>
                       <span className="fs-5 fw-bold" style={{ color: 'var(--color-base-green)' }}>{formatMoney(total)}</span>
                     </div>
                   </div>
@@ -465,13 +474,13 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
                 <div className="card-header bg-transparent">
                   <h6 className="mb-0 fw-semibold" style={{ color: 'var(--color-base-green)' }}>
                     <i className="bi bi-pencil-square me-2"></i>
-                    Información Adicional
+                    {t('sales.form.additionalInfo')}
                   </h6>
                 </div>
                 <div className="card-body">
                   <div className="row g-3">
                     <div className="col-md-12">
-                      <label htmlFor="usuario" className="form-label fw-semibold">Registrado por</label>
+                      <label htmlFor="usuario" className="form-label fw-semibold">{t('sales.form.registeredBy')}</label>
                       <select
                         className="form-select"
                         id="usuario"
@@ -487,17 +496,17 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
                       </select>
                     </div>
                     <div className="col-12">
-                      <label htmlFor="observaciones" className="form-label fw-semibold">Observaciones</label>
+                      <label htmlFor="observaciones" className="form-label fw-semibold">{t('sales.form.observations')}</label>
                       <textarea
                         className="form-control"
                         id="observaciones"
                         rows={3}
                         value={formData.Observaciones}
                         onChange={(e) => setFormData({ ...formData, Observaciones: e.target.value })}
-                        placeholder="Observaciones adicionales sobre la venta..."
+                        placeholder={t('sales.form.observationsPlaceholder')}
                         maxLength={1000}
                       />
-                      <small className="text-muted">{formData.Observaciones?.length || 0}/1000 caracteres</small>
+                      <small className="text-muted">{formData.Observaciones?.length || 0}/1000 {t('sales.form.characters')}</small>
                     </div>
                   </div>
                 </div>
@@ -507,12 +516,12 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
               <div className="d-flex justify-content-between align-items-center gap-2 w-100">
                 <small className="text-muted">
                   <i className="bi bi-info-circle me-1"></i>
-                  {venta ? 'Se actualizará la factura' : 'Se generará un número de factura automáticamente'}
+                  {venta ? t('sales.form.updateInvoiceInfo') : t('sales.form.generateInvoiceInfo')}
                 </small>
                 <div className="d-flex gap-2">
                   <button type="button" className="btn btn-secondary" onClick={onClose}>
                     <i className="bi bi-x-circle me-2"></i>
-                    Cancelar
+                    {t('common.cancel')}
                   </button>
                   <button
                     type="submit"
@@ -520,7 +529,7 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
                     disabled={!formData.Comprador.trim() || !formData.Vendedor.trim() || formData.Precio_Unitario <= 0 || formData.ID_Animal <= 0}
                   >
                     <i className="bi bi-check-circle me-2"></i>
-                    {venta ? 'Actualizar Venta' : 'Crear Venta y Generar Factura'}
+                    {venta ? t('sales.form.updateSale') : t('sales.form.createSale')}
                   </button>
                 </div>
               </div>
@@ -533,6 +542,7 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
 }
 
 export function Ventas() {
+  const { t } = useTranslation();
   const { params, updateParams, clearParams, setParams } = useQueryParams<VentasFilters>();
 
   // Set default pagination parameters if not present
@@ -621,13 +631,11 @@ export function Ventas() {
           // Poll the venta endpoint until Numero_Factura is set (backend may generate it asynchronously)
           const maxAttempts = 20;
           const delayMs = 1000;
-          let found = false;
           for (let attempt = 0; attempt < maxAttempts; attempt++) {
             try {
               const ventaResp = await ventasApi.getById(Number(createdId));
               const ventaData = ventaResp?.data;
               if (ventaData && ventaData.Numero_Factura) {
-                found = true;
                 break;
               }
             } catch (err) {
@@ -664,7 +672,7 @@ export function Ventas() {
       }
       // Mensaje especial para estado "viva"
       if (errorMessage.includes('Solo se pueden vender animales que estén en estado')) {
-        errorMessage = 'Solo puedes vender animales que estén en estado "viva". Por favor, selecciona un animal válido.';
+        errorMessage = t('sales.messages.onlyAliveAnimals');
       }
       showToast(errorMessage, 'error');
     }
@@ -674,9 +682,9 @@ export function Ventas() {
     if (window.confirm(`¿Estás seguro de eliminar la venta de "${venta.AnimalNombre}"?${venta.Numero_Factura ? `\nFactura: ${venta.Numero_Factura}` : ''}`)) {
       try {
         await deleteMutation.mutateAsync(venta.ID_Venta);
-        showToast('Venta eliminada exitosamente', 'success');
+        showToast(t('sales.messages.deleteSuccess'), 'success');
       } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'Error al eliminar la venta';
+        const errorMessage = error instanceof Error ? error.message : t('sales.messages.deleteError');
         showToast(errorMessage, 'error');
       }
     }
@@ -685,7 +693,7 @@ export function Ventas() {
   const handleDescargarPDF = async (ventaId: number) => {
     try {
       setDownloadingPDF(ventaId);
-      showToast('Descargando factura...', 'info');
+      showToast(t('sales.messages.downloadingInvoice'), 'info');
       // Obtener datos de la factura desde el endpoint específico usando el cliente API (asegura baseURL correcto)
       const resp = await ventasApi.getFacturaPDF(ventaId);
       if (!resp || !resp.data) {
@@ -693,10 +701,10 @@ export function Ventas() {
       }
       // Generar y descargar el PDF
       await generarFacturaPDF(resp.data);
-      showToast('Factura descargada exitosamente', 'success');
+      showToast(t('sales.messages.downloadSuccess'), 'success');
     } catch (error) {
       console.error('Error al descargar PDF:', error);
-      showToast(error instanceof Error ? error.message : 'Error al descargar la factura', 'error');
+      showToast(error instanceof Error ? error.message : t('sales.messages.downloadError'), 'error');
     } finally {
       setDownloadingPDF(null);
     }
@@ -854,10 +862,10 @@ export function Ventas() {
   if (error) {
     return (
       <div className="alert alert-danger" role="alert">
-        <h4 className="alert-heading">Error al cargar las ventas</h4>
-        <p>{error.message || 'Ocurrió un error inesperado'}</p>
+        <h4 className="alert-heading">{t('sales.messages.loadError')}</h4>
+        <p>{error.message || t('common.unexpectedError')}</p>
         <button className="btn btn-outline-danger" onClick={() => window.location.reload()}>
-          Intentar de nuevo
+          {t('common.tryAgain')}
         </button>
       </div>
     );
@@ -868,8 +876,8 @@ export function Ventas() {
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
-          { label: 'Dashboard', path: '/' },
-          { label: 'Ventas', active: true }
+          { label: t('dashboard.title'), path: '/' },
+          { label: t('sales.title'), active: true }
         ]}
       />
 
@@ -880,15 +888,15 @@ export function Ventas() {
             <div className="flex-grow-1">
               <h1 className="h2 mb-2 d-flex align-items-center" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-cash-coin me-3"></i>
-                Gestión de Ventas
+                {t('sales.title')}
               </h1>
               <p className="mb-0 fs-6 text-muted">
-                {isLoading ? 'Cargando ventas...' : pagination ? `${pagination.totalCount} ventas registradas` : `${ventas.length} ventas registradas`}
+                {isLoading ? t('common.loading') : pagination ? `${pagination.totalCount} ${t('sales.messages.registered')}` : `${ventas.length} ${t('sales.messages.registered')}`}
               </p>
             </div>
             <div className="d-flex flex-column flex-sm-row gap-2">
               <div className="d-flex align-items-center gap-2">
-                <label className="form-label mb-0 small text-muted">Moneda:</label>
+                <label className="form-label mb-0 small text-muted">{t('sales.form.currency')}:</label>
                 <CurrencySelector
                   value={monedaSeleccionada}
                   onChange={setMonedaSeleccionada}
@@ -900,17 +908,17 @@ export function Ventas() {
                 className="btn btn-outline-secondary d-lg-none"
                 data-bs-toggle="offcanvas"
                 data-bs-target="#filtersOffcanvas"
-                aria-label="Abrir filtros"
+                aria-label={t('animals.buttons.filters')}
               >
                 <i className="bi bi-funnel me-2"></i>
-                Filtros
+                {t('animals.buttons.filters')}
                 {hasActiveFilters && (
                   <span className="badge bg-primary ms-2">{Object.keys(params).length}</span>
                 )}
               </button>
               <button className="btn btn-apply" onClick={() => openModal()}>
                 <i className="bi bi-plus-circle-fill me-2"></i>
-                <span className="fw-bold">Nueva</span>
+                <span className="fw-bold">{t('sales.buttons.new')}</span>
               </button>
             </div>
           </div>
@@ -924,7 +932,7 @@ export function Ventas() {
             <div className="d-flex justify-content-between align-items-center">
               <h6 className="mb-0 fw-semibold d-flex align-items-center" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-funnel-fill me-2"></i>
-                Filtros de Búsqueda
+                {t('sales.filters.title')}
               </h6>
               {hasActiveFilters && (
                 <button className="btn btn-outline-secondary btn-sm" onClick={clearAllFilters}>
@@ -935,38 +943,38 @@ export function Ventas() {
             </div>
             <div className="row g-3">
               <div className="col-md-3">
-                <label className="form-label">Número de Factura</label>
+                <label className="form-label">{t('sales.filters.invoiceNumber')}</label>
                 <input
                   type="text"
                   className="form-control"
                   value={params.Numero_Factura || ''}
                   onChange={(e) => handleFilterChange('Numero_Factura', e.target.value || undefined)}
                   placeholder="FAC-2025-00001"
-                  aria-label="Buscar por número de factura"
+                  aria-label={t('sales.filters.invoiceNumber')}
                   autoComplete="off"
                 />
               </div>
               <div className="col-md-3">
-                <label className="form-label">Comprador</label>
+                <label className="form-label">{t('sales.filters.buyer')}</label>
                 <input
                   type="text"
                   className="form-control"
                   value={params.Comprador || ''}
                   onChange={(e) => handleFilterChange('Comprador', e.target.value || undefined)}
                   placeholder="Nombre del comprador"
-                  aria-label="Buscar por comprador"
+                  aria-label={t('sales.filters.buyer')}
                   autoComplete="off"
                 />
               </div>
               <div className="col-md-2">
-                <label className="form-label">Animal</label>
+                <label className="form-label">{t('sales.filters.animal')}</label>
                 <select
                   className="form-select"
                   value={params.ID_Animal || ''}
                   onChange={(e) => handleFilterChange('ID_Animal', e.target.value === '' ? undefined : Number(e.target.value))}
-                  aria-label="Filtrar por animal"
+                  aria-label={t('sales.filters.animal')}
                 >
-                  <option value="">Todos</option>
+                  <option value="">{t('sales.filters.allAnimals')}</option>
                   {animales.map((animal) => (
                     <option key={animal.ID_Animal} value={animal.ID_Animal}>
                       {animal.Nombre}
@@ -975,14 +983,14 @@ export function Ventas() {
                 </select>
               </div>
               <div className="col-md-2">
-                <label className="form-label">Tipo de Venta</label>
+                <label className="form-label">{t('sales.filters.saleType')}</label>
                 <select
                   className="form-select"
                   value={params.Tipo_Venta || ''}
                   onChange={(e) => handleFilterChange('Tipo_Venta', e.target.value === '' ? undefined : e.target.value)}
-                  aria-label="Filtrar por tipo de venta"
+                  aria-label={t('sales.filters.saleType')}
                 >
-                  <option value="">Todos</option>
+                  <option value="">{t('sales.filters.allTypes')}</option>
                   {tiposVenta.map((tipo) => (
                     <option key={tipo} value={tipo}>
                       {tipo}
@@ -993,23 +1001,23 @@ export function Ventas() {
             </div>
             <div className="row g-3 mt-1">
               <div className="col-md-3">
-                <label className="form-label">Fecha desde</label>
+                <label className="form-label">{t('sales.filters.dateFrom')}</label>
                 <input
                   type="date"
                   className="form-control"
                   value={params.fechaDesde || ''}
                   onChange={(e) => handleFilterChange('fechaDesde', e.target.value || undefined)}
-                  aria-label="Fecha desde"
+                  aria-label={t('sales.filters.dateFrom')}
                 />
               </div>
               <div className="col-md-3">
-                <label className="form-label">Fecha hasta</label>
+                <label className="form-label">{t('sales.filters.dateTo')}</label>
                 <input
                   type="date"
                   className="form-control"
                   value={params.fechaHasta || ''}
                   onChange={(e) => handleFilterChange('fechaHasta', e.target.value || undefined)}
-                  aria-label="Fecha hasta"
+                  aria-label={t('sales.filters.dateTo')}
                 />
               </div>
             </div>
@@ -1033,7 +1041,7 @@ export function Ventas() {
                   )}
                 </div>
                 <div className="flex-grow-1">
-                  <div className="text-muted small fw-semibold">TOTAL INGRESOS</div>
+                  <div className="text-muted small fw-semibold">{t('sales.stats.totalIncome')}</div>
                   <div className="fw-bold fs-5" style={{ color: 'var(--bs-body-color)' }}>
                     {formatMoney(totalIngresos)}
                   </div>
@@ -1056,7 +1064,7 @@ export function Ventas() {
                   )}
                 </div>
                 <div className="flex-grow-1">
-                  <div className="text-muted small fw-semibold">PROMEDIO POR VENTA</div>
+                  <div className="text-muted small fw-semibold">{t('sales.stats.averagePerSale')}</div>
                   <div className="fw-bold fs-5" style={{ color: 'var(--bs-body-color)' }}>
                     {formatMoney(promedioVenta)}
                   </div>
@@ -1073,7 +1081,7 @@ export function Ventas() {
                   <i className="bi bi-list-check fs-4" style={{ color: 'var(--color-sage-gray)' }}></i>
                 </div>
                 <div className="flex-grow-1">
-                  <div className="text-muted small fw-semibold">TOTAL VENTAS</div>
+                  <div className="text-muted small fw-semibold">{t('sales.stats.totalSales')}</div>
                   <div className="fw-bold fs-5" style={{ color: 'var(--bs-body-color)' }}>
                     {totalVentas}
                   </div>
@@ -1092,7 +1100,7 @@ export function Ventas() {
             <div className="card-header bg-transparent border-0 pb-2">
               <h6 className="card-title mb-0 fw-semibold d-flex align-items-center" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-calendar-month me-2"></i>
-                Análisis por Mes
+                {t('sales.charts.monthlyAnalysis')}
               </h6>
             </div>
             <div className="card-body p-3">
@@ -1115,7 +1123,7 @@ export function Ventas() {
                     <Tooltip
                       formatter={(value: number, name: string) => [
                         name === 'ventas' ? `${value} ventas` : `${formatMoney(value)}`,
-                        name === 'ventas' ? 'Cantidad' : 'Ingresos'
+                        name === 'ventas' ? t('sales.charts.quantity') : t('sales.charts.income')
                       ]}
                       labelStyle={{ color: 'var(--bs-body-color)', fontSize: '11px' }}
                       contentStyle={{
@@ -1147,7 +1155,7 @@ export function Ventas() {
             <div className="card-header bg-transparent border-0 pb-2">
               <h6 className="card-title mb-0 fw-semibold d-flex align-items-center" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-pie-chart me-2"></i>
-                Distribución por Tipo
+                {t('sales.charts.distributionByType')}
               </h6>
             </div>
             <div className="card-body p-3">
@@ -1176,7 +1184,7 @@ export function Ventas() {
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(value: number) => [`${value} ventas`, 'Cantidad']}
+                      formatter={(value: number) => [`${value} ${t('sales.charts.sales')}`, t('sales.charts.quantity')]}
                       labelStyle={{ color: 'var(--bs-body-color)', fontSize: '11px' }}
                       contentStyle={{
                         backgroundColor: 'var(--bs-body-bg)',
@@ -1193,15 +1201,15 @@ export function Ventas() {
 
               {/* Tabla de detalles */}
               <div className="mt-3">
-                <h6 className="small text-muted mb-2">Detalles por Tipo:</h6>
+                <h6 className="small text-muted mb-2">{t('sales.charts.detailsByType')}:</h6>
                 <div className="table-responsive">
                   <table className="table table-sm table-hover mb-0">
                     <thead>
                       <tr>
-                        <th className="small">Tipo</th>
-                        <th className="small text-center">Ventas</th>
-                        <th className="small text-center">Porcentaje</th>
-                        <th className="small text-end">Ingresos</th>
+                        <th className="small">{t('sales.table.type')}</th>
+                        <th className="small text-center">{t('sales.charts.sales')}</th>
+                        <th className="small text-center">{t('sales.charts.percentage')}</th>
+                        <th className="small text-end">{t('sales.charts.income')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1252,9 +1260,9 @@ export function Ventas() {
         <div className="offcanvas-header">
           <h5 className="offcanvas-title d-flex align-items-center">
             <i className="bi bi-funnel-fill me-2"></i>
-            Filtros de Búsqueda
+            {t('sales.filters.title')}
           </h5>
-          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar filtros"></button>
+          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label={t('animals.buttons.closeFilters')}></button>
         </div>
         <div className="offcanvas-body">
           <div className="row g-3">
@@ -1288,9 +1296,9 @@ export function Ventas() {
                 className="form-select"
                 value={params.ID_Animal || ''}
                 onChange={(e) => handleFilterChange('ID_Animal', e.target.value === '' ? undefined : Number(e.target.value))}
-                aria-label="Filtrar por animal"
+                aria-label={t('sales.filters.animal')}
               >
-                <option value="">Todos los animales</option>
+                <option value="">{t('sales.filters.allAnimals')}</option>
                 {animales.map((animal) => (
                   <option key={animal.ID_Animal} value={animal.ID_Animal}>
                     {animal.Nombre} - {animal.CategoriaTipo}
@@ -1304,9 +1312,9 @@ export function Ventas() {
                 className="form-select"
                 value={params.Tipo_Venta || ''}
                 onChange={(e) => handleFilterChange('Tipo_Venta', e.target.value === '' ? undefined : e.target.value)}
-                aria-label="Filtrar por tipo de venta"
+                aria-label={t('sales.filters.saleType')}
               >
-                <option value="">Todos los tipos</option>
+                <option value="">{t('sales.filters.allTypes')}</option>
                 {tiposVenta.map((tipo) => (
                   <option key={tipo} value={tipo}>
                     {tipo}
@@ -1394,13 +1402,13 @@ export function Ventas() {
                 <div className="d-flex justify-content-between align-items-center">
                   <h6 className="card-title mb-0 fw-semibold d-flex align-items-center" style={{ color: 'var(--color-base-green)' }}>
                     <i className="bi bi-list-ul me-2"></i>
-                    Historial de Ventas
+                    {t('sales.table.salesHistory')}
                   </h6>
                   <span className="badge rounded-pill px-3 py-2" style={{
                     backgroundColor: 'var(--color-sage-gray)',
                     color: 'var(--color-charcoal)'
                   }}>
-                    {ventas.length} {ventas.length === 1 ? 'venta' : 'ventas'}
+                    {ventas.length} {ventas.length === 1 ? t('sales.messages.singleSale') : t('sales.messages.pluralSales')}
                   </span>
                 </div>
               </div>
@@ -1408,13 +1416,13 @@ export function Ventas() {
                 <table className="table table-ganado table-hover align-middle mb-0">
                   <thead>
                     <tr>
-                      <th scope="col" className="cell-tight text-center fw-bold p-4">Factura</th>
-                      <th scope="col" className="cell-tight text-center fw-bold p-4">Animal</th>
-                      <th scope="col" className="cell-tight text-center fw-bold p-4 d-none d-lg-table-cell">Fecha</th>
-                      <th scope="col" className="cell-tight text-center fw-bold p-4 d-none d-xl-table-cell">Tipo</th>
-                      <th scope="col" className="cell-tight text-center fw-bold p-4 d-none d-md-table-cell">Comprador</th>
-                      <th scope="col" className="cell-tight text-center fw-bold p-4">Total</th>
-                      <th scope="col" className="cell-tight text-center fw-bold p-4">Acciones</th>
+                      <th scope="col" className="cell-tight text-center fw-bold p-4">{t('sales.table.invoice')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold p-4">{t('sales.table.animal')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold p-4 d-none d-lg-table-cell">{t('sales.table.date')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold p-4 d-none d-xl-table-cell">{t('sales.table.type')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold p-4 d-none d-md-table-cell">{t('sales.table.buyer')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold p-4">{t('sales.table.total')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold p-4">{t('sales.table.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1424,7 +1432,7 @@ export function Ventas() {
                           {venta.Numero_Factura ? (
                             <span className="text-center">{venta.Numero_Factura}</span>
                           ) : (
-                            <span className="text-center">Sin No.</span>
+                            <span className="text-center">{t('sales.table.noNumber')}</span>
                           )}
                         </td>
                         <td className="cell-tight text-center">
@@ -1496,13 +1504,13 @@ export function Ventas() {
                           </div>
                         </td>
                         <td className="cell-tight text-center">
-                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label="Acciones de la venta">
+                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label={t('sales.table.actions')}>
                             {/* Botón Ver Detalles */}
                             <button
                               className="btn btn-sm btn-info"
                               onClick={() => openDetalleModal(venta)}
-                              title="Ver Detalles"
-                              aria-label="Ver detalles de la venta"
+                              title={t('sales.buttons.viewDetails')}
+                              aria-label={t('sales.buttons.viewDetails')}
                             >
                               <i className="bi bi-eye"></i>
                             </button>
@@ -1512,8 +1520,8 @@ export function Ventas() {
                                 className="btn btn-sm btn-success"
                                 onClick={() => handleDescargarPDF(venta.ID_Venta)}
                                 disabled={downloadingPDF === venta.ID_Venta}
-                                title="Descargar Factura PDF"
-                                aria-label="Descargar factura en PDF"
+                                title={t('sales.buttons.downloadPDF')}
+                                aria-label={t('sales.buttons.downloadPDF')}
                               >
                                 {downloadingPDF === venta.ID_Venta ? (
                                   <span className="spinner-border spinner-border-sm" role="status"></span>
@@ -1526,8 +1534,8 @@ export function Ventas() {
                             <button
                               className="btn btn-sm btn-warning"
                               onClick={() => openModal(venta)}
-                              title="Editar"
-                              aria-label="Editar venta"
+                              title={t('common.edit')}
+                              aria-label={t('common.edit')}
                             >
                               <i className="bi bi-pencil"></i>
                             </button>
@@ -1536,8 +1544,8 @@ export function Ventas() {
                               className="btn btn-sm btn-danger"
                               onClick={() => handleDelete(venta)}
                               disabled={deleteMutation.isPending}
-                              title="Eliminar"
-                              aria-label="Eliminar venta"
+                              title={t('common.delete')}
+                              aria-label={t('common.delete')}
                             >
                               <i className="bi bi-trash"></i>
                             </button>
@@ -1578,7 +1586,7 @@ export function Ventas() {
                   <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
                     <div className="d-flex align-items-center">
                       <label htmlFor="itemsPerPage" className="form-label me-2 mb-0 small">
-                        Mostrar:
+                        {t('pagination.showing')}:
                       </label>
                       <select
                         id="itemsPerPage"
@@ -1586,7 +1594,7 @@ export function Ventas() {
                         style={{ width: 'auto' }}
                         value={currentParams.limit || 10}
                         onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-                        aria-label="Elementos por página"
+                        aria-label={t('pagination.itemsPerPage')}
                       >
                         <option value={5}>5</option>
                         <option value={10}>10</option>

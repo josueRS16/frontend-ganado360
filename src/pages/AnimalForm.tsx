@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useCreateAnimal, useUpdateAnimal } from '../hooks/useAnimales';
 import { useCategorias } from '../hooks/useCategorias';
 import { useToast } from '../hooks/useToast';
@@ -50,6 +51,7 @@ const calculateEstimatedBirthDate = (matingDate: string | null) => {
 };
 
 export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormProps) {
+  const { t } = useTranslation();
   const { data: categoriasData } = useCategorias();
   const categorias = categoriasData?.data || [];
   const createMutation = useCreateAnimal();
@@ -78,7 +80,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
       Imagen_URL: formData.Imagen_URL && formData.Imagen_URL.trim().length > 0 ? formData.Imagen_URL.trim().slice(0, 500) : null,
     };
     const resp = await createMutation.mutateAsync(payload);
-    showToast('Animal creado exitosamente', 'success');
+    showToast(t('animals.messages.createSuccess'), 'success');
     const createdId = resp.data.ID_Animal;
     if (payload.Imagen_URL) {
       cacheAnimalImage(createdId, payload.Imagen_URL);
@@ -91,7 +93,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
   };
 
   const handleUpdateAnimal = async () => {
-    if (!animal) throw new Error('No se puede actualizar: animal no especificado');
+    if (!animal) throw new Error(t('animals.messages.updateSuccess'));
     
     const newImageUrl = formData.Imagen_URL && formData.Imagen_URL.trim().length > 0 ? formData.Imagen_URL.trim().slice(0, 500) : null;
 
@@ -107,7 +109,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
       id: animal.ID_Animal,
       data: payload
     });
-    showToast('Animal actualizado exitosamente', 'success');
+    showToast(t('animals.messages.updateSuccess'), 'success');
     // Cachear nueva imagen si es externa
     if (payload.Imagen_URL && !uploadApi.isLocalUploadedImage(payload.Imagen_URL)) {
       cacheAnimalImage(animal.ID_Animal, payload.Imagen_URL);
@@ -130,7 +132,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
       onClose();
       onSuccess?.();
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Error al guardar el animal';
+      const errorMessage = error instanceof Error ? error.message : t('animals.messages.deleteError');
       showToast(errorMessage, 'error');
     }
   };
@@ -144,13 +146,13 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
           <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
             <h5 className="modal-title fw-semibold d-flex align-items-center">
               <i className={`bi ${animal ? 'bi-pencil-square' : 'bi-plus-circle'} me-2`}></i>
-              {animal ? 'Editar Animal' : 'Nuevo Animal'}
+              {animal ? t('animals.editAnimal') : t('animals.newAnimal')}
             </h5>
             <button 
               type="button" 
               className="btn-close btn-close-white" 
               onClick={handleClose}
-              aria-label="Cerrar modal"
+              aria-label={t('animals.form.close')}
             ></button>
           </div>
           <form onSubmit={handleSubmit}>
@@ -160,7 +162,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                 <div className="card-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
                   <h6 className="card-title mb-0 d-flex align-items-center">
                     <i className="bi bi-info-circle-fill me-2"></i>
-                    Información Básica
+                    {t('animals.form.basicInfo')}
                   </h6>
                 </div>
                 <div className="card-body">
@@ -171,12 +173,12 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                           type="text"
                           className="form-control"
                           id="nombre"
-                          placeholder="Nombre del animal"
+                          placeholder={t('animals.form.animalName')}
                           value={formData.Nombre}
                           onChange={(e) => setFormData({ ...formData, Nombre: e.target.value })}
                           required
                         />
-                        <label htmlFor="nombre">Nombre del Animal</label>
+                        <label htmlFor="nombre">{t('animals.form.animalName')}</label>
                       </div>
                     </div>
                     <div className="col-md-3">
@@ -202,11 +204,11 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                           }}
                           required
                         >
-                          <option value="">Seleccionar</option>
-                          <option value="M">Macho</option>
-                          <option value="F">Hembra</option>
+                          <option value="">{t('animals.form.selectSex')}</option>
+                          <option value="M">{t('animals.form.male')}</option>
+                          <option value="F">{t('animals.form.female')}</option>
                         </select>
-                        <label htmlFor="sexo">Sexo</label>
+                        <label htmlFor="sexo">{t('animals.form.gender')}</label>
                       </div>
                     </div>
                     <div className="col-md-3">
@@ -218,14 +220,14 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                           onChange={(e) => setFormData({ ...formData, ID_Categoria: Number(e.target.value) })}
                           required
                         >
-                          <option value="">Seleccionar</option>
+                          <option value="">{t('animals.form.selectCategory')}</option>
                           {categorias.map(categoria => (
                             <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
                               {categoria.Tipo}
                             </option>
                           ))}
                         </select>
-                        <label htmlFor="categoria">Categoría</label>
+                        <label htmlFor="categoria">{t('animals.form.category')}</label>
                       </div>
                     </div>
                     <div className="col-md-4">
@@ -237,7 +239,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                           onChange={(e) => setFormData({ ...formData, Raza: e.target.value })}
                           required
                         >
-                          <option value="">Seleccionar raza</option>
+                          <option value="">{t('animals.form.selectRace')}</option>
                           {Object.entries(razasPorCategoria).map(([categoria, razas]) => (
                             <optgroup key={categoria} label={categoria}>
                               {razas.map((raza) => (
@@ -248,11 +250,11 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                             </optgroup>
                           ))}
                         </select>
-                        <label htmlFor="raza">Raza</label>
+                        <label htmlFor="raza">{t('animals.form.race')}</label>
                       </div>
                       <div className="form-text">
                         <i className="bi bi-info-circle me-1"></i>
-                        Selecciona la raza bovina más apropiada
+                        {t('animals.form.raceHelp')}
                       </div>
                     </div>
                     <div className="col-md-4">
@@ -261,12 +263,12 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                           type="text"
                           className="form-control"
                           id="color"
-                          placeholder="Color del animal"
+                          placeholder={t('animals.form.color')}
                           value={formData.Color}
                           onChange={(e) => setFormData({ ...formData, Color: e.target.value })}
                           required
                         />
-                        <label htmlFor="color">Color</label>
+                        <label htmlFor="color">{t('animals.form.color')}</label>
                       </div>
                     </div>
                     <div className="col-md-4">
@@ -275,16 +277,16 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                           type="number"
                           className="form-control"
                           id="peso"
-                          placeholder="Peso en kg"
+                          placeholder={t('animals.form.weight')}
                           value={formData.Peso || ''}
                           onChange={(e) => setFormData({ ...formData, Peso: Number(e.target.value) })}
                           required
                         />
-                        <label htmlFor="peso">Peso (kg)</label>
+                        <label htmlFor="peso">{t('animals.form.weight')}</label>
                       </div>
                     </div>
                     <div className="col-md-12">
-                      <label className="form-label fw-semibold">Imagen del Animal</label>
+                      <label className="form-label fw-semibold">{t('animals.form.animalImage')}</label>
                       <ImageSelector
                         value={formData.Imagen_URL ?? null}
                         onChange={(imageUrl) => setFormData({ ...formData, Imagen_URL: imageUrl })}
@@ -304,7 +306,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                 <div className="card-header" style={{ background: 'var(--color-tint1)', color: 'white' }}>
                   <h6 className="card-title mb-0 d-flex align-items-center">
                     <i className="bi bi-calendar-event me-2"></i>
-                    Fechas Importantes
+                    {t('animals.form.importantDates')}
                   </h6>
                 </div>
                 <div className="card-body">
@@ -319,7 +321,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                           onChange={(e) => setFormData({ ...formData, Fecha_Nacimiento: e.target.value })}
                           required
                         />
-                        <label htmlFor="fechaNacimiento">Fecha de Nacimiento</label>
+                        <label htmlFor="fechaNacimiento">{t('animals.form.birthDate')}</label>
                       </div>
                     </div>
                     <div className="col-md-6">
@@ -332,7 +334,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                           onChange={(e) => setFormData({ ...formData, Fecha_Ingreso: e.target.value })}
                           required
                         />
-                        <label htmlFor="fechaIngreso">Fecha de Ingreso</label>
+                        <label htmlFor="fechaIngreso">{t('animals.form.entryDate')}</label>
                       </div>
                     </div>
                   </div>
@@ -343,7 +345,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                 <div className="card-header" style={{ background: 'var(--color-slate)', color: 'white' }}>
                   <h6 className="card-title mb-0 d-flex align-items-center">
                     <i className="bi bi-heart-pulse me-2"></i>
-                    Estado Reproductivo
+                    {t('animals.form.reproductiveStatus')}
                   </h6>
                 </div>
                 <div className="card-body">
@@ -358,30 +360,30 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                           disabled={formData.Sexo === null || formData.Sexo !== "F"}
                         >
                           {formData.Sexo === null ? (
-                            <option value="">Seleccione sexo</option>
+                            <option value="">{t('animals.form.selectSexFirst')}</option>
                           ) : formData.Sexo !== "F" ? (
                             <>
-                              <option value="false">No preñada</option>
+                              <option value="false">{t('animals.form.notPregnant')}</option>
                             </>
                           ) : (
                             <>
-                              <option value="false">No preñada</option>
-                              <option value="true">Preñada</option>
+                              <option value="false">{t('animals.form.notPregnant')}</option>
+                              <option value="true">{t('animals.form.pregnant')}</option>
                             </>
                           )}
                         </select>
-                        <label htmlFor="estaPreniada">Estado Reproductivo</label>
+                        <label htmlFor="estaPreniada">{t('animals.form.reproductiveStatus')}</label>
                       </div>
                       {formData.Sexo === "M" && (
                         <div className="form-text text-muted">
                           <i className="bi bi-info-circle me-1"></i>
-                          Los machos no pueden estar preñados
+                          {t('animals.form.maleCannotPregnant')}
                         </div>
                       )}
                       {formData.Sexo === null && (
                         <div className="form-text text-muted">
                           <i className="bi bi-info-circle me-1"></i>
-                          Seleccione primero el sexo del animal
+                          {t('animals.form.selectSexAnimal')}
                         </div>
                       )}
                     </div>
@@ -396,7 +398,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                               value={formData.Fecha_Estimada_Parto || ''}
                               onChange={(e) => setFormData({ ...formData, Fecha_Estimada_Parto: e.target.value || null })}
                             />
-                            <label htmlFor="fechaEstimadaParto">Fecha Estimada de Parto</label>
+                            <label htmlFor="fechaEstimadaParto">{t('animals.form.estimatedBirthDate')}</label>
                           </div>
                         </div>
                         <div className="col-md-6">
@@ -412,8 +414,8 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                                 setFormData({ ...formData, Fecha_Monta: matingDate, Fecha_Estimada_Parto: estimatedBirthDate });
                               }}
                             />
-                            <p className="small text-muted">(Opcional)</p>
-                            <label htmlFor="fechaMonta">Fecha de Monta</label>
+                            <p className="small text-muted">{t('animals.form.optional')}</p>
+                            <label htmlFor="fechaMonta">{t('animals.form.mountingDate')}</label>
                           </div>
                         </div>
                       </>
@@ -432,12 +434,12 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                   {createMutation.isPending || updateMutation.isPending ? (
                     <>
                       <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Guardando...
+                      {t('animals.form.saving')}
                     </>
                   ) : (
                     <>
                       <i className={`bi ${animal ? 'bi-check-circle' : 'bi-plus-circle'} me-2`}></i>
-                      {animal ? 'Actualizar' : 'Crear'}
+                      {animal ? t('animals.form.update') : t('animals.form.create')}
                     </>
                   )}
                 </button>
@@ -447,7 +449,7 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                   onClick={handleClose}
                 >
                   <i className="bi bi-x-circle me-2"></i>
-                  Cancelar
+                  {t('animals.form.cancel')}
                 </button>
               </div>
             </div>

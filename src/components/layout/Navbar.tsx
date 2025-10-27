@@ -10,9 +10,11 @@ declare global {
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { recordatoriosApi } from '../../api/recordatorios';
 import { PerfilUsuarioModal } from '../modals/PerfilUsuarioModal';
 import '../../styles/google-popover.css';
+import '../../styles/modern-navbar.css';
 
 interface NavbarProps {
   onToggleSidebar: () => void;
@@ -23,11 +25,14 @@ interface NavbarProps {
 export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [notiCount, setNotiCount] = useState(0);
   const [showPerfilModal, setShowPerfilModal] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
+  const [showLangMenu, setShowLangMenu] = useState(false);
   const popoverRef = useRef<HTMLButtonElement>(null);
   const popoverContainerRef = useRef<HTMLDivElement>(null);
+  const langMenuRef = useRef<HTMLDivElement>(null);
 
   // Función para obtener las iniciales del usuario
   const getUserInitials = (name: string) => {
@@ -55,6 +60,17 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
     setShowPopover(prev => !prev);
   }, []);
 
+  // Función para cambiar idioma
+  const changeLanguage = useCallback((lng: string) => {
+    i18n.changeLanguage(lng);
+    setShowLangMenu(false);
+  }, [i18n]);
+
+  // Función para toggle del menú de idioma
+  const toggleLangMenu = useCallback(() => {
+    setShowLangMenu(prev => !prev);
+  }, []);
+
   // Cerrar popover al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -71,6 +87,23 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showPopover]);
+
+  // Cerrar menú de idioma al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
+        setShowLangMenu(false);
+      }
+    };
+
+    if (showLangMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showLangMenu]);
 
   useEffect(() => {
     const fetchCount = async () => {
@@ -93,60 +126,97 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
   }, []);
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark navbar-ganado">
-      <div className="container-fluid px-lg-4">
+    <nav className="navbar navbar-expand-lg navbar-modern">
+      <div className="navbar-container">
         {/* Sidebar toggle button */}
         <button
-          className="btn btn-outline-light d-lg-none me-3 border-0"
+          className="navbar-menu-toggle"
           type="button"
           onClick={onToggleSidebar}
           aria-label="Abrir menú de navegación"
         >
-          <i className="bi bi-list fs-5"></i>
+          <i className="bi bi-list"></i>
         </button>
 
-        {/* Brand */}
-        <div className="navbar-brand d-flex align-items-center mb-0">
-          <div className="bg-white rounded-2 p-2 me-3 shadow-sm">
-            <i className="bi bi-clipboard-data-fill text-success fs-4"></i>
-          </div>
-          <div>
-            <Link className="text-white text-decoration-none" to="/">
-              <div className="fw-bold fs-4 lh-1">Ganado360</div>
-              <small className="text-light fw-normal">Sistema de Gestión Ganadera</small>
-            </Link>
-          </div>
-  </div>
+        {/* Brand with logo */}
+        <div className="navbar-brand-custom">
+          <Link className="navbar-brand-link" to="/">
+            <img 
+              src={isDark ? '/Logo_Negro_2.png' : '/Logo_Verde.png'} 
+              alt="Ganado360" 
+              className="navbar-logo"
+              style={{
+                height: '50px',
+                width: 'auto',
+                transition: 'all 0.3s ease-in-out'
+              }}
+            />
+            <div className="navbar-brand-text">
+              <div className="brand-title">{t('navbar.appName')}</div>
+              <small className="brand-subtitle">{t('navbar.subtitle')}</small>
+            </div>
+          </Link>
+        </div>
 
   {/* Right side actions */}
-  <div className="d-flex align-items-center gap-2">
+  <div className="navbar-actions">
 
           {/* Notificación de recordatorios automáticos */}
-          <div className="me-2 position-relative">
+          <button
+            className="navbar-action-btn"
+            title="Recordatorios"
+            onClick={() => navigate('/recordatorios')}
+          >
+            <i className="bi bi-bell-fill"></i>
+            {notiCount > 0 && (
+              <span className="navbar-badge">
+                {notiCount}
+              </span>
+            )}
+          </button>
+
+          {/* Language selector */}
+          <div className="position-relative" ref={langMenuRef}>
             <button
-              className="btn btn-outline-light border-0 position-relative"
-              style={{ fontSize: '1.5rem' }}
-              title="Recordatorios"
-              onClick={() => navigate('/recordatorios')}
+              className="navbar-action-btn"
+              onClick={toggleLangMenu}
+              aria-label={t('navbar.language')}
+              title={t('navbar.language')}
             >
-              <i className="bi bi-bell-fill"></i>
-              {notiCount > 0 && (
-                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                  {notiCount}
-                  <span className="visually-hidden">recordatorios</span>
-                </span>
-              )}
+              <i className="bi bi-translate"></i>
             </button>
+
+            {/* Language menu */}
+            {showLangMenu && (
+              <div className="google-popover position-absolute end-0 mt-2" style={{ zIndex: 1050, minWidth: '150px' }}>
+                <div className="google-popover-body">
+                  <button 
+                    className={`popover-action-btn ${i18n.language === 'es' ? 'active' : ''}`}
+                    onClick={() => changeLanguage('es')}
+                  >
+                    <i className="bi bi-check2"></i>
+                    Español
+                  </button>
+                  <button 
+                    className={`popover-action-btn ${i18n.language === 'en' ? 'active' : ''}`}
+                    onClick={() => changeLanguage('en')}
+                  >
+                    <i className="bi bi-check2"></i>
+                    English
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Theme toggle */}
           <button
-            className="btn btn-outline-light border-0"
+            className="navbar-action-btn"
             onClick={onToggleTheme}
-            aria-label={isDark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
-            title={isDark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+            aria-label={t(isDark ? 'navbar.theme.light' : 'navbar.theme.dark')}
+            title={t(isDark ? 'navbar.theme.light' : 'navbar.theme.dark')}
           >
-            <i className={`bi ${isDark ? 'bi-sun-fill' : 'bi-moon-fill'} fs-5`}></i>
+            <i className={`bi ${isDark ? 'bi-sun-fill' : 'bi-moon-fill'}`}></i>
           </button>
 
           {/* User profile popover */}
@@ -156,7 +226,7 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
               className="popover-trigger-btn"
               type="button"
               onClick={togglePopover}
-              aria-label="Menú de perfil de usuario"
+              aria-label={t('navbar.profile.menu')}
             >
               <div className="user-avatar-small">
                 {getUserInitials(user?.Nombre || 'U')}
@@ -189,7 +259,7 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
                     onClick={handleEditProfile}
                   >
                     <i className="bi bi-pencil-square"></i>
-                    Editar perfil
+                    {t('navbar.profile.edit')}
                   </button>
                   <hr className="popover-separator" />
                   <button 
@@ -197,7 +267,7 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
                     onClick={handleLogout}
                   >
                     <i className="bi bi-box-arrow-right"></i>
-                    Cerrar sesión
+                    {t('navbar.profile.logout')}
                   </button>
                 </div>
               </div>

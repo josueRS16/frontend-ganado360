@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAnimales } from '../../hooks/useAnimales';
 import { useCurrency } from '../../context/CurrencyContext';
 import { getImageDisplayUrl } from '../../utils/imageUtils';
@@ -12,6 +13,7 @@ interface VentaDetalleModalProps {
 }
 
 export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalProps) {
+  const { t } = useTranslation();
   // Obtener detalles del animal vendido
   const { data: animalesData } = useAnimales();
   const { monedaSeleccionada } = useCurrency();
@@ -37,7 +39,7 @@ export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalP
           <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
             <h5 className="modal-title fw-semibold d-flex align-items-center">
               <i className="bi bi-receipt me-2"></i>
-              Detalles de la Venta/Factura
+              {t('sales.modal.title')}
             </h5>
             <button type="button" className="btn-close btn-close-white" onClick={onClose}></button>
           </div>
@@ -46,11 +48,11 @@ export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalP
             {venta.Numero_Factura && (
               <div className="text-center mb-4 p-3 rounded" style={{ backgroundColor: 'var(--bs-secondary-bg)' }}>
                 <h4 className="mb-1" style={{ color: 'var(--color-base-green)' }}>
-                  FACTURA No. {venta.Numero_Factura}
+                  {t('sales.modal.invoiceNumber')} {venta.Numero_Factura}
                 </h4>
                 <div className="d-flex justify-content-center align-items-center gap-3 mb-2">
                   <p className="text-muted mb-0">
-                    Fecha de Emisión: {formatDate(venta.Fecha_Venta)}
+                    {t('sales.modal.issueDate')}: {formatDate(venta.Fecha_Venta)}
                   </p>
                   {venta.Moneda && (
                     <span className="badge" style={{ backgroundColor: 'var(--color-base-green)', color: 'white' }}>
@@ -75,7 +77,7 @@ export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalP
                   <div className="card-header bg-transparent">
                     <h6 className="mb-0 fw-semibold" style={{ color: 'var(--color-base-green)' }}>
                       <i className="bi bi-tag me-2"></i>
-                      Animal Vendido
+                      {t('sales.modal.soldAnimal')}
                     </h6>
                   </div>
                   <div className="card-body text-center">
@@ -95,23 +97,23 @@ export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalP
                     <div className="mt-3 text-start">
                       <div className="mb-2">
                         <i className="bi bi-gender-ambiguous me-2 text-muted"></i>
-                        <strong>Sexo:</strong> {animal?.Sexo === 'F' ? 'Hembra' : 'Macho'}
+                        <strong>{t('sales.modal.sex')}:</strong> {animal?.Sexo === 'F' ? t('animals.form.female') : t('animals.form.male')}
                       </div>
                       <div className="mb-2">
                         <i className="bi bi-speedometer2 me-2 text-muted"></i>
-                        <strong>Peso:</strong> {animal?.Peso || 'N/A'}
+                        <strong>{t('sales.modal.weight')}:</strong> {animal?.Peso || 'N/A'}
                       </div>
                       <div className="mb-2">
                         <i className="bi bi-card-list me-2 text-muted"></i>
-                        <strong>Raza:</strong> {animal?.Raza || 'N/A'}
+                        <strong>{t('sales.modal.breed')}:</strong> {animal?.Raza || 'N/A'}
                       </div>
                       <div className="mb-2">
                         <i className="bi bi-tag me-2 text-muted"></i>
-                        <strong>Categoría:</strong> {animal?.CategoriaTipo || 'N/A'}
+                        <strong>{t('sales.modal.category')}:</strong> {animal?.CategoriaTipo || 'N/A'}
                       </div>
                       <div className="mb-2">
                         <i className="bi bi-palette me-2 text-muted"></i>
-                        <strong>Color:</strong> {animal?.Color || 'N/A'}
+                        <strong>{t('sales.modal.color')}:</strong> {animal?.Color || 'N/A'}
                       </div>
                     </div>
                   </div>
@@ -125,20 +127,20 @@ export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalP
                   <div className="card-header bg-transparent">
                     <h6 className="mb-0 fw-semibold" style={{ color: 'var(--color-base-green)' }}>
                       <i className="bi bi-people me-2"></i>
-                      Información de las Partes
+                      {t('sales.modal.partiesInfo')}
                     </h6>
                   </div>
                   <div className="card-body">
                     <div className="row g-3">
                       <div className="col-md-6">
                         <div className="p-3 rounded" style={{ backgroundColor: 'var(--bs-secondary-bg)' }}>
-                          <small className="text-muted d-block mb-1">VENDEDOR</small>
-                          <strong>{venta.Vendedor || 'No especificado'}</strong>
+                          <small className="text-muted d-block mb-1">{t('sales.modal.seller')}</small>
+                          <strong>{venta.Vendedor || t('sales.modal.notSpecified')}</strong>
                         </div>
                       </div>
                       <div className="col-md-6">
                         <div className="p-3 rounded" style={{ backgroundColor: 'var(--bs-secondary-bg)' }}>
-                          <small className="text-muted d-block mb-1">COMPRADOR</small>
+                          <small className="text-muted d-block mb-1">{t('sales.modal.buyer')}</small>
                           <strong>{venta.Comprador}</strong>
                         </div>
                       </div>
@@ -151,27 +153,27 @@ export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalP
                   <div className="card-header bg-transparent">
                     <h6 className="mb-0 fw-semibold" style={{ color: 'var(--color-base-green)' }}>
                       <i className="bi bi-info-circle me-2"></i>
-                      Detalles de la Venta
+                      {t('sales.modal.saleDetails')}
                     </h6>
                   </div>
                   <div className="card-body">
                     <div className="row g-3">
                       <div className="col-md-6">
-                        <small className="text-muted d-block mb-1">Tipo de Venta</small>
+                        <small className="text-muted d-block mb-1">{t('sales.modal.saleType')}</small>
                         <span className="badge" style={{ backgroundColor: 'var(--color-tint1)', color: 'var(--color-charcoal)' }}>
                           {venta.Tipo_Venta}
                         </span>
                       </div>
                       <div className="col-md-6">
-                        <small className="text-muted d-block mb-1">Método de Pago</small>
-                        <strong>{venta.Metodo_Pago || 'No especificado'}</strong>
+                        <small className="text-muted d-block mb-1">{t('sales.modal.paymentMethod')}</small>
+                        <strong>{venta.Metodo_Pago || t('sales.modal.notSpecified')}</strong>
                       </div>
                       <div className="col-md-6">
-                        <small className="text-muted d-block mb-1">Cantidad</small>
-                        <strong>{venta.Cantidad || 1} unidad(es)</strong>
+                        <small className="text-muted d-block mb-1">{t('sales.modal.quantity')}</small>
+                        <strong>{venta.Cantidad || 1} {t('sales.modal.units')}</strong>
                       </div>
                       <div className="col-md-6">
-                        <small className="text-muted d-block mb-1">Registrado Por</small>
+                        <small className="text-muted d-block mb-1">{t('sales.modal.registeredBy')}</small>
                         <strong>{venta.UsuarioNombre}</strong>
                       </div>
                     </div>
@@ -183,14 +185,14 @@ export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalP
                   <div className="card-header bg-transparent">
                     <h6 className="mb-0 fw-semibold" style={{ color: 'var(--color-base-green)' }}>
                       <i className="bi bi-currency-dollar me-2"></i>
-                      Resumen Financiero
+                      {t('sales.modal.financialSummary')}
                     </h6>
                   </div>
                   <div className="card-body">
                     <table className="table table-borderless mb-0">
                       <tbody>
                         <tr>
-                          <td className="text-muted">Precio:</td>
+                          <td className="text-muted">{t('sales.modal.price')}:</td>
                           <td className="text-end fw-semibold">
                             {(() => {
                               // Robust fallback: prefer Precio_Unitario, then Precio, then 0
@@ -216,11 +218,11 @@ export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalP
                           </td>
                         </tr>
                         <tr>
-                          <td className="text-muted">Cantidad:</td>
+                          <td className="text-muted">{t('sales.modal.quantity')}:</td>
                           <td className="text-end fw-semibold">× {venta.Cantidad || 1}</td>
                         </tr>
                         <tr>
-                          <td className="text-muted">Subtotal:</td>
+                          <td className="text-muted">{t('sales.modal.subtotal')}:</td>
                           <td className="text-end fw-semibold">
                             <CurrencyValue
                               value={typeof venta.Subtotal === 'number' ? venta.Subtotal : Number(venta.Precio || 0) * Number(venta.Cantidad || 1)}
@@ -245,7 +247,7 @@ export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalP
                         </tr>
                         <tr className="border-top">
                           <td className="fs-5 fw-bold" style={{ color: 'var(--color-base-green)' }}>
-                            TOTAL:
+                            {t('sales.modal.total')}:
                           </td>
                           <td className="text-end fs-5 fw-bold" style={{ color: 'var(--color-base-green)' }}>
                             {(() => {
@@ -277,7 +279,7 @@ export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalP
                     <div className="card-header bg-transparent">
                       <h6 className="mb-0 fw-semibold" style={{ color: 'var(--color-base-green)' }}>
                         <i className="bi bi-chat-left-text me-2"></i>
-                        Observaciones
+                        {t('sales.modal.observations')}
                       </h6>
                     </div>
                     <div className="card-body">
@@ -292,7 +294,7 @@ export function VentaDetalleModal({ venta, isOpen, onClose }: VentaDetalleModalP
             <div className="d-flex justify-content-end w-100">
               <button type="button" className="btn btn-secondary" onClick={onClose}>
                 <i className="bi bi-x-circle me-2"></i>
-                Cerrar
+                {t('common.close')}
               </button>
             </div>
           </div>

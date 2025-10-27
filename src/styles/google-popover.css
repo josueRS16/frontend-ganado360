@@ -139,6 +139,23 @@
   border: none;
 }
 
+/* Idioma activo */
+.popover-action-btn.active {
+  background: rgba(18, 107, 50, 0.1);
+  color: var(--color-base-green);
+  font-weight: 600;
+}
+
+.popover-action-btn.active i.bi-check2 {
+  opacity: 1;
+}
+
+.popover-action-btn i.bi-check2 {
+  opacity: 0;
+  margin-right: -0.25rem;
+  transition: opacity 0.2s ease;
+}
+
 /* Botón trigger del popover */
 .popover-trigger-btn {
   background: transparent !important;

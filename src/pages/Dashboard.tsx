@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAnimales } from '../hooks/useAnimales';
 import { useCategorias } from '../hooks/useCategorias';
+import { useAuth } from '../hooks/useAuth';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { useMemo } from 'react';
 
@@ -53,10 +55,15 @@ function StatCard({ title, value, subtitle, icon, color = 'primary', to }: StatC
 }
 
 export function Dashboard() {
+  const { t } = useTranslation();
+  const { user } = useAuth();
   const { data: animalesData, isLoading: loadingAnimales } = useAnimales();
   const { data: categoriasData, isLoading: loadingCategorias } = useCategorias();
 
   const categorias = categoriasData?.data || [];
+  
+  // Verificar si el usuario es Administrador (RolID = 2)
+  const isAdmin = user?.RolID === 2;
 
   // Filtrar solo animales vivos usando lógica de Recordatorios
   const animalesVivos = useMemo(() => (animalesData?.data || []).filter(a => a.EstadoNombre?.toLowerCase() === 'viva'), [animalesData?.data]);
@@ -79,7 +86,7 @@ export function Dashboard() {
   }, {} as Record<string, number>);
 
   if (loadingAnimales || loadingCategorias) {
-    return <div>Cargando datos...</div>;
+    return <div>{t('common.loading')}</div>;
   }
 
   return (
@@ -87,7 +94,7 @@ export function Dashboard() {
       {/* Breadcrumb */}
       <Breadcrumb 
         items={[
-          { label: 'Dashboard', active: true }
+          { label: t('dashboard.title'), active: true }
         ]} 
       />
       
@@ -98,20 +105,20 @@ export function Dashboard() {
             <div>
               <h1 className="h2 mb-2 d-flex align-items-center page-title-dark" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-speedometer2 me-3"></i>
-                Dashboard Ejecutivo
+                {t('dashboard.title')}
               </h1>
               <p className="mb-0 fs-6">
-                Resumen integral del sistema de gestión ganadera • Tiempo real
+                {t('dashboard.breadcrumb.home')}
               </p>
             </div>
             <div className="d-flex flex-column flex-sm-row gap-2">
               <Link to="/animales" className="btn btn-gold fw-semibold">
                 <i className="bi bi-diagram-3-fill me-2"></i>
-                Gestionar Animales
+                {t('animals.title')}
               </Link>
               <Link to="/recordatorios" className="btn btn-secondary">
                 <i className="bi bi-calendar-check me-2"></i>
-                Ver Recordatorios
+                {t('reminders.title')}
               </Link>
             </div>
           </div>
@@ -122,9 +129,9 @@ export function Dashboard() {
       <div className="row row-cols-1 row-cols-md-2 row-cols-xxl-4 g-4 mb-5">
         <div className="col">
           <StatCard
-            title="Total de Animales"
+            title={t('dashboard.kpis.totalAnimals')}
             value={totalAnimales}
-            subtitle="Animales registrados en el sistema"
+            subtitle={t('dashboard.kpis.animals')}
             icon="bi-diagram-3-fill"
             color="primary"
             to="/animales"
@@ -132,9 +139,9 @@ export function Dashboard() {
         </div>
         <div className="col">
           <StatCard
-            title="Hembras"
+            title={t('animals.form.female')}
             value={hembras}
-            subtitle={`${totalAnimales > 0 ? Math.round((hembras / totalAnimales) * 100) : 0}% del inventario total`}
+            subtitle={`${totalAnimales > 0 ? Math.round((hembras / totalAnimales) * 100) : 0}%`}
             icon="bi-gender-female"
             color="success"
             to="/animales?Sexo=F"
@@ -142,9 +149,9 @@ export function Dashboard() {
         </div>
         <div className="col">
           <StatCard
-            title="Machos"
+            title={t('animals.form.male')}
             value={machos}
-            subtitle={`${totalAnimales > 0 ? Math.round((machos / totalAnimales) * 100) : 0}% del inventario total`}
+            subtitle={`${totalAnimales > 0 ? Math.round((machos / totalAnimales) * 100) : 0}%`}
             icon="bi-gender-male"
             color="info"
             to="/animales?Sexo=M"
@@ -152,9 +159,9 @@ export function Dashboard() {
         </div>
         <div className="col">
           <StatCard
-            title="Preñadas"
+            title={t('dashboard.kpis.activeAnimals')}
             value={animalesPreniadas}
-            subtitle={`${hembras > 0 ? Math.round((animalesPreniadas / hembras) * 100) : 0}% de las hembras`}
+            subtitle={`${hembras > 0 ? Math.round((animalesPreniadas / hembras) * 100) : 0}%`}
             icon="bi-heart-fill"
             color="gold"
             to="/animales?Esta_Preniada=1"
@@ -170,14 +177,16 @@ export function Dashboard() {
               <div className="d-flex align-items-center justify-content-between">
                 <h5 className="card-title mb-0 fw-semibold d-flex align-items-center">
                   <i className="bi bi-pie-chart-fill me-2" style={{ color: 'var(--color-base-green)' }}></i>
-                  Distribución por Categoría
+                  {t('dashboard.sections.categoryDistribution')}
                 </h5>
-                <Link to="/categorias" className="btn btn-outline-secondary btn-sm">
-                  <i className="bi bi-gear-fill me-1"></i>
-                  Gestionar
-                </Link>
+                {isAdmin && (
+                  <Link to="/categorias" className="btn btn-outline-secondary btn-sm">
+                    <i className="bi bi-gear-fill me-1"></i>
+                    {t('dashboard.buttons.manage')}
+                  </Link>
+                )}
               </div>
-              <p className="text-muted small mb-0">Análisis del inventario ganadero</p>
+              <p className="text-muted small mb-0">{t('dashboard.sections.analysis')}</p>
             </div>
             <div className="card-body">
               {categorias.length > 0 ? (
@@ -194,7 +203,7 @@ export function Dashboard() {
                               <i className="bi bi-tag-fill me-2 text-muted"></i>
                               <span className="fw-semibold">{categoria.Tipo}</span>
                             </div>
-                            <small className="text-muted">{count} animales registrados</small>
+                            <small className="text-muted">{count} {t('dashboard.messages.animalsRegistered')}</small>
                             <div className="progress mt-2" style={{ height: '6px' }}>
                               <div 
                                 className="progress-bar" 
@@ -226,12 +235,14 @@ export function Dashboard() {
               ) : (
                 <div className="text-center py-5">
                   <i className="bi bi-tags display-1 text-muted mb-3"></i>
-                  <h6 className="text-muted">No hay categorías registradas</h6>
-                  <p className="text-muted small mb-3">Configure las categorías para organizar su ganado</p>
-                  <Link to="/categorias" className="btn btn-gold">
-                    <i className="bi bi-plus-circle me-2"></i>
-                    Crear Primera Categoría
-                  </Link>
+                  <h6 className="text-muted">{t('dashboard.messages.noCategories')}</h6>
+                  <p className="text-muted small mb-3">{t('dashboard.messages.configureCategories')}</p>
+                  {isAdmin && (
+                    <Link to="/categorias" className="btn btn-gold">
+                      <i className="bi bi-plus-circle me-2"></i>
+                      {t('dashboard.buttons.createCategory')}
+                    </Link>
+                  )}
                 </div>
               )}
             </div>
@@ -244,9 +255,9 @@ export function Dashboard() {
             <div className="card-header bg-transparent border-0 pb-0">
               <h5 className="card-title mb-0 fw-semibold d-flex align-items-center">
                 <i className="bi bi-lightning-fill me-2" style={{ color: 'var(--color-gold)' }}></i>
-                Panel de Control Rápido
+                {t('dashboard.sections.quickActions')}
               </h5>
-              <p className="text-muted small mb-0">Acceso directo a funciones principales</p>
+              <p className="text-muted small mb-0">{t('dashboard.sections.directAccess')}</p>
             </div>
             <div className="card-body">
               <div className="d-grid gap-3">
@@ -256,8 +267,8 @@ export function Dashboard() {
                       <i className="bi bi-diagram-3-fill fs-4 text-primary"></i>
                     </div>
                     <div className="flex-grow-1">
-                      <div className="fw-semibold">Gestionar Animales</div>
-                      <small className="text-muted">Ver, editar e ingresar información del ganado</small>
+                      <div className="fw-semibold">{t('dashboard.buttons.manageAnimals')}</div>
+                      <small className="text-muted">{t('dashboard.links.livestockManagement')}</small>
                     </div>
                     <div className="text-end">
                       <span className="badge bg-primary rounded-pill fs-6">{totalAnimales}</span>
@@ -272,8 +283,8 @@ export function Dashboard() {
                       <i className="bi bi-calendar-check fs-4 text-warning"></i>
                     </div>
                     <div className="flex-grow-1">
-                      <div className="fw-semibold">Recordatorios</div>
-                      <small className="text-muted">Próximas vacunas y tratamientos programados</small>
+                      <div className="fw-semibold">{t('reminders.title')}</div>
+                      <small className="text-muted">{t('dashboard.links.upcomingTasks')}</small>
                     </div>
                     <div><i className="bi bi-arrow-right text-muted"></i></div>
                   </div>
@@ -285,25 +296,27 @@ export function Dashboard() {
                       <i className="bi bi-heart-pulse fs-4 text-info"></i>
                     </div>
                     <div className="flex-grow-1">
-                      <div className="fw-semibold">Historial Veterinario</div>
-                      <small className="text-muted">Registro completo de eventos médicos</small>
+                      <div className="fw-semibold">{t('history.title')}</div>
+                      <small className="text-muted">{t('dashboard.links.medicalEvents')}</small>
                     </div>
                     <div><i className="bi bi-arrow-right text-muted"></i></div>
                   </div>
                 </Link>
 
-                <Link to="/ventas" className="btn btn-outline-success text-start border-2 py-3">
-                  <div className="d-flex align-items-center">
-                    <div className="me-3">
-                      <i className="bi bi-cash-coin fs-4 text-success"></i>
+                {isAdmin && (
+                  <Link to="/ventas" className="btn btn-outline-success text-start border-2 py-3">
+                    <div className="d-flex align-items-center">
+                      <div className="me-3">
+                        <i className="bi bi-cash-coin fs-4 text-success"></i>
+                      </div>
+                      <div className="flex-grow-1">
+                        <div className="fw-semibold">{t('sales.title')}</div>
+                        <small className="text-muted">{t('dashboard.links.transactions')}</small>
+                      </div>
+                      <div><i className="bi bi-arrow-right text-muted"></i></div>
                     </div>
-                    <div className="flex-grow-1">
-                      <div className="fw-semibold">Ventas</div>
-                      <small className="text-muted">Registro y seguimiento de transacciones</small>
-                    </div>
-                    <div><i className="bi bi-arrow-right text-muted"></i></div>
-                  </div>
-                </Link>
+                  </Link>
+                )}
               </div>
             </div>
           </div>

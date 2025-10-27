@@ -1,6 +1,7 @@
 
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 
 interface SidebarProps {
@@ -23,6 +24,7 @@ interface MenuSection {
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [isDarkMode, setIsDarkMode] = useState(false);
   
   // Determinar si el usuario es Administrador
@@ -50,30 +52,30 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   // Definir secciones del menú basadas en el rol del usuario
   const allMenuSections: MenuSection[] = [
     {
-      title: 'Principal',
+      title: t('sidebar.sections.main'),
       items: [
-        { path: '/', label: 'Dashboard', description: 'Resumen general', icon: 'bi-speedometer2' },
-        { path: '/animales', label: 'Animales', description: 'Gestión de ganado', icon: 'bi-diagram-3-fill' },
-        { path: '/animales-detalle', label: 'Vista Detallada', description: 'Información completa', icon: 'bi-list-columns-reverse' },
+        { path: '/', label: t('sidebar.menu.dashboard.label'), description: t('sidebar.menu.dashboard.description'), icon: 'bi-speedometer2' },
+        { path: '/animales', label: t('sidebar.menu.animals.label'), description: t('sidebar.menu.animals.description'), icon: 'bi-diagram-3-fill' },
+        { path: '/animales-detalle', label: t('sidebar.menu.animalsDetail.label'), description: t('sidebar.menu.animalsDetail.description'), icon: 'bi-list-columns-reverse' },
       ]
     },
     {
-      title: 'Gestión',
+      title: t('sidebar.sections.management'),
       items: [
-        { path: '/recordatorios', label: 'Recordatorios', description: 'Próximas tareas', icon: 'bi-calendar-check' },
-        { path: '/historial', label: 'Historial Veterinario', description: 'Eventos veterinarios', icon: 'bi-heart-pulse' },
+        { path: '/recordatorios', label: t('sidebar.menu.reminders.label'), description: t('sidebar.menu.reminders.description'), icon: 'bi-calendar-check' },
+        { path: '/historial', label: t('sidebar.menu.history.label'), description: t('sidebar.menu.history.description'), icon: 'bi-heart-pulse' },
         // Ventas solo para Administrador
-        ...(isAdmin ? [{ path: '/ventas', label: 'Ventas', description: 'Registro de ventas', icon: 'bi-cash-coin' }] : []),
+        ...(isAdmin ? [{ path: '/ventas', label: t('sidebar.menu.sales.label'), description: t('sidebar.menu.sales.description'), icon: 'bi-cash-coin' }] : []),
       ]
     },
     // Sección de Configuración solo para Administrador
     ...(isAdmin ? [{
-      title: 'Configuración',
+      title: t('sidebar.sections.settings'),
       items: [
-        { path: '/categorias', label: 'Categorías', description: 'Tipos de ganado', icon: 'bi-tags' },
-        { path: '/estados', label: 'Estados', description: 'Estados del ganado', icon: 'bi-flag' },
-        { path: '/roles', label: 'Roles', description: 'Roles de usuario', icon: 'bi-person-badge' },
-        { path: '/usuarios', label: 'Usuarios', description: 'Gestión de usuarios', icon: 'bi-people' },
+        { path: '/categorias', label: t('sidebar.menu.categories.label'), description: t('sidebar.menu.categories.description'), icon: 'bi-tags' },
+        { path: '/estados', label: t('sidebar.menu.states.label'), description: t('sidebar.menu.states.description'), icon: 'bi-flag' },
+        { path: '/roles', label: t('sidebar.menu.roles.label'), description: t('sidebar.menu.roles.description'), icon: 'bi-person-badge' },
+        { path: '/usuarios', label: t('sidebar.menu.users.label'), description: t('sidebar.menu.users.description'), icon: 'bi-people' },
       ]
     }] : [])
   ];

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecordatorios, useCreateRecordatorio, useUpdateRecordatorio, useDeleteRecordatorio } from '../hooks/useRecordatorios';
 import { useAnimales } from '../hooks/useAnimales';
 import { useQueryParams } from '../hooks/useQueryParams';
@@ -16,6 +17,7 @@ interface RecordatorioModalProps {
 }
 
 function RecordatorioModal({ recordatorio, isOpen, onClose, onSave }: RecordatorioModalProps) {
+  const { t } = useTranslation();
   // Mostrar todos los animales sin filtro
   const { data: animalesData } = useAnimales({});
   // Solo mostrar animales en estado 'viva'
@@ -85,16 +87,16 @@ function RecordatorioModal({ recordatorio, isOpen, onClose, onSave }: Recordator
           <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
             <h5 className="modal-title fw-semibold d-flex align-items-center">
               <i className="bi bi-calendar-check me-2"></i>
-              {recordatorio ? 'Editar Recordatorio' : 'Nuevo Recordatorio'}
+              {recordatorio ? t('reminders.editReminder') : t('reminders.newReminder')}
             </h5>
             <button type="button" className="btn-close btn-close-white" onClick={onClose}></button>
           </div>
           <form onSubmit={handleSubmit}>
             <div className="modal-body p-4">
-            <p className="text-muted small">Solo animales vivos</p>
+            <p className="text-muted small">{t('reminders.messages.onlyAlive')}</p>
               <div className="row g-3">
                 <div className="col-md-6">
-                  <label htmlFor="animal" className="form-label fw-semibold">Animal</label>
+                  <label htmlFor="animal" className="form-label fw-semibold">{t('reminders.form.animal')}</label>
                   <select
                     className="form-select"
                     id="animal"
@@ -110,7 +112,7 @@ function RecordatorioModal({ recordatorio, isOpen, onClose, onSave }: Recordator
                   </select>
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="fecha" className="form-label fw-semibold">Fecha Recordatorio</label>
+                  <label htmlFor="fecha" className="form-label fw-semibold">{t('reminders.form.reminderDate')}</label>
                   <input
                     type="date"
                     className="form-control"
@@ -121,26 +123,26 @@ function RecordatorioModal({ recordatorio, isOpen, onClose, onSave }: Recordator
                   />
                 </div>
                 <div className="col-12">
-                  <label htmlFor="titulo" className="form-label fw-semibold">Título</label>
+                  <label htmlFor="titulo" className="form-label fw-semibold">{t('reminders.form.type')}</label>
                   <input
                     type="text"
                     className="form-control"
                     id="titulo"
                     value={formData.Titulo}
                     onChange={(e) => setFormData({ ...formData, Titulo: e.target.value })}
-                    placeholder="Ej: Vacuna Triple, Desparasitación..."
+                    placeholder={t('reminders.form.typePlaceholder')}
                     required
                   />
                 </div>
                 <div className="col-12">
-                  <label htmlFor="descripcion" className="form-label fw-semibold">Descripción</label>
+                  <label htmlFor="descripcion" className="form-label fw-semibold">{t('reminders.form.description')}</label>
                   <textarea
                     className="form-control"
                     id="descripcion"
                     rows={3}
                     value={formData.Descripcion}
                     onChange={(e) => setFormData({ ...formData, Descripcion: e.target.value })}
-                    placeholder="Descripción detallada del recordatorio..."
+                    placeholder={t('reminders.form.descriptionPlaceholder')}
                     required
                   />
                 </div>
@@ -150,11 +152,11 @@ function RecordatorioModal({ recordatorio, isOpen, onClose, onSave }: Recordator
               <div className="d-flex justify-content-end gap-2 w-100">
                 <button type="button" className="btn btn-secondary" onClick={onClose}>
                   <i className="bi bi-x-circle me-2"></i>
-                  Cancelar
+                  {t('common.cancel')}
                 </button>
                 <button type="submit" className="btn btn-apply">
                   <i className="bi bi-check-circle me-2"></i>
-                  {recordatorio ? 'Actualizar' : 'Crear'}
+                  {recordatorio ? t('common.update') : t('common.create')}
                 </button>
               </div>
             </div>
@@ -166,6 +168,7 @@ function RecordatorioModal({ recordatorio, isOpen, onClose, onSave }: Recordator
 }
 
 export function Recordatorios() {
+  const { t } = useTranslation();
   const { params, updateParams, clearParams, setParams } = useQueryParams<RecordatoriosFilters>();
   
   // Set default pagination parameters if not present
@@ -273,9 +276,9 @@ export function Recordatorios() {
     } else if (width < 992) {
       return 40; // md - tablet
     } else if (width < 1200) {
-      return 50; // lg - desktop pequeño
+      return 35; // lg - desktop pequeño
     } else {
-      return 65; // xl+ - desktop grande
+      return 45; // xl+ - desktop grande
     }
   };
 
@@ -311,10 +314,10 @@ export function Recordatorios() {
           id: modalState.recordatorio.ID_Recordatorio,
           data: formData
         });
-        showToast('Recordatorio actualizado exitosamente', 'success');
+        showToast(t('reminders.messages.updateSuccess'), 'success');
       } else {
         await createMutation.mutateAsync(formData);
-        showToast('Recordatorio creado exitosamente', 'success');
+        showToast(t('reminders.messages.createSuccess'), 'success');
       }
       closeModal();
       // Refrescar tabla y contador de notificaciones inmediatamente
@@ -329,7 +332,7 @@ export function Recordatorios() {
       };
       tryUpdateNotificationCount2();
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Error al guardar el recordatorio';
+      const errorMessage = error instanceof Error ? error.message : t('reminders.messages.saveError');
       showToast(errorMessage, 'error');
     }
   };
@@ -338,7 +341,7 @@ export function Recordatorios() {
     if (window.confirm(`¿Estás seguro de eliminar el recordatorio "${recordatorio.Titulo}"?`)) {
       try {
         await deleteMutation.mutateAsync(recordatorio.ID_Recordatorio);
-        showToast('Recordatorio eliminado exitosamente', 'success');
+        showToast(t('reminders.messages.deleteSuccess'), 'success');
         // Refrescar tabla y contador de notificaciones inmediatamente
         refetch();
         // Refrescar contador de notificaciones, reintentando si la función aún no está lista
@@ -351,7 +354,7 @@ export function Recordatorios() {
         };
         tryUpdateNotificationCount3();
       } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : 'Error al eliminar el recordatorio';
+        const errorMessage = error instanceof Error ? error.message : t('reminders.messages.deleteError');
         showToast(errorMessage, 'error');
       }
     }
@@ -373,7 +376,7 @@ export function Recordatorios() {
       };
       tryUpdateNotificationCount();
     } catch {
-      showToast('Error al cambiar el estado', 'error');
+      showToast(t('reminders.messages.stateChangeError'), 'error');
     }
   };
 
@@ -397,10 +400,10 @@ export function Recordatorios() {
   if (error) {
     return (
       <div className="alert alert-danger" role="alert">
-        <h4 className="alert-heading">Error al cargar los recordatorios</h4>
-        <p>{error.message || 'Ocurrió un error inesperado'}</p>
+        <h4 className="alert-heading">{t('reminders.messages.errorLoading')}</h4>
+        <p>{error.message || t('common.unexpectedError')}</p>
         <button className="btn btn-outline-danger" onClick={() => window.location.reload()}>
-          Intentar de nuevo
+          {t('common.tryAgain')}
         </button>
       </div>
     );
@@ -411,8 +414,8 @@ export function Recordatorios() {
       {/* Breadcrumb */}
       <Breadcrumb 
         items={[
-          { label: 'Dashboard', path: '/' },
-          { label: 'Recordatorios', active: true }
+          { label: t('dashboard.title'), path: '/' },
+          { label: t('reminders.title'), active: true }
         ]} 
       />
       
@@ -423,10 +426,10 @@ export function Recordatorios() {
             <div>
               <h1 className="h2 mb-2 d-flex align-items-center page-title-dark" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-calendar-check me-3"></i>
-                Gestión de Recordatorios
+                {t('reminders.title')}
               </h1>
               <p className="mb-0 fs-6">
-                {isLoading ? 'Cargando recordatorios...' : pagination ? `${pagination.totalCount} recordatorios registrados` : `${recordatorios.length} recordatorios registrados`}
+                {isLoading ? t('reminders.messages.loading') : pagination ? `${pagination.totalCount} ${t('reminders.messages.registered')}` : `${recordatorios.length} ${t('reminders.messages.registered')}`}
               </p>
             </div>
             <div className="d-flex flex-column flex-sm-row gap-2">
@@ -434,17 +437,17 @@ export function Recordatorios() {
                 className="btn btn-outline-secondary d-lg-none" 
                 data-bs-toggle="offcanvas" 
                 data-bs-target="#filtersOffcanvas"
-                aria-label="Abrir filtros"
+                aria-label={t('animals.buttons.filters')}
               >
                 <i className="bi bi-funnel me-2"></i>
-                Filtros
+                {t('animals.buttons.filters')}
                 {hasActiveFilters && (
                   <span className="badge bg-primary ms-2">{Object.keys(params).length}</span>
                 )}
               </button>
               <button className="btn btn-apply" onClick={() => openModal()}>
                 <i className="bi bi-plus-circle-fill me-2"></i>
-                <span className="fw-bold">Añadir</span>
+                <span className="fw-bold">{t('common.add')}</span>
               </button>
             </div>
           </div>
@@ -455,14 +458,14 @@ export function Recordatorios() {
       <div className="row mb-4">
         <div className="col-12">
           <div className="d-flex justify-content-center">
-            <div className="btn-group" role="group" aria-label="Filtro de estado">
+            <div className="btn-group" role="group" aria-label={t('reminders.filters.state')}>
               <button
                 type="button"
                 className={`btn ${!params.Estado ? 'btn-apply' : 'btn-outline-secondary'}`}
                 onClick={() => handleEstadoChange(undefined)}
               >
                 <i className="bi bi-list-ul me-2"></i>
-                Todo
+                {t('reminders.filters.all')}
               </button>
               <button
                 type="button"
@@ -470,7 +473,7 @@ export function Recordatorios() {
                 onClick={() => handleEstadoChange('pendiente')}
               >
                 <i className="bi bi-clock me-2"></i>
-                Pendientes
+                {t('reminders.filters.pending')}
               </button>
               <button
                 type="button"
@@ -478,7 +481,7 @@ export function Recordatorios() {
                 onClick={() => handleEstadoChange('hecho')}
               >
                 <i className="bi bi-check-circle me-2"></i>
-                Realizados
+                {t('reminders.filters.completed')}
               </button>
             </div>
           </div>
@@ -492,34 +495,34 @@ export function Recordatorios() {
             <div className="d-flex justify-content-between align-items-center">
               <h6 className="mb-0 fw-semibold d-flex align-items-center section-title-dark" style={{ color: 'var(--color-base-green)' }}>
                 <i className="bi bi-funnel-fill me-2"></i>
-                Filtros de Búsqueda
+                {t('reminders.filters.title')}
               </h6>
               {hasActiveFilters && (
                 <button className="btn btn-outline-secondary btn-sm" onClick={clearAllFilters}>
                   <i className="bi bi-x-circle me-1"></i>
-                  Limpiar Filtros
+                  {t('animals.buttons.clearFilters')}
                 </button>
               )}
             </div>
             <div className="row">
               <div className="col-md-6">
-                <label className="form-label">Fecha desde</label>
+                <label className="form-label">{t('reminders.filters.dateFrom')}</label>
                 <input
                   type="date"
                   className="form-control"
                   value={params.fechaDesde || ''}
                   onChange={(e) => handleFilterChange('fechaDesde', e.target.value || undefined)}
-                  aria-label="Fecha desde"
+                  aria-label={t('reminders.filters.dateFrom')}
                 />
               </div>
               <div className="col-md-6">
-                <label className="form-label">Fecha hasta</label>
+                <label className="form-label">{t('reminders.filters.dateTo')}</label>
                 <input
                   type="date"
                   className="form-control"
                   value={params.fechaHasta || ''}
                   onChange={(e) => handleFilterChange('fechaHasta', e.target.value || undefined)}
-                  aria-label="Fecha hasta"
+                  aria-label={t('reminders.filters.dateTo')}
                 />
               </div>
             </div>
@@ -532,37 +535,37 @@ export function Recordatorios() {
         <div className="offcanvas-header">
           <h5 className="offcanvas-title d-flex align-items-center">
             <i className="bi bi-funnel-fill me-2"></i>
-            Filtros de Búsqueda
+            {t('reminders.filters.title')}
           </h5>
-          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar filtros"></button>
+          <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label={t('animals.buttons.closeFilters')}></button>
         </div>
         <div className="offcanvas-body">
           <div className="row g-3">
             <div className="col-12">
-              <label className="form-label">Fecha desde</label>
+              <label className="form-label">{t('reminders.filters.dateFrom')}</label>
               <input
                 type="date"
                 className="form-control"
                 value={params.fechaDesde || ''}
                 onChange={(e) => handleFilterChange('fechaDesde', e.target.value || undefined)}
-                aria-label="Fecha desde"
+                aria-label={t('reminders.filters.dateFrom')}
               />
             </div>
             <div className="col-12">
-              <label className="form-label">Fecha hasta</label>
+              <label className="form-label">{t('reminders.filters.dateTo')}</label>
               <input
                 type="date"
                 className="form-control"
                 value={params.fechaHasta || ''}
                 onChange={(e) => handleFilterChange('fechaHasta', e.target.value || undefined)}
-                aria-label="Fecha hasta"
+                aria-label={t('reminders.filters.dateTo')}
               />
             </div>
           </div>
           <div className="d-grid gap-2 mt-4">
             <button className="btn btn-apply" data-bs-dismiss="offcanvas">
               <i className="bi bi-search me-2"></i>
-              Aplicar Filtros
+              {t('common.applyFilters')}
             </button>
             <button className="btn btn-outline-secondary" onClick={clearAllFilters}>
               <i className="bi bi-x-circle me-2"></i>
@@ -589,11 +592,11 @@ export function Recordatorios() {
           <div className="card-body table-state-empty">
             <div className="d-flex flex-column align-items-center">
               <i className="bi bi-calendar-check display-1 text-muted mb-3"></i>
-              <h5 className="text-muted mb-2">No se encontraron recordatorios</h5>
+              <h5 className="text-muted mb-2">{t('reminders.messages.noData')}</h5>
               <p className="text-muted text-center mb-4">
                 {hasActiveFilters 
-                  ? 'No hay recordatorios que coincidan con los filtros aplicados.'
-                  : 'Aún no tienes recordatorios registrados en el sistema.'
+                  ? t('reminders.messages.noMatches')
+                  : t('reminders.messages.noRegistered')
                 }
               </p>
               {hasActiveFilters ? (
@@ -632,12 +635,12 @@ export function Recordatorios() {
                 <table className="table table-ganado table-hover align-middle mb-0">
                   <thead>
                     <tr>
-                      <th scope="col" className="cell-tight text-center fw-bold">Título</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">Animal</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">Descripción</th>
-                      <th scope="col" className="cell-tight text-center fw-bold">Fecha</th>
-                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">Estado</th>
-                      <th scope="col" className="cell-tight text-center fw-bold">Acciones</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('reminders.table.title')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">{t('reminders.table.animal')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-lg-table-cell">{t('reminders.table.description')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('reminders.table.date')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold d-none d-md-table-cell">{t('reminders.table.state')}</th>
+                      <th scope="col" className="cell-tight text-center fw-bold">{t('reminders.table.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -651,7 +654,7 @@ export function Recordatorios() {
                             <div className='text-body'>{renderDescripcion(recordatorio)}</div>
                             <div className='text-body'>
                               <span className={`badge ${recordatorio.Estado === 'hecho' ? 'bg-success' : 'bg-warning text-dark'}`}>
-                                {recordatorio.Estado === 'hecho' ? 'Realizado' : 'Pendiente'}
+                                {recordatorio.Estado === 'hecho' ? t('reminders.filters.completed') : t('reminders.filters.pending')}
                               </span>
                             </div>
                           </div>
@@ -667,16 +670,16 @@ export function Recordatorios() {
                         </td>
                         <td className="cell-tight text-center d-none d-md-table-cell">
                           <span className={`badge ${recordatorio.Estado === 'hecho' ? 'bg-success' : 'bg-warning text-dark'}`}>
-                            {recordatorio.Estado === 'hecho' ? 'Realizado' : 'Pendiente'}
+                            {recordatorio.Estado === 'hecho' ? t('reminders.filters.completed') : t('reminders.filters.pending')}
                           </span>
                         </td>
                         <td className="cell-tight text-center">
-                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label="Acciones del recordatorio">
+                          <div className="d-flex gap-1 justify-content-center flex-wrap" role="group" aria-label={t('reminders.table.actions')}>
                             <button
                               className="btn btn-sm btn-warning"
                               onClick={() => openModal(recordatorio)}
-                              title="Editar"
-                              aria-label="Editar recordatorio"
+                              title={t('common.edit')}
+                              aria-label={t('common.edit')}
                             >
                               <i className="bi bi-pencil"></i>
                               {/* <span className="d-none d-lg-inline ms-1">Editar</span> */}
@@ -685,8 +688,8 @@ export function Recordatorios() {
                               <button
                                 className="btn btn-sm btn-success"
                                 onClick={() => handleChangeEstado(recordatorio, 'hecho')}
-                                title="Marcar como realizado"
-                                aria-label="Marcar como realizado"
+                                title={t('reminders.buttons.markCompleted')}
+                                aria-label={t('reminders.buttons.markCompleted')}
                               >
                                 <i className="bi bi-check-circle"></i>
                                 {/* <span className="d-none d-lg-inline ms-1">Hecho</span> */}
@@ -695,8 +698,8 @@ export function Recordatorios() {
                               <button
                                 className="btn btn-sm btn-secondary"
                                 onClick={() => handleChangeEstado(recordatorio, 'pendiente')}
-                                title="Marcar como pendiente"
-                                aria-label="Marcar como pendiente"
+                                title={t('reminders.buttons.markPending')}
+                                aria-label={t('reminders.buttons.markPending')}
                               >
                                 <i className="bi bi-arrow-clockwise"></i>
                                 {/* <span className="d-none d-lg-inline ms-1">Pendiente</span> */}
@@ -706,8 +709,8 @@ export function Recordatorios() {
                               className="btn btn-sm btn-danger"
                               onClick={() => handleDelete(recordatorio)}
                               disabled={deleteMutation.isPending}
-                              title="Eliminar"
-                              aria-label="Eliminar recordatorio"
+                              title={t('common.delete')}
+                              aria-label={t('common.delete')}
                             >
                               <i className="bi bi-trash"></i>
                               {/* <span className="d-none d-lg-inline ms-1">Eliminar</span> */}
@@ -757,7 +760,7 @@ export function Recordatorios() {
                         style={{ width: 'auto' }}
                         value={currentParams.limit || 10}
                         onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
-                        aria-label="Elementos por página"
+                        aria-label={t('pagination.itemsPerPage')}
                       >
                         <option value={5}>5</option>
                         <option value={10}>10</option>
@@ -792,13 +795,13 @@ export function Recordatorios() {
               <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
                 <h5 className="modal-title fw-semibold d-flex align-items-center">
                   <i className="bi bi-card-text me-2"></i>
-                  Descripción Completa
+                  {t('reminders.modal.fullDescription')}
                 </h5>
                 <button
                   type="button"
                   className="btn-close btn-close-white"
                   onClick={closeDescripcionModal}
-                  aria-label="Cerrar modal"
+                  aria-label={t('common.close')}
                 ></button>
               </div>
               <div className="modal-body bg-light bg-dark-subtle p-4" data-bs-theme="auto">
@@ -821,7 +824,7 @@ export function Recordatorios() {
                         <div className="row g-3">
                           <div className="col-12">
                             <div className="p-3 bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-2 fw-semibold">DESCRIPCIÓN COMPLETA</div>
+                              <div className="text-muted small mb-2 fw-semibold">{t('reminders.modal.fullDescriptionLabel')}</div>
                               <div className="text-body" style={{ lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
                                 {descripcionModalState.recordatorio.Descripcion}
                               </div>
@@ -833,7 +836,7 @@ export function Recordatorios() {
                         <div className="row g-3 mt-3">
                           <div className="col-6">
                             <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-1">FECHA</div>
+                              <div className="text-muted small mb-1">{t('reminders.modal.date')}</div>
                               <div className="fw-semibold text-body">
                                 {new Date(descripcionModalState.recordatorio.Fecha_Recordatorio).toLocaleDateString('es-ES', {
                                   year: 'numeric',
@@ -845,10 +848,10 @@ export function Recordatorios() {
                           </div>
                           <div className="col-6">
                             <div className="text-center p-3 bg-light bg-dark-subtle rounded-3">
-                              <div className="text-muted small mb-1">ESTADO</div>
+                              <div className="text-muted small mb-1">{t('reminders.modal.state')}</div>
                               <div className="fw-semibold text-body">
                                 <span className={`badge ${descripcionModalState.recordatorio.Estado === 'hecho' ? 'bg-success' : 'bg-warning text-dark'}`}>
-                                  {descripcionModalState.recordatorio.Estado === 'hecho' ? 'Realizado' : 'Pendiente'}
+                                  {descripcionModalState.recordatorio.Estado === 'hecho' ? t('reminders.filters.completed') : t('reminders.filters.pending')}
                                 </span>
                               </div>
                             </div>
@@ -867,7 +870,7 @@ export function Recordatorios() {
                     onClick={closeDescripcionModal}
                   >
                     <i className="bi bi-x-circle me-2"></i>
-                    Cerrar
+                    {t('common.close')}
                   </button>
                 </div>
               </div>
