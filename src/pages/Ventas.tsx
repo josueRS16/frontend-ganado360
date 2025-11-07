@@ -179,6 +179,17 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Agregar confirmación antes de guardar o editar
+    const userConfirmed = window.confirm(
+      venta
+        ? `¿Estás seguro de que deseas actualizar la venta de "${venta.AnimalNombre}"?${venta.Numero_Factura ? `\nFactura: ${venta.Numero_Factura}` : ''}`
+        : '¿Estás seguro de que deseas registrar una nueva venta?'
+    );
+    if (!userConfirmed) {
+      return; // Salir si el usuario cancela
+    }
+
     const precioUnitario = Number(formData.Precio_Unitario) || 0;
     const idAnimal = Number(formData.ID_Animal) || 0;
     
@@ -215,65 +226,66 @@ function VentaModal({ venta, isOpen, onClose, onSave }: VentaModalProps) {
 
   if (!isOpen) return null;
 
-  return (
-    <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="modal-dialog modal-lg modal-dialog-centered">
-        <div className="modal-content border-0 shadow-lg" style={{ backgroundColor: 'var(--bs-body-bg)' }}>
-          <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
-            <h5 className="modal-title fw-semibold d-flex align-items-center">
-              <i className="bi bi-receipt-cutoff me-2"></i>
-              {venta ? t('sales.editSale') : t('sales.newSale')}
-            </h5>
-            <button type="button" className="btn-close btn-close-white" onClick={onClose}></button>
-          </div>
-          <form onSubmit={handleSubmit}>
-            <div className="modal-body p-4">
-              <p className="text-muted small mb-4">
-                <i className="bi bi-info-circle me-1"></i>
-                {venta ? t('sales.form.editInfo') : t('sales.form.newInfo')}
-              </p>
+ return (
+  <div className="modal show d-block" tabIndex={-1} style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    <div className="modal-dialog modal-lg modal-dialog-centered">
+      <div className="modal-content border-0 shadow-lg" style={{ backgroundColor: 'var(--bs-body-bg)' }}>
+        <div className="modal-header" style={{ background: 'var(--color-base-green)', color: 'white' }}>
+          <h5 className="modal-title fw-semibold d-flex align-items-center">
+            <i className="bi bi-receipt-cutoff me-2"></i>
+            {venta ? t('sales.editSale') : t('sales.newSale')}
+          </h5>
+          <button type="button" className="btn-close btn-close-white" onClick={onClose}></button>
+        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="modal-body p-4">
+            <p className="text-muted small mb-4">
+              <i className="bi bi-info-circle me-1"></i>
+              {venta ? t('sales.form.editInfo') : t('sales.form.newInfo')}
+            </p>
 
-              {/* SECCIÓN 1: INFORMACIÓN DEL ANIMAL Y FECHA */}
-              <div className="card mb-3 border-0 shadow-sm">
-                <div className="card-header bg-transparent">
-                  <h6 className="mb-0 fw-semibold" style={{ color: 'var(--color-base-green)' }}>
-                    <i className="bi bi-tag me-2"></i>
-                    {t('sales.form.animalInfo')}
-                  </h6>
-                </div>
-                <div className="card-body">
-                  <div className="row g-3">
-                    <div className="col-md-8">
-                      <label htmlFor="animal" className="form-label fw-semibold">{t('sales.form.animal')} *</label>
-                      <select
-                        className="form-select"
-                        id="animal"
-                        value={formData.ID_Animal}
-                        onChange={(e) => setFormData({ ...formData, ID_Animal: Number(e.target.value) })}
-                        required
-                      >
-                        <option value="0">{t('sales.form.selectAnimal')}</option>
-                        {animales.map(animal => (
-                          <option key={animal.ID_Animal} value={animal.ID_Animal}>
-                            {animal.Nombre} - {animal.CategoriaTipo} ({animal.Raza})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="col-md-4">
-                      <label htmlFor="fecha" className="form-label fw-semibold">{t('sales.form.saleDate')} *</label>
-                      <input
-                        type="date"
-                        className="form-control"
-                        id="fecha"
-                        value={formData.Fecha_Venta}
-                        onChange={(e) => setFormData({ ...formData, Fecha_Venta: e.target.value })}
-                        required
-                      />
-                    </div>
+            {/* SECCIÓN 1: INFORMACIÓN DEL ANIMAL Y FECHA */}
+            <div className="card mb-3 border-0 shadow-sm">
+              <div className="card-header bg-transparent">
+                <h6 className="mb-0 fw-semibold" style={{ color: 'var(--color-base-green)' }}>
+                  <i className="bi bi-tag me-2"></i>
+                  {t('sales.form.animalInfo')}
+                </h6>
+              </div>
+              <div className="card-body">
+                <div className="row g-3">
+                  <div className="col-md-8">
+                    <label htmlFor="animal" className="form-label fw-semibold">{t('sales.form.animal')} *</label>
+                    <select
+                      className="form-select"
+                      id="animal"
+                      value={formData.ID_Animal}
+                      onChange={(e) => setFormData({ ...formData, ID_Animal: Number(e.target.value) })}
+                      required
+                    >
+                      <option value="0">{t('sales.form.selectAnimal')}</option>
+                      {animales.map(animal => (
+                        <option key={animal.ID_Animal} value={animal.ID_Animal}>
+                          {animal.Nombre} - {animal.CategoriaTipo} ({animal.Raza})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-md-4">
+                    <label htmlFor="fecha" className="form-label fw-semibold">{t('sales.form.saleDate')} *</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="fecha"
+                      value={formData.Fecha_Venta}
+                      onChange={(e) => setFormData({ ...formData, Fecha_Venta: e.target.value })}
+                      required
+                    />
                   </div>
                 </div>
               </div>
+            </div>
+
 
               {/* SECCIÓN 2: INFORMACIÓN DE FACTURACIÓN */}
               <div className="card mb-3 border-0 shadow-sm">
@@ -720,7 +732,10 @@ export function Ventas() {
   // Cálculos de estadísticas (priorizar Total de factura sobre Precio)
   const totalIngresos = useMemo(() => {
     return ventas.reduce((sum, venta) => {
-      let monto = venta.Total || venta.Precio;
+      let subtotal = venta.Subtotal ?? 0;
+      let ivaMonto = venta.IVA_Monto ?? 0;
+      let monto = venta.Total || (subtotal + ivaMonto) || venta.Precio;
+
       if (typeof monto === 'string') {
         monto = parseFloat(monto);
       }
@@ -729,7 +744,6 @@ export function Ventas() {
       // Convertir a la moneda seleccionada si es necesario
       const monedaVenta = venta.Moneda || 'CRC';
       if (monedaVenta !== monedaSeleccionada) {
-        // Usar la función de conversión directa
         const valorConvertido = formatearValorConConversion(montoNumerico, monedaVenta, false);
         const valorNumerico = typeof valorConvertido === 'string' ? parseFloat(valorConvertido.replace(/[^\d.-]/g, '')) : valorConvertido;
         return sum + (isNaN(valorNumerico) ? 0 : valorNumerico);

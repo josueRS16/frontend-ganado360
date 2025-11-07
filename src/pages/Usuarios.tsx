@@ -45,6 +45,17 @@ function UsuarioModal({ usuario, isOpen, onClose, onSave }: UsuarioModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Agregar confirmación antes de guardar o editar
+    const userConfirmed = window.confirm(
+      usuario
+        ? `¿Estás seguro de que deseas actualizar el usuario "${usuario.Nombre}"?`
+        : '¿Estás seguro de que deseas registrar un nuevo usuario?'
+    );
+    if (!userConfirmed) {
+      return; // Salir si el usuario cancela
+    }
+
     if (formData.Nombre.trim() && formData.Correo.trim()) {
       onSave(formData);
     }

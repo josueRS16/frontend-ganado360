@@ -158,6 +158,12 @@ export function ImageSelector({
   };
 
   const handleClear = async () => {
+    // Agregar confirmación antes de eliminar
+    const userConfirmed = window.confirm('¿Estás seguro de que deseas eliminar esta imagen?');
+    if (!userConfirmed) {
+      return; // Salir si el usuario cancela
+    }
+
     try {
       if (value && value.trim()) {
         if (uploadApi.isLocalUploadedImage(value)) {

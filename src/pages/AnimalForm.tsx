@@ -42,6 +42,14 @@ const createInitialFormData = (animal?: Animal): CreateAnimalRequest => {
   };
 };
 
+// Utility function to calculate estimated birth date
+const calculateEstimatedBirthDate = (matingDate: string | null) => {
+  if (!matingDate) return null;
+  const matingDateObj = new Date(matingDate);
+  matingDateObj.setDate(matingDateObj.getDate() + 283); // Add 283 days (average gestation period for cattle)
+  return matingDateObj.toISOString().split('T')[0]; // Return in YYYY-MM-DD format
+};
+
 export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormProps) {
   const { t } = useTranslation();
   const { data: categoriasData } = useCategorias();
@@ -114,7 +122,17 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    // Agregar confirmación antes de actualizar o crear
+    const userConfirmed = window.confirm(
+      animal
+        ? '¿Estás seguro de que deseas actualizar los datos de este animal?'
+        : '¿Estás seguro de que deseas crear un nuevo animal?'
+    );
+    if (!userConfirmed) {
+      return; // Salir si el usuario cancela
+    }
+
     try {
       if (animal) {
         await handleUpdateAnimal();
@@ -400,7 +418,11 @@ export function AnimalForm({ animal, isOpen, onClose, onSuccess }: AnimalFormPro
                               className="form-control"
                               id="fechaMonta"
                               value={formData.Fecha_Monta || ''}
-                              onChange={(e) => setFormData({ ...formData, Fecha_Monta: e.target.value || null })}
+                              onChange={(e) => {
+                                const matingDate = e.target.value || null;
+                                const estimatedBirthDate = matingDate ? calculateEstimatedBirthDate(matingDate) : null;
+                                setFormData({ ...formData, Fecha_Monta: matingDate, Fecha_Estimada_Parto: estimatedBirthDate });
+                              }}
                             />
                             <p className="small text-muted">{t('animals.form.optional')}</p>
                             <label htmlFor="fechaMonta">{t('animals.form.mountingDate')}</label>
