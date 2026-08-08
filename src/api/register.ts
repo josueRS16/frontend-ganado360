@@ -1,4 +1,4 @@
-import http from '../api/http';
+import http from './http';
 import type { UsuarioRequest, ApiResponse, Usuario } from '../types/api';
 
 export const registerApi = {
