@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Informatica.css";
 import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from "recharts";
+import type { PieLabelRenderProps } from "recharts";
 
 const FACTORES = {
   vaca: 120,
@@ -75,8 +76,8 @@ const HuellaAmbiental: React.FC = () => {
   const pieColors = pieData.map(e => coloresAnimales[e.tipo as keyof typeof coloresAnimales] || "#888");
 
   // Etiqueta personalizada para mostrar el valor y nombre dentro de la porción
-  const renderCustomizedLabel = (props: never) => {
-    const { cx, cy, midAngle, innerRadius, outerRadius, value } = props;
+  const renderCustomizedLabel = (props: PieLabelRenderProps) => {
+    const { cx, cy, midAngle, innerRadius, outerRadius, value } = props as unknown as { cx: number; cy: number; midAngle: number; innerRadius: number; outerRadius: number; value: number };
     const RADIAN = Math.PI / 180;
     const radius = innerRadius + (outerRadius - innerRadius) * 0.7;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -182,7 +183,7 @@ const HuellaAmbiental: React.FC = () => {
                 stroke="#fff"
                 strokeWidth={3}
               >
-                {pieData.map((entry, index) => (
+                {pieData.map((_entry, index) => (
                   <Cell key={`cell-${index}`} fill={pieColors[index]} />
                 ))}
               </Pie>

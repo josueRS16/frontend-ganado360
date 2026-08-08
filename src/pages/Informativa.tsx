@@ -1,13 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import "./Informatica.css";
 import Logo_Verde from "../img/Logo_Verde.png";
 import Huella from "../img/Huella.jpeg";
 
 const Informativa: React.FC = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const handleHuellaClick = () => {
     window.open("/huella-ambiental", "_blank");
