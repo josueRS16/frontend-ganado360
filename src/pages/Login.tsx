@@ -5,22 +5,12 @@ import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
 import { useTranslation } from 'react-i18next';
 import './LoginRegister.css';
-import ReCAPTCHA from 'react-google-recaptcha';
-
-declare global {
-  interface Window {
-    grecaptcha: {
-      execute: (siteKey: string, options: { action: string }) => Promise<string>;
-    };
-  }
-}
 
 const Login: React.FC = () => {
   const [correo, setCorreo] = useState('');
   const [recordar, setRecordar] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [captchaToken, setCaptchaToken] = useState('');
   const navigate = useNavigate();
   const { login } = useAuth();
   const { showToast } = useToast();
@@ -35,23 +25,9 @@ const Login: React.FC = () => {
     }
   }, []);
 
-  const handleCaptchaChange = (token: string | null) => {
-    if (token) {
-      setCaptchaToken(token);
-    } else {
-      setError('Por favor, completa el CAPTCHA.');
-    }
-  };
-
-  // Ajustar el tipo de datos enviado a authApi.login
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
-    if (!captchaToken) {
-      setError('Por favor, completa el CAPTCHA.');
-      return;
-    }
 
     if (!correo || !password) {
       setError('Por favor, complete todos los campos.');
@@ -59,7 +35,7 @@ const Login: React.FC = () => {
     }
 
     try {
-      const res = await authApi.login({ correo, password, captchaToken });
+      const res = await authApi.login({ correo, password });
       if (res.token) {
         localStorage.setItem('token', res.token);
         if (recordar) {
@@ -141,10 +117,6 @@ const Login: React.FC = () => {
         <button type="submit">Entrar</button>
         <p>¿No tienes cuenta? <a href="/register">Regístrate</a></p>
         <p>¿Olvidaste tu contraseña? <a href="/forgot-password">Recupérala aquí</a></p>
-        <ReCAPTCHA
-          sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-          onChange={handleCaptchaChange}
-        />
       </form>
     </div>
   );
