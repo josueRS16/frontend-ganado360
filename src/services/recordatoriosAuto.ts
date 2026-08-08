@@ -1,5 +1,5 @@
-import http from '../api/http';
-import type { Recordatorio } from '../types/api';
+import http from './http';
+import type { Recordatorio } from '../types/models';
 
 export const recordatoriosAutoApi = {
   getAutomaticos: async (): Promise<Recordatorio[]> => {

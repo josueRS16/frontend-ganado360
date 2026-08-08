@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { Usuario } from '../types/api';
+import type { Usuario } from '../types/models';
 
 type UsuarioSesion = Partial<Pick<Usuario, 'ID_Usuario' | 'Nombre' | 'Correo' | 'RolID' | 'RolNombre'>> & { [key: string]: unknown };
 

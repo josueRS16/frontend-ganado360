@@ -6,7 +6,7 @@ import type {
   RecordatoriosFilters, 
   ApiResponse, 
   PaginatedResponse
-} from '../types/api';
+} from '../types/models';
 
 export const recordatoriosApi = {
   getAll: (filters: RecordatoriosFilters = {}): Promise<PaginatedResponse<Recordatorio[]>> => {

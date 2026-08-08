@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { historialApi } from '../api/historial';
-import type { HistorialVeterinarioRequest, HistorialFilters } from '../types/api';
+import { historialApi } from '../services/historial';
+import type { HistorialVeterinarioRequest, HistorialFilters } from '../types/models';
 
 export function useHistorial(filters: HistorialFilters = {}) {
   return useQuery({

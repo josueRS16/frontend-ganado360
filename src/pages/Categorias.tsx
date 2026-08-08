@@ -5,7 +5,7 @@ import { useQueryParams } from '../hooks/useQueryParams';
 import { useToast } from '../hooks/useToast';
 import { Pagination } from '../components/ui/Pagination';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
-import type { Categoria, CategoriaRequest, UpdateCategoriaRequest, CategoriasFilters } from '../types/api';
+import type { Categoria, CategoriaRequest, UpdateCategoriaRequest, CategoriasFilters } from '../types/models';
 
 interface CategoriaModalProps {
   categoria?: Categoria;

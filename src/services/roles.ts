@@ -5,7 +5,7 @@ import type {
   RolesFilters,
   ApiResponse,
   PaginatedResponse 
-} from '../types/api';
+} from '../types/models';
 
 export const rolesApi = {
   // GET /roles con filtros y paginación

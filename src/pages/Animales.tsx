@@ -9,7 +9,7 @@ import { AnimalForm } from './AnimalForm';
 import { Pagination } from '../components/ui/Pagination';
 import { DarDeBajaModal } from '../components/modals/DarDeBajaModal';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
-import type { AnimalesFilters, Animal } from '../types/api';
+import type { AnimalesFilters, Animal } from '../types/models';
 import { getCachedAnimalImage } from '../utils/imageCache';
 import { getImageDisplayUrl } from '../utils/imageUtils';
 

@@ -6,7 +6,7 @@ import type {
   CategoriasFilters,
   ApiResponse,
   PaginatedResponse 
-} from '../types/api';
+} from '../types/models';
 
 export const categoriasApi = {
   // GET /categorias con filtros y paginación

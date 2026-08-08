@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ventasApi } from '../api/ventas';
-import type { VentasFilters, VentaRequest, PaginatedResponse, Venta, VentaFacturaPDF, VentasEstadisticas, ApiResponse } from '../types/api';
+import { ventasApi } from '../services/ventas';
+import type { VentasFilters, VentaRequest, PaginatedResponse, Venta, VentaFacturaPDF, VentasEstadisticas, ApiResponse } from '../types/models';
 
 export function useVentas(filters: VentasFilters = {}) {
   return useQuery<PaginatedResponse<Venta[]>>({

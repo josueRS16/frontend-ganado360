@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import type { VentaFacturaPDF } from '../types/api';
+import type { VentaFacturaPDF } from '../types/models';
 
 // Extender el tipo de jsPDF para incluir autoTable
 declare module 'jspdf' {

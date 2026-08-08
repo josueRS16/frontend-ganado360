@@ -6,8 +6,8 @@ import { useQueryParams } from '../hooks/useQueryParams';
 import { useToast } from '../hooks/useToast';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { Pagination } from '../components/ui/Pagination';
-import http from '../api/http';
-import type { RecordatoriosFilters, Recordatorio, RecordatorioRequest } from '../types/api';
+import http from '../services/http';
+import type { RecordatoriosFilters, Recordatorio, RecordatorioRequest } from '../types/models';
 
 interface RecordatorioModalProps {
   recordatorio?: Recordatorio;

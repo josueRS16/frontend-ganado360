@@ -1,5 +1,5 @@
-import http from '../api/http';
-import type { UsuarioRequest, ApiResponse, Usuario } from '../types/api';
+import http from './http';
+import type { UsuarioRequest, ApiResponse, Usuario } from '../types/models';
 
 export const registerApi = {
   register: async (data: UsuarioRequest): Promise<ApiResponse<Usuario>> => {

@@ -1,4 +1,4 @@
-import { uploadApi } from '../api/upload';
+import { uploadApi } from '../services/upload';
 
 /**
  * Utilidades para manejo de imágenes en la aplicación

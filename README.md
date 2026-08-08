@@ -33,7 +33,7 @@ src/
 │   ├── tables/          # Tablas responsivas
 │   └── forms/           # Formularios con validaciones
 ├── pages/               # Páginas principales
-├── api/                 # Servicios Axios por recurso
+├── services/            # Servicios Axios por recurso
 ├── hooks/               # Hooks de React Query y utilidades
 ├── types/               # Tipos TypeScript
 ├── utils/               # Utilidades (params, fechas)

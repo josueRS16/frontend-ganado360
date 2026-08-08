@@ -12,9 +12,9 @@ import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { CurrencySelector, CurrencyValue } from '../components/ui/CurrencySelector';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { generarFacturaPDF } from '../utils/facturasPDF';
-import { ventasApi } from '../api/ventas';
+import { ventasApi } from '../services/ventas';
 import { VentaDetalleModal } from '../components/modals/VentaDetalleModal';
-import type { VentasFilters, Venta, VentaRequest, Moneda } from '../types/api';
+import type { VentasFilters, Venta, VentaRequest, Moneda } from '../types/models';
 
 
 interface VentaModalProps {

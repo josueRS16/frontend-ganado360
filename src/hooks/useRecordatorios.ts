@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { recordatoriosApi } from '../api/recordatorios';
-import type { RecordatoriosFilters, RecordatorioRequest, PaginatedResponse, Recordatorio } from '../types/api';
+import { recordatoriosApi } from '../services/recordatorios';
+import type { RecordatoriosFilters, RecordatorioRequest, PaginatedResponse, Recordatorio } from '../types/models';
 
 export function useRecordatorios(filters: RecordatoriosFilters = {}) {
   return useQuery<PaginatedResponse<Recordatorio[]>>({

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import type { Moneda } from '../types/api';
+import type { Moneda } from '../types/models';
 import { 
   getTipoCambio, 
   setTipoCambio, 

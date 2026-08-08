@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { animalesApi } from '../api/animales';
-import type { AnimalesFilters, CreateAnimalRequest, UpdateAnimalRequest } from '../types/api';
+import { animalesApi } from '../services/animales';
+import type { AnimalesFilters, CreateAnimalRequest, UpdateAnimalRequest } from '../types/models';
 
 export function useAnimales(filters: AnimalesFilters = {}) {
   return useQuery({

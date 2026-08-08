@@ -4,7 +4,7 @@ import type {
   PerfilUsuario,
   UpdateUsuarioPerfilRequest,
   ApiResponse
-} from '../types/api';
+} from '../types/models';
 
 export const authApi = {
   // Login

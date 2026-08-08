@@ -6,7 +6,7 @@ import { useQueryParams } from '../hooks/useQueryParams';
 import { useToast } from '../hooks/useToast';
 import { Pagination } from '../components/ui/Pagination';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
-import type { Usuario, UsuarioRequest, UsuariosFilters } from '../types/api';
+import type { Usuario, UsuarioRequest, UsuariosFilters } from '../types/models';
 
 interface UsuarioModalProps {
   usuario?: Usuario;
