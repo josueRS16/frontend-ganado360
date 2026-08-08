@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDarDeBajaAnimal } from '../../hooks/useEstadoAnimal';
 import { useToast } from '../../hooks/useToast';
-import type { Animal } from '../../types/models';
+import type { Animal } from '../../types/api';
 
 interface DarDeBajaModalProps {
   animal: Animal | null;

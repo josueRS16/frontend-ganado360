@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { estadoAnimalApi } from '../services/estado-animal';
-import type { EstadoAnimalRequest, EstadoAnimalFilters } from '../types/models';
+import { estadoAnimalApi } from '../api/estado-animal';
+import type { EstadoAnimalRequest, EstadoAnimalFilters } from '../types/api';
 
 export function useEstadoAnimal(filters: EstadoAnimalFilters = {}) {
   return useQuery({

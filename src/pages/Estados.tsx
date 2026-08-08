@@ -5,7 +5,7 @@ import { useQueryParams } from '../hooks/useQueryParams';
 import { useToast } from '../hooks/useToast';
 import { Pagination } from '../components/ui/Pagination';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
-import type { Estado, EstadoRequest, EstadosFilters } from '../types/models';
+import type { Estado, EstadoRequest, EstadosFilters } from '../types/api';
 
 interface EstadoModalProps {
   estado?: Estado;

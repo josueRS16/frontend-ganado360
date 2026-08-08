@@ -1,4 +1,4 @@
-import type { Moneda } from '../types/models';
+import type { Moneda } from '../types/api';
 
 // Configuración de monedas
 export const MONEDAS = {

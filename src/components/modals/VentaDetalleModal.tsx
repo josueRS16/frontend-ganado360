@@ -4,7 +4,7 @@ import { useAnimales } from '../../hooks/useAnimales';
 import { useCurrency } from '../../context/CurrencyContext';
 import { getImageDisplayUrl } from '../../utils/imageUtils';
 import { CurrencyValue, ExchangeRateInfo } from '../ui/CurrencySelector';
-import type { Venta, Animal } from '../../types/models';
+import type { Venta, Animal } from '../../types/api';
 
 interface VentaDetalleModalProps {
   venta: Venta | null;

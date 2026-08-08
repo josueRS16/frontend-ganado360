@@ -5,7 +5,7 @@ import type {
   EstadoAnimalRequest, 
   EstadoAnimalFilters, 
   ApiResponse 
-} from '../types/models';
+} from '../types/api';
 
 export const estadoAnimalApi = {
   // GET /estado-animal con filtros opcionales

@@ -5,7 +5,7 @@ import { useQueryParams } from '../hooks/useQueryParams';
 import { useToast } from '../hooks/useToast';
 import { Pagination } from '../components/ui/Pagination';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
-import type { Rol, RolRequest, RolesFilters } from '../types/models';
+import type { Rol, RolRequest, RolesFilters } from '../types/api';
 
 interface RolModalProps {
   rol?: Rol;

@@ -25,7 +25,7 @@ export const uploadApi = {
     return response.data;
   },
 
-  // DELETE /upload/image/:filename
+  // DELETE /api/upload/image/:filename
   deleteImage: async (filename: string): Promise<void> => {
     const baseURL = import.meta.env.VITE_API_URL;
     const fullUrl = `${baseURL}/upload/image/${filename}`;

@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { useCreateAnimal, useUpdateAnimal } from '../hooks/useAnimales';
 import { useCategorias } from '../hooks/useCategorias';
 import { useToast } from '../hooks/useToast';
-import type { Animal, CreateAnimalRequest } from '../types/models';
+import type { Animal, CreateAnimalRequest } from '../types/api';
 import { cacheAnimalImage } from '../utils/imageCache';
 import { ImageSelector } from '../components/ui/ImageSelector';
 import { getRazasPorCategoria } from '../utils/razasBovinas';
-import { uploadApi } from '../services/upload';
+import { uploadApi } from '../api/upload';
 import '../styles/razas-select.css';
 
 interface AnimalFormProps {

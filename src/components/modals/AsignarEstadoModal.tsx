@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useEstados } from '../../hooks/useEstados';
 import { useCreateEstadoAnimal } from '../../hooks/useEstadoAnimal';
 import { useToast } from '../../hooks/useToast';
-import type { Animal, EstadoAnimalRequest } from '../../types/models';
+import type { Animal, EstadoAnimalRequest } from '../../types/api';
 import '../../styles/modal-estados.css';
 
 interface AsignarEstadoModalProps {

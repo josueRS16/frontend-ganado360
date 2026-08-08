@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '../../hooks/useToast';
 import { useAuth } from '../../hooks/useAuth';
-import { authApi } from '../../services/auth';
-import type { PerfilUsuario } from '../../types/models';
+import { authApi } from '../../api/auth';
+import type { PerfilUsuario } from '../../types/api';
 
 interface PerfilUsuarioModalProps {
   isOpen: boolean;

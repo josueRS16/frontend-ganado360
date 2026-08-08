@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { categoriasApi } from '../services/categorias';
-import type { CategoriaRequest, UpdateCategoriaRequest, CategoriasFilters } from '../types/models';
+import { categoriasApi } from '../api/categorias';
+import type { CategoriaRequest, UpdateCategoriaRequest, CategoriasFilters } from '../types/api';
 
 export function useCategorias(filters: CategoriasFilters = {}) {
   return useQuery({

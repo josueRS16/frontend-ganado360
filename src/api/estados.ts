@@ -5,7 +5,7 @@ import type {
   EstadosFilters,
   ApiResponse,
   PaginatedResponse 
-} from '../types/models';
+} from '../types/api';
 
 export const estadosApi = {
   // GET /estados con filtros y paginación

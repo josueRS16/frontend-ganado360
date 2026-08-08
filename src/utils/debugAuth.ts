@@ -3,7 +3,7 @@
  * Verifica que el token se esté incluyendo en todas las solicitudes
  */
 
-import http from '../services/http';
+import http from '../api/http';
 
 export const debugAuth = {
   // Verificar si hay token en localStorage

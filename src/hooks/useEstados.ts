@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { estadosApi } from '../services/estados';
-import type { EstadoRequest, EstadosFilters } from '../types/models';
+import { estadosApi } from '../api/estados';
+import type { EstadoRequest, EstadosFilters } from '../types/api';
 
 export function useEstados(filters: EstadosFilters = {}) {
   return useQuery({

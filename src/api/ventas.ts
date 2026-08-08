@@ -8,7 +8,7 @@ import type {
   PaginatedResponse,
   VentaFacturaPDF,
   VentasEstadisticas
-} from '../types/models';
+} from '../types/api';
 
 export const ventasApi = {
   // GET /ventas con filtros opcionales

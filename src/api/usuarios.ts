@@ -5,7 +5,7 @@ import type {
   UsuariosFilters,
   ApiResponse,
   PaginatedResponse 
-} from '../types/models';
+} from '../types/api';
 
 export const usuariosApi = {
   // GET /usuarios con filtros y paginación

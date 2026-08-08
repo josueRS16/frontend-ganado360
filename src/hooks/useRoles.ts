@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { rolesApi } from '../services/roles';
-import type { RolRequest, RolesFilters } from '../types/models';
+import { rolesApi } from '../api/roles';
+import type { RolRequest, RolesFilters } from '../types/api';
 
 export function useRoles(filters: RolesFilters = {}) {
   return useQuery({

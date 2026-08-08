@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { usuariosApi } from '../services/usuarios';
-import type { UsuarioRequest, UsuariosFilters } from '../types/models';
+import { usuariosApi } from '../api/usuarios';
+import type { UsuarioRequest, UsuariosFilters } from '../types/api';
 
 export function useUsuarios(filters: UsuariosFilters = {}) {
   return useQuery({

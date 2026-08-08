@@ -13,7 +13,7 @@ import { useToast } from '../hooks/useToast';
 import { useAuth } from '../hooks/useAuth';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
 import { Pagination } from '../components/ui/Pagination';
-import type { HistorialVeterinario, HistorialVeterinarioRequest, HistorialFilters } from '../types/models';
+import type { HistorialVeterinario, HistorialVeterinarioRequest, HistorialFilters } from '../types/api';
 
 interface HistorialModalProps {
   historial?: HistorialVeterinario;

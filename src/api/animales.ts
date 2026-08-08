@@ -11,7 +11,7 @@ import type {
   EstadoAnimal,
   HistorialVeterinario,
   Recordatorio
-} from '../types/models';
+} from '../types/api';
 
 export const animalesApi = {
   // GET /animales con filtros opcionales y paginación

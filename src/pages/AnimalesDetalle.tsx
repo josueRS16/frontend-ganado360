@@ -7,7 +7,7 @@ import { useTiposVenta } from '../hooks/useVentas';
 import { useQueryParams } from '../hooks/useQueryParams';
 import { Pagination } from '../components/ui/Pagination';
 import { Breadcrumb } from '../components/ui/Breadcrumb';
-import type { AnimalesFilters, AnimalConDetalle } from '../types/models';
+import type { AnimalesFilters, AnimalConDetalle } from '../types/api';
 import { getCachedAnimalImage } from '../utils/imageCache';
 import { getImageDisplayUrl } from '../utils/imageUtils';
 

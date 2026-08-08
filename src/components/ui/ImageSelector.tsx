@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useToast } from '../../hooks/useToast';
-import { uploadApi } from '../../services/upload';
+import { uploadApi } from '../../api/upload';
 import { removeCachedAnimalImage } from '../../utils/imageCache';
 
 interface ImageSelectorProps {

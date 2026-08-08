@@ -5,7 +5,7 @@ import type {
   HistorialFilters,
   ApiResponse,
   PaginatedResponse 
-} from '../types/models';
+} from '../types/api';
 
 export const historialApi = {
   // GET /historial con paginación

@@ -12,7 +12,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { recordatoriosApi } from '../../services/recordatorios';
+import { recordatoriosApi } from '../../api/recordatorios';
 import { PerfilUsuarioModal } from '../modals/PerfilUsuarioModal';
 import '../../styles/google-popover.css';
 import '../../styles/modern-navbar.css';

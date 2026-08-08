@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useCurrency } from '../../context/CurrencyContext';
 import { getMonedasDisponibles } from '../../utils/currencyUtils';
-import type { Moneda } from '../../types/models';
+import type { Moneda } from '../../types/api';
 
 interface CurrencySelectorProps {
   /** Moneda seleccionada actualmente */
