@@ -8,7 +8,7 @@ import type {
 
 export const authApi = {
   // Login
-  login: async (data: { correo: string; password: string; captchaToken: string }): Promise<LoginResponse> => {
+  login: async (data: { correo: string; password: string }): Promise<LoginResponse> => {
     const response = await http.post('/auth/login', data);
     return response.data;
   },
