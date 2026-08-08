@@ -9,6 +9,7 @@ declare global {
 
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../../hooks/useToast';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { recordatoriosApi } from '../../api/recordatorios';
@@ -24,6 +25,7 @@ interface NavbarProps {
 
 export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) {
   const { user, logout } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const [notiCount, setNotiCount] = useState(0);
@@ -46,8 +48,9 @@ export function Navbar({ onToggleSidebar, isDark, onToggleTheme }: NavbarProps) 
 
   const handleLogout = useCallback(() => {
     logout();
+    showToast(t('auth.messages.logoutSuccess'), 'success');
     navigate('/login');
-  }, [logout, navigate]);
+  }, [logout, navigate, showToast, t]);
 
   // Función para abrir el modal de perfil desde el popover
   const handleEditProfile = useCallback(() => {

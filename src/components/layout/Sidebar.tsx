@@ -64,6 +64,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       items: [
         { path: '/recordatorios', label: t('sidebar.menu.reminders.label'), description: t('sidebar.menu.reminders.description'), icon: 'bi-calendar-check' },
         { path: '/historial', label: t('sidebar.menu.history.label'), description: t('sidebar.menu.history.description'), icon: 'bi-heart-pulse' },
+        { path: '/informativa', label: t('sidebar.menu.informativa.label'), description: t('sidebar.menu.informativa.description'), icon: 'bi-info-circle' },
         // Ventas solo para Administrador
         ...(isAdmin ? [{ path: '/ventas', label: t('sidebar.menu.sales.label'), description: t('sidebar.menu.sales.description'), icon: 'bi-cash-coin' }] : []),
       ]
