@@ -20,6 +20,8 @@ import { RoleRoute } from './components/RoleRoute';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import VerifyCode from './pages/VerifyCode';
+import Informativa from './pages/Informativa';
+import HuellaAmbiental from './pages/HuellaAmbiental';
 
 // Crear QueryClient con configuración optimizada
 const queryClient = new QueryClient({
@@ -55,6 +57,8 @@ function App() {
               <Route path="animales-detalle" element={<AnimalesDetalle />} />
               <Route path="recordatorios" element={<Recordatorios />} />
               <Route path="historial" element={<Historial />} />
+              <Route path="informativa" element={<Informativa />} />
+              <Route path="/huella-ambiental" element={<HuellaAmbiental />} />
               
               {/* Rutas solo para Administradores */}
               <Route path="ventas" element={
@@ -82,6 +86,17 @@ function App() {
                   <Estados />
                 </RoleRoute>
               } />
+              <Route path="informativa" element={
+                <RoleRoute allowedRoles={['Administrador']}>
+                  <Informativa />
+                </RoleRoute>
+              } />
+              <Route path="huella-ambiental" element={
+                <RoleRoute allowedRoles={['Administrador']}>
+                  <HuellaAmbiental />
+                </RoleRoute>
+              } />
+              
               <Route path="*" element={
                 <div className="text-center py-5">
                   <h1 className="display-1">404</h1>

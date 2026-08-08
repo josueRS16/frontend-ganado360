@@ -94,6 +94,10 @@
       "users": {
         "label": "Usuarios",
         "description": "Gestión de usuarios"
+      },
+      "informativa": {
+        "label": "Acerca de Nosotros",
+        "description": "Acerca de Ganado360"
       }
     }
   },
@@ -826,6 +830,8 @@
     },
     "messages": {
       "loginSuccess": "Inicio de sesión exitoso",
+      "welcome": "Bienvenido {{user}}",
+      "logoutSuccess": "Sesión finalizada",
       "loginError": "Error al iniciar sesión",
       "registerSuccess": "Registro exitoso",
       "registerError": "Error al registrarse",

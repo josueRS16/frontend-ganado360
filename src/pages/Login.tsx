@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { authApi } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useToast } from '../hooks/useToast';
+import { useTranslation } from 'react-i18next';
 import './LoginRegister.css';
 import ReCAPTCHA from 'react-google-recaptcha';
 
@@ -21,6 +23,8 @@ const Login: React.FC = () => {
   const [captchaToken, setCaptchaToken] = useState('');
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { showToast } = useToast();
+  const { t } = useTranslation();
 
   // Al cargar, recuperar correo si está guardado
   useEffect(() => {
@@ -65,8 +69,10 @@ const Login: React.FC = () => {
         }
         
         // Obtener el perfil completo del usuario
+        let userName = res.nombre || correo;
         try {
           const profileResponse = await authApi.getProfile();
+          userName = profileResponse.data.Nombre || userName;
           // Guardar todos los datos del usuario en el contexto
           login({ 
             ID_Usuario: profileResponse.data.ID_Usuario,
@@ -85,7 +91,8 @@ const Login: React.FC = () => {
             Correo: correo 
           });
         }
-        
+
+        showToast(t('auth.messages.welcome', { user: userName }), 'success');
         navigate('/');
       } else {
         setError('Respuesta inválida del servidor.');
@@ -106,6 +113,8 @@ const Login: React.FC = () => {
   <div className="login-background">
       <form className="login-form" onSubmit={handleSubmit}>
         <h2>Iniciar Sesión</h2>
+        <p>Correo: test@gmail.com</p>
+        <p>Contraseña: 1234</p>
         {error && <div className="error-message">{error}</div>}
         <input
           type="email"

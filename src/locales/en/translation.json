@@ -94,6 +94,10 @@
       "users": {
         "label": "Users",
         "description": "User management"
+      },
+      "informativa": {
+        "label": "About Us",
+        "description": "About Ganado360"
       }
     }
   },
@@ -830,6 +834,8 @@
     },
     "messages": {
       "loginSuccess": "Login successful",
+      "welcome": "Welcome {{user}}",
+      "logoutSuccess": "Session ended",
       "loginError": "Login error",
       "registerSuccess": "Registration successful",
       "registerError": "Registration error",
